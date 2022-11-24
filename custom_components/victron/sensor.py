@@ -12,7 +12,7 @@ from homeassistant.core import HomeAssistant, HassJob
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.components.sensor import SensorEntityDescription, SensorStateClass, SensorEntity
+from homeassistant.components.sensor import SensorEntityDescription, SensorStateClass, SensorEntity, DOMAIN as SENSOR_DOMAIN
 from .coordinator import victronEnergyDeviceUpdateCoordinator
 
 from collections.abc import Callable
@@ -72,7 +72,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         """Initialize the sensor."""
         self.description = description
         #this needs to be changed to allow multiple of the same type
-        self.entity_id = f"sensor.{DOMAIN}_{description.key}"
+        self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{description.key}"
         self._attr_unique_id = f"{description.key}"
         self._attr_name = f"{description.name}"
 
