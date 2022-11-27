@@ -54,7 +54,7 @@ class RegisterInfo():
         self.scale = scale
         
     def determine_stateclass(self):
-        if self.unit in (UnitOfEnergy.KILO_WATT_HOUR):
+        if self.unit == UnitOfEnergy.KILO_WATT_HOUR:
             return SensorStateClass.TOTAL_INCREASING
         elif self.unit == "":
             return None
