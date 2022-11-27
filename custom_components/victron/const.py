@@ -404,7 +404,7 @@ gps_registers = {
 
 settings_ess_registers = {
     "settings_ess_batterylife_state": RegisterInfo(2900, UINT16),
-    "setting_ess_batterylife_minimumsoc": RegisterInfo(2901, UINT16, PERCENTAGE, 10),
+    "settings_ess_batterylife_minimumsoc": RegisterInfo(2901, UINT16, PERCENTAGE, 10),
     "settings_ess_mode": RegisterInfo(2902, UINT16),
     "settings_ess_batterylife_soclimit": RegisterInfo(2903, UINT16, PERCENTAGE, 10),
 
@@ -805,7 +805,7 @@ system_battery_registers = {
 
 system_dc_registers = {
     "system_dc_pv_power": RegisterInfo(850, UINT16, UnitOfPower.WATT),
-    "victron_system_dc_pv_current": RegisterInfo(851, INT16, ELECTRIC_CURRENT_AMPERE, 10)
+    "system_dc_pv_current": RegisterInfo(851, INT16, ELECTRIC_CURRENT_AMPERE, 10)
 }
 
 system_charger_registers = {

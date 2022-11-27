@@ -7,7 +7,7 @@ import logging
 
 from datetime import timedelta
 from homeassistant.util import utcnow
-from homeassistant.helpers import event
+from homeassistant.helpers import event, entity
 from homeassistant.core import HomeAssistant, HassJob
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -107,4 +107,17 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
             self.hass,
             self._update_job,
             utcnow() + timedelta(seconds=self.coordinator.interval),
+        )
+
+
+    @property
+    def device_info(self) -> entity.DeviceInfo:
+        """Return the device info."""
+        return entity.DeviceInfo(
+            identifiers={
+                # Serial numbers are unique identifiers within a specific domain
+                (self.unique_id.split('_')[0])
+            },
+            name=self.unique_id.split('_')[0],
+            manufacturer="victron", # to be dynamically set for gavazzi and redflow
         )
