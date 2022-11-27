@@ -66,7 +66,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
     # _attr_attribution = ATTRIBUTION
     # _attr_icon = ICON
     # _attr_device_class = SensorDeviceClass.MONETARY
-    _attr_state_class = SensorStateClass.MEASUREMENT
+
 
     def __init__(self, coordinator: victronEnergyDeviceUpdateCoordinator, description: VictronEntityDescription) -> None:
         """Initialize the sensor."""
@@ -75,6 +75,8 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{description.key}"
         self._attr_unique_id = f"{description.key}"
         self._attr_name = f"{description.name}"
+
+        self._attr_state_class = description.state_class
 
         self.entity_description: VictronEntityDescription = description
 

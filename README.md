@@ -13,6 +13,7 @@ The current state of this integration provides the current limitations to it's u
 - all available "slave" units are added as entities but not grouped into logical devices.
 - Read only, this integration doesn't (yet) provide write support for writeable registers.
 - Configuring the integration will be relatively slow if a discovery scan is required.
+- Only one instance of a unit type (multi, gavazzi grid meters) is currently supported (due to unique entity naming constrants)
 
 
 ## Currently planned improvements
