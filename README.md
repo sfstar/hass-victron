@@ -1,3 +1,5 @@
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+
 # Victron GX modbusTCP integration
 This integration scans for all available registers of a provided GX device.
 It then uses the defined register ledgers to create entities for each and every register that is provided by the GX device.
@@ -37,7 +39,7 @@ This integration uses pymodbus 3.0.2 or higher.
 As of november 2022 the built-in home assistant modbus integration runs on a version < 3.0.0
 If you install this integration the built-in modbus integration will stop to work due to breaking changes between 2.x.x and 3.0.0
 
-## Manual (preffered)
+## Manual
 1. Clone the repository to your machine.
 2. Copy the contents of custom_components/ to your machine running home assistant.
 3. Restart home assistant
@@ -47,6 +49,14 @@ If you install this integration the built-in modbus integration will stop to wor
 7. Fill in the correct options and submit
 
 ## HACS
+
+### Custom repository
+1. Add https://github.com/sfstar/hass-victron to your HACS custom repositories.
+2. Install through HACS. 
+3. Restart Home Assistant. 
+4. Add the integration through your settings.
+
+### Default
 Currently not explicitly supported (although you could add the repo as an custom repository in hacs)
 TODO 
 
