@@ -60,7 +60,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                     #raise error
                     _LOGGER.error("no valid data returned for entities")
                 else:
-                    parsed_data = OrderedDict(list(parsed_data.items()) + list(self.parse_register_data(data, register_info_dict[name]).items()))
+                    parsed_data = OrderedDict(list(parsed_data.items()) + list(self.parse_register_data(data, register_info_dict[name], unit).items()))
                     register_list_names.append(name)
 
         return {
@@ -68,22 +68,22 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             "data": parsed_data
         }
 
-    def parse_register_data(self, buffer: ReadHoldingRegistersResponse, registerInfo: OrderedDict(str, RegisterInfo)) -> dict:
+    def parse_register_data(self, buffer: ReadHoldingRegistersResponse, registerInfo: OrderedDict(str, RegisterInfo), unit: int) -> dict:
         decoder = BinaryPayloadDecoder.fromRegisters(
         buffer.registers, byteorder=Endian.Big
         )
         decoded_data  = OrderedDict()
         for key,value in registerInfo.items():
             if value.dataType == UINT16:
-                decoded_data[key] = self.decode_scaling(decoder.decode_16bit_uint(), value.scale)
+                decoded_data[key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_16bit_uint(), value.scale))
             elif value.dataType == INT16:
-                decoded_data[key] = self.decode_scaling(decoder.decode_16bit_int(), value.scale)
+                decoded_data[key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_16bit_int(), value.scale))
             elif value.dataType == UINT32:
-                decoded_data[key] = self.decode_scaling(decoder.decode_32bit_uint(), value.scale)
+                decoded_data[key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_32bit_uint(), value.scale))
             elif value.dataType == INT32:
-                decoded_data[key] = self.decode_scaling(decoder.decode_32bit_uint(), value.scale)
+                decoded_data[key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_32bit_uint(), value.scale))
             elif isinstance(value.dataType, STRING):
-                decoded_data[key] = decoder.decode_string(value.dataType.length*2) #Accomodate for individual character length
+                decoded_data[key] = DataEntry(unit=unit, value=decoder.decode_string(value.dataType.length*2)) #TODO Accomodate for individual character length
             else:
                 #TODO raise error for not supported datatype
                 raise Exception("unknown datatype not supported")
@@ -137,3 +137,9 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         #     raise UpdateFailed("Device did not respond as expected") from ex
 
         return data
+
+class DataEntry():
+
+    def __init__(self, unit, value) -> None:
+        self.unit = unit
+        self.value = value

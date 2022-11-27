@@ -37,7 +37,7 @@ async def async_setup_entry(
                 key=register_name,
                 name=register_name.replace('_', ' '),
                 native_unit_of_measurement=registerInfo.unit,
-                value_fn=lambda data: data["data"][register_name],
+                value_fn=lambda data: data["data"][register_name].value,
                 state_class=registerInfo.determine_stateclass()
             ))
 
@@ -73,7 +73,6 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         self.description = description
         #this needs to be changed to allow multiple of the same type
         self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{description.key}"
-        self._attr_unique_id = f"{description.key}"
         self._attr_name = f"{description.name}"
 
         self._attr_state_class = description.state_class
@@ -89,7 +88,9 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
     async def async_update(self) -> None:
         """Get the latest data and updates the states."""
         try:
-            self._attr_native_value = self.coordinator.processed_data()["data"][self.entity_description.key]
+            data = self.coordinator.processed_data()["data"][self.entity_description.key]
+            self._attr_native_value = data.value
+            self._attr_unique_id = f"{data.unit}_{self.description.key}"
 #TODO FURTHER DEBUG AND USE THIS FUNCTION IN DESCRIPTION INSTEAD
 #            self._attr_native_value =  self.entity_description.value_fn(self.coordinator.processed_data())
         except (TypeError, IndexError):
@@ -118,6 +119,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
                 # Serial numbers are unique identifiers within a specific domain
                 (self.unique_id.split('_')[0])
             },
-            name=self.unique_id.split('_')[0],
+            name=self.unique_id.split('_')[1],
+            model=self.unique_id.split('_')[0],
             manufacturer="victron", # to be dynamically set for gavazzi and redflow
         )

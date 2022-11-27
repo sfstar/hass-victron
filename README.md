@@ -68,7 +68,7 @@ These errors can be cleared without any issue and should not be reported unless 
 # Disclaimer
 This integration speaks to the victron GX device.
 The GX device is an exposed integration point for a system capable of running on high voltages and currents.
-If the system were to become unstable it might lead to damage of equipment, fires or electrocution.
+If the system were to become unstable it might lead to damage of equipment, fires and/or electrocution.
 Although this integration speaks to the (exposed by victron) modbusTCP server it might cause the system to become unstable in circumstances like (but not limited to):
 - High request frequency
 - (when implemented) writing to write_registers (for example changing the ess setpoint value)
