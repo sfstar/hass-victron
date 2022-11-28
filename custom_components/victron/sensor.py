@@ -36,8 +36,8 @@ async def async_setup_entry(
     for unit, registerLedger in register_set.items():
         for name in registerLedger:
             for register_name, registerInfo in register_info_dict[name].items():
-                _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
-                _LOGGER.debug(str(registerInfo.unit))
+                # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
+                # _LOGGER.debug(str(registerInfo.unit))
                 if registerInfo.writeType is None:
                     descriptions.append(VictronEntityDescription(
                         key=register_name,
@@ -83,7 +83,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         self._attr_name = f"{description.name}"
         self._attr_native_unit_of_measurement = description.native_unit_of_measurement
         self._attr_state_class = description.state_class
-        self.data_key = str(self.description.unit + "." + self.description.key)
+        self.data_key = str(self.description.unit) + "." + str(self.description.key)
 
         self._attr_unique_id = f"{description.unit}_{self.description.key}"
         if description.unit not in (100, 225):

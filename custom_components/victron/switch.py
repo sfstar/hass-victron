@@ -25,7 +25,7 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(
     hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
-    """Set up Abode switch devices."""
+    """Set up victron switch devices."""
     victron_coordinator: victronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
     _LOGGER.debug("attempting to setup switch entities")
     descriptions = []
@@ -34,10 +34,10 @@ async def async_setup_entry(
     for unit, registerLedger in register_set.items():
         for name in registerLedger:
             for register_name, registerInfo in register_info_dict[name].items():
-                _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
-                _LOGGER.debug(str(registerInfo.unit))
-                _LOGGER.debug("register_name")
-                _LOGGER.debug(register_name)
+                # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
+                # _LOGGER.debug(str(registerInfo.unit))
+                # _LOGGER.debug("register_name")
+                # _LOGGER.debug(register_name)
                 if isinstance(registerInfo.writeType, SwitchWriteType):
                     descriptions.append(VictronEntityDescription(
                         key=register_name,
@@ -46,21 +46,6 @@ async def async_setup_entry(
                         unit=unit,
                         register_ledger_key=name
                     ))
-
-    # for key in victron_coordinator.processed_data()["register_set"]:
-    #     for register_name, registerInfo in register_info_dict[key].items():
-        
-    #         if isinstance(registerInfo.writeType, SwitchWriteType):
-    #             _LOGGER.debug("switch entity")
-    #             _LOGGER.debug(register_name)
-    #             _LOGGER.debug(registerInfo)
-    #             _LOGGER.debug(key)
-    #             descriptions.append(VictronEntityDescription(
-    #                 key=register_name,
-    #                 name=register_name.replace('_', ' '),
-    #                 value_fn=lambda data: data["data"][register_name].value,
-    #                 unit=unit
-    #             ))
 
     entities = []
     entity = {}
@@ -92,7 +77,7 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
         self.description: VictronEntityDescription = description
         #this needs to be changed to allow multiple of the same type
         self._attr_name = f"{description.name}"
-        self.data_key = str(self.description.unit + "." + self.description.key)
+        self.data_key = str(self.description.unit) + "." + str(self.description.key)
 
         self._attr_unique_id = f"{self.description.unit}_{self.description.key}"
         if self.description.unit not in (100, 225):

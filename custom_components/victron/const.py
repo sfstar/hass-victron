@@ -401,7 +401,7 @@ charger_registers = {
 }
 
 settings_registers = {
-    "settings_ess_acpowersetpoint": RegisterInfo(register=2700, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 900)), #TODO make user configureable
+    "settings_ess_acpowersetpoint": RegisterInfo(register=2700, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 9000)), #TODO make user configureable
     "settings_ess_maxchargepercentage": RegisterInfo(register=2701, dataType=UINT16, unit=PERCENTAGE, writeType=SliderWriteType(0, 100)),
     "settings_ess_maxdischargepercentage": RegisterInfo(register=2702, dataType=UINT16, unit=PERCENTAGE, writeType=SliderWriteType(0, 100)),
     "settings_ess_acpowersetpoint2": RegisterInfo(2703, INT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000)), # Duplicate register exposed by victron #TODO make user configureable

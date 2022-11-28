@@ -23,7 +23,7 @@ TODO
 - Switch to async
 - make register list smarter
 - Investigate if scan without causing errors is possible
-- Support write registers
+- Support write registers (initial working buggy setup for switches and numbers.)
 - expose write registers as types like button, slider etc.
 - Improve configuration options to allow users to explicitly enable write support
 - Expose this integration to hacs
