@@ -26,20 +26,27 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Victron price sensor entries."""
+    _LOGGER.debug("attempting to setup sensor entities")
     victron_coordinator: victronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
-
+    _LOGGER.debug(victron_coordinator.processed_data()["register_set"])
+    _LOGGER.debug(victron_coordinator.processed_data()["data"])
     descriptions = []
     #TODO cleanup
-    for key in victron_coordinator.processed_data()["register_set"]:
-        for register_name, registerInfo in register_info_dict[key].items():
-
-            descriptions.append(VictronEntityDescription(
-                key=register_name,
-                name=register_name.replace('_', ' '),
-                native_unit_of_measurement=registerInfo.unit,
-                value_fn=lambda data: data["data"][register_name].value,
-                state_class=registerInfo.determine_stateclass()
-            ))
+    register_set = victron_coordinator.processed_data()["register_set"]
+    for unit, registerLedger in register_set.items():
+        for name in registerLedger:
+            for register_name, registerInfo in register_info_dict[name].items():
+                _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
+                _LOGGER.debug(str(registerInfo.unit))
+                if registerInfo.writeType is None:
+                    descriptions.append(VictronEntityDescription(
+                        key=register_name,
+                        name=register_name.replace('_', ' '),
+                        native_unit_of_measurement=registerInfo.unit,
+                        value_fn=lambda data: data["data"][unit + "." + register_name].value,
+                        state_class=registerInfo.determine_stateclass(),
+                        unit=unit
+                    ))
 
     entities = []
     entity = {}
@@ -57,7 +64,8 @@ async def async_setup_entry(
 @dataclass
 class VictronEntityDescription(SensorEntityDescription):
     """Describes victron sensor entity."""
-
+    #TODO write unit references into this class and convert to base for all entity types
+    unit: int = None
     value_fn: Callable[[dict], StateType] = None
 
 class VictronSensor(CoordinatorEntity, SensorEntity):
@@ -70,14 +78,19 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
 
     def __init__(self, coordinator: victronEnergyDeviceUpdateCoordinator, description: VictronEntityDescription) -> None:
         """Initialize the sensor."""
-        self.description = description
+        self.description: VictronEntityDescription = description
         #this needs to be changed to allow multiple of the same type
-        self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{description.key}"
         self._attr_name = f"{description.name}"
-
+        self._attr_native_unit_of_measurement = description.native_unit_of_measurement
         self._attr_state_class = description.state_class
+        self.data_key = str(self.description.unit + "." + self.description.key)
 
-        self.entity_description: VictronEntityDescription = description
+        self._attr_unique_id = f"{description.unit}_{self.description.key}"
+        if description.unit not in (100, 225):
+            self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}_{description.unit}"
+        else:
+            self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}"
+
 
 
         self._update_job = HassJob(self.async_schedule_update_ha_state)
@@ -88,9 +101,9 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
     async def async_update(self) -> None:
         """Get the latest data and updates the states."""
         try:
-            data = self.coordinator.processed_data()["data"][self.entity_description.key]
+            #TODO see if entitydescription can be updated to include unit info and set it in init
+            data = self.coordinator.processed_data()["data"][self.data_key]
             self._attr_native_value = data.value
-            self._attr_unique_id = f"{data.unit}_{self.description.key}"
 #TODO FURTHER DEBUG AND USE THIS FUNCTION IN DESCRIPTION INSTEAD
 #            self._attr_native_value =  self.entity_description.value_fn(self.coordinator.processed_data())
         except (TypeError, IndexError):
@@ -117,7 +130,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         return entity.DeviceInfo(
             identifiers={
                 # Serial numbers are unique identifiers within a specific domain
-                (self.unique_id.split('_')[0])
+                (DOMAIN, self.unique_id.split('_')[0])
             },
             name=self.unique_id.split('_')[1],
             model=self.unique_id.split('_')[0],

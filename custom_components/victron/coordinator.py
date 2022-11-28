@@ -61,10 +61,9 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                     _LOGGER.error("no valid data returned for entities")
                 else:
                     parsed_data = OrderedDict(list(parsed_data.items()) + list(self.parse_register_data(data, register_info_dict[name], unit).items()))
-                    register_list_names.append(name)
 
         return {
-            "register_set": register_list_names,
+            "register_set": self.decodeInfo,
             "data": parsed_data
         }
 
@@ -74,16 +73,17 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         )
         decoded_data  = OrderedDict()
         for key,value in registerInfo.items():
+            full_key = str(unit) + "." + key
             if value.dataType == UINT16:
-                decoded_data[key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_16bit_uint(), value.scale))
+                decoded_data[full_key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_16bit_uint(), value.scale))
             elif value.dataType == INT16:
-                decoded_data[key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_16bit_int(), value.scale))
+                decoded_data[full_key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_16bit_int(), value.scale))
             elif value.dataType == UINT32:
-                decoded_data[key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_32bit_uint(), value.scale))
+                decoded_data[full_key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_32bit_uint(), value.scale))
             elif value.dataType == INT32:
-                decoded_data[key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_32bit_uint(), value.scale))
+                decoded_data[full_key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_32bit_uint(), value.scale))
             elif isinstance(value.dataType, STRING):
-                decoded_data[key] = DataEntry(unit=unit, value=decoder.decode_string(value.dataType.length*2)) #TODO Accomodate for individual character length
+                decoded_data[full_key] = DataEntry(unit=unit, value=decoder.decode_string(value.dataType.length*2)) #TODO Accomodate for individual character length
             else:
                 #TODO raise error for not supported datatype
                 raise Exception("unknown datatype not supported")
@@ -113,6 +113,20 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
 
         except:
             raise UpdateFailed("Fetching registers failed")
+
+    def write_register(self, unit, address, value):
+        # try:
+
+            resp = self.api_write(unit, address, value)
+        # except:
+            # TODO raise specific write error
+            # _LOGGER.error("failed to write to option")
+
+
+    def api_write(self, unit, address, value):
+        #recycle connection
+        return self.api.write_register(unit=unit, address=address, value=value)
+#        return self.api.write
 
     def api_update(self, unit, registerInfo):
         #recycle connection

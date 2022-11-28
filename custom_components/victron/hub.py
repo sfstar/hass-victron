@@ -25,6 +25,11 @@ class VictronHub:
     def connect(self):
         return self._client.connect()
 
+    def write_register(self, unit, address, value):
+        with self._lock:
+            kwargs = {"slave": int(unit)} if unit else {}
+            return self._client.write_register(address, value, **kwargs)
+
     def read_holding_registers(self, unit, address, count):
         """Read holding registers."""
         with self._lock:
