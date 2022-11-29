@@ -24,8 +24,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     #TODO group register sets in devices
     coordinator = Coordinator(hass, entry.options[CONF_HOST], entry.options[CONF_PORT], 
                                        entry.data[SCAN_REGISTERS], entry.options[CONF_INTERVAL], 
-                                       entry.options.get(CONF_AC_SYSTEM_VOLTAGE, 0), entry.options.get(CONF_AC_CURRENT_LIMIT,0),
-                                       entry.options.get(CONF_DC_SYSTEM_VOLTAGE, 0), entry.options.get(CONF_DC_CURRENT_LIMIT,0)) # TODO static first index reference needs to be changed for dynamic support
+                                       int(entry.options.get(CONF_AC_SYSTEM_VOLTAGE, 0)), int(entry.options.get(CONF_AC_CURRENT_LIMIT,0)),
+                                       int(entry.options.get(CONF_DC_SYSTEM_VOLTAGE, 0)), int(entry.options.get(CONF_DC_CURRENT_LIMIT,0))) # TODO static first index reference needs to be changed for dynamic support
     # try:
     #     await coordinator.async_config_entry_first_refresh()
     # except ConfigEntryNotReady:

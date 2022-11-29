@@ -29,6 +29,8 @@ from .hub import VictronHub
 
 _LOGGER = logging.getLogger(__name__)
 
+CONF_RESCAN = "rescan"
+
 # TODO adjust the data schema to the data that you need
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
@@ -211,16 +213,78 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
         self.config_entry = config_entry
         self.area = None
 
+    async def async_step_advanced(self, user_input=None):
+        """Handle write support and limit settings if requested."""
+        config = dict(self.config_entry.options)
+        user_input.pop(CONF_RESCAN, None)
+        #combine dictionaries with priority given to user_input
+        dict_priority = {1 : user_input, 2: config}
+        combined_config = {**dict_priority[2], **dict_priority[1]} 
+        return self.async_create_entry(title="", data = combined_config)
+
+
+    async def async_step_init_read(self, user_input=None):
+        """Handle write support and limit settings if requested."""
+        config = dict(self.config_entry.options)
+        #combine dictionaries with priority given to user_input
+        if user_input[CONF_RESCAN]:
+            info = await validate_input(self.hass, config)
+            self.hass.config_entries.async_update_entry(self.config_entry,
+                data = { SCAN_REGISTERS: info["data"] },
+                title=""
+            )
+
+        user_input.pop(CONF_RESCAN, None)
+        dict_priority = {1 : user_input, 2: config}
+        combined_config = {**dict_priority[2], **dict_priority[1]} 
+
+        if user_input[CONF_ADVANCED_OPTIONS]:
+            self.hass.config_entries.async_update_entry(self.config_entry,
+            options=combined_config, title="")
+            _LOGGER.debug("returning step init because advanced options were selected")
+            errors = {}
+            #move to dedicated function (the write show form) to allow for re-use
+            return self.init_write_form()
+        else:
+            return self.async_create_entry(title="", data = combined_config)
+
+    async def async_step_init_write(self, user_input=None):
+        """Handle write support and limit settings if requested."""
+        config = dict(self.config_entry.options)
+        #remove temp options =
+        if user_input[CONF_RESCAN]:
+            info = await validate_input(self.hass, config)
+            self.hass.config_entries.async_update_entry(self.config_entry,
+                data = { SCAN_REGISTERS: info["data"] },
+                title=""
+            )
+
+        user_input.pop(CONF_RESCAN, None)
+        #combine dictionaries with priority given to user_input
+        dict_priority = {1 : user_input, 2: config}
+        combined_config = {**dict_priority[2], **dict_priority[1]} 
+
+        if not user_input[CONF_ADVANCED_OPTIONS]:
+            self.hass.config_entries.async_update_entry(self.config_entry,
+            options=combined_config, title="")
+            _LOGGER.debug("returning step init because advanced options were selected")
+            errors = {}
+            #move to dedicated function (the write show form) to allow for re-use
+            return self.init_read_form()
+
+        return self.async_create_entry(title="", data = combined_config)
+
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Handle a flow initiated by the user."""
         errors = {}
-        CONF_RESCAN = "rescan"
+
 
         config = dict(self.config_entry.options)
 
         if user_input is not None:
+
             if user_input[CONF_INTERVAL] not in (None, ""):
                 config[CONF_INTERVAL] = user_input[CONF_INTERVAL]
 
@@ -236,18 +300,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
-
-    # @callback
-    # def finish_flow(
-    #     self, new_entry_data: KNXConfigEntryData, title: str | None
-    # ) -> FlowResult:
-    #     """Update the ConfigEntry and finish the flow."""
-    #     new_data = DEFAULT_ENTRY_DATA | self.initial_data | new_entry_data
-    #     self.hass.config_entries.async_update_entry(
-    #         self.config_entry,
-    #         data=new_data,
-    #         title=title or UNDEFINED,
-    #     )
+            
             if user_input[CONF_RESCAN]:
                 self.hass.config_entries.async_update_entry(self.config_entry,
                     data = { SCAN_REGISTERS: info["data"] },
@@ -257,42 +310,69 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
 
             return self.async_create_entry(title="", data = config)
 
-        system_ac_voltage_default = self.config_entry.options.get(CONF_AC_SYSTEM_VOLTAGE, AC_VOLTAGES["US"])
-        system_dc_voltage_default = self.config_entry.options.get(CONF_DC_SYSTEM_VOLTAGE, DC_VOLTAGES["lifepo4_12v"])
-        _LOGGER.debug("defaults")
-        _LOGGER.debug(system_ac_voltage_default)
-        _LOGGER.debug(system_dc_voltage_default)
+        if config[CONF_ADVANCED_OPTIONS]:
+            _LOGGER.debug("advanced options is set")
 
+            return self.init_write_form()
+        else:
+            if user_input is None:
+                return self.init_read_form()
+
+
+    def init_read_form(self):
+        errors = {}
+        #TODO allow passing of already generated error states
         return self.async_show_form(
-            step_id="init",
+            step_id="init_read",
             errors=errors,
             data_schema=vol.Schema(
                 {
                     vol.Required(
                         CONF_INTERVAL, default=self.config_entry.options[CONF_INTERVAL]
                     ): vol.All(vol.Coerce(int)),
-                    vol.Required(CONF_AC_SYSTEM_VOLTAGE, default=str(system_ac_voltage_default)): SelectSelector(
-                        SelectSelectorConfig(
-                            options=[
-                                SelectOptionDict(value=str(value), label=key)
-                                for key, value in AC_VOLTAGES.items()
-                            ]
-                        ),
-                    ),
-                    vol.Required(CONF_AC_CURRENT_LIMIT, default=config[CONF_AC_CURRENT_LIMIT]): vol.All(vol.Coerce(int, "must be a number")),
-                    vol.Required(CONF_DC_SYSTEM_VOLTAGE, default=str(system_dc_voltage_default)): SelectSelector(
-                        SelectSelectorConfig(
-                            options=[
-                                SelectOptionDict(value=str(value), label=key)
-                                for key, value in DC_VOLTAGES.items()
-                            ]
-                        ),
-                    ),
-                    vol.Required(CONF_DC_CURRENT_LIMIT, default=config[CONF_DC_CURRENT_LIMIT]): vol.All(vol.Coerce(int, "must be a number")),
                     vol.Optional(CONF_RESCAN, default=False): bool,
+                    vol.Optional(CONF_ADVANCED_OPTIONS, default=False): bool
                 },
             ),
         )
+
+    def init_write_form(self):
+        config = dict(self.config_entry.options)
+        #TODO allow passing of already generated error states
+        system_ac_voltage_default = self.config_entry.options.get(CONF_AC_SYSTEM_VOLTAGE, AC_VOLTAGES["US"])
+        system_dc_voltage_default = self.config_entry.options.get(CONF_DC_SYSTEM_VOLTAGE, DC_VOLTAGES["lifepo4_12v"])
+        errors = {}
+        return self.async_show_form(
+                step_id="init_write",
+                errors=errors,
+                data_schema=vol.Schema(
+                    {
+                        vol.Required(
+                            CONF_INTERVAL, default=self.config_entry.options[CONF_INTERVAL]
+                        ): vol.All(vol.Coerce(int)),
+                        vol.Required(CONF_AC_SYSTEM_VOLTAGE, default=str(system_ac_voltage_default)): SelectSelector(
+                            SelectSelectorConfig(
+                                options=[
+                                    SelectOptionDict(value=str(value), label=key)
+                                    for key, value in AC_VOLTAGES.items()
+                                ]
+                            ),
+                        ),
+                        vol.Required(CONF_AC_CURRENT_LIMIT, default=config.get(CONF_AC_CURRENT_LIMIT, 0)): vol.All(vol.Coerce(int, "must be a number")),
+                        vol.Required(CONF_DC_SYSTEM_VOLTAGE, default=str(system_dc_voltage_default)): SelectSelector(
+                            SelectSelectorConfig(
+                                options=[
+                                    SelectOptionDict(value=str(value), label=key)
+                                    for key, value in DC_VOLTAGES.items()
+                                ]
+                            ),
+                        ),
+                        vol.Required(CONF_DC_CURRENT_LIMIT, default=config.get(CONF_DC_CURRENT_LIMIT,1)): vol.All(vol.Coerce(int, "must be a number")),
+                        vol.Optional(CONF_RESCAN, default=False): bool,
+                        vol.Optional(CONF_ADVANCED_OPTIONS, default=True): bool
+                    },
+                ),
+            )
 
     def get_dict_key(self, dict, val):
         for key, value in dict.items():

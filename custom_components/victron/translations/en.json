@@ -30,15 +30,31 @@
     },
     "options": {
         "step": {
-            "init": {
+            "init_write": {
                 "data": {
                     "rescan": "Rescan available devices. This will rescan all available devices",
                     "interval": "Update interval in (s)",
                     "ac_voltage": "The AC voltage of your grid in V",
                     "ac_current": "The AC current limit of your grid in A",
                     "dc_voltage": "The DC voltage of your battery in V",
-                    "dc_current": "The DC current limit of your battery in A"
+                    "dc_current": "The DC current limit of your battery in A",
+                    "advanced": "switch to read only mode if unchecked"
                 }
+            },
+            "init_read": {
+                "data": {
+                    "rescan": "Rescan available devices. This will rescan all available devices",
+                    "interval": "Update interval in (s)",
+                    "advanced": "Enable write support"
+                }
+            },
+            "advanced": {
+                "data": {
+                    "ac_voltage": "The AC voltage of your grid in V",
+                    "ac_current": "The AC current limit of your grid in A",
+                    "dc_voltage": "The DC voltage of your battery in V",
+                    "dc_current": "The DC current limit of your battery in A"
+                }                
             }
         }
     }
