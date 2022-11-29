@@ -13,7 +13,17 @@
             "user": {
                 "data": {
                     "host": "Host",
-                    "port": "port"
+                    "port": "port",
+                    "interval": "update interval in (s)",
+                    "advanced": "Enables write support and allows setting write limits"
+                }
+            },
+            "advanced": {
+                "data": {
+                    "ac_voltage": "The AC voltage of your grid in V",
+                    "ac_current": "The AC current limit of your grid in A",
+                    "dc_voltage": "The DC voltage of your battery in V",
+                    "dc_current": "The DC current limit of your battery in A"
                 }
             }
         }
@@ -23,7 +33,11 @@
             "init": {
                 "data": {
                     "rescan": "Rescan available devices. This will rescan all available devices",
-                    "interval": "Update interval"
+                    "interval": "Update interval in (s)",
+                    "ac_voltage": "The AC voltage of your grid in V",
+                    "ac_current": "The AC current limit of your grid in A",
+                    "dc_voltage": "The DC voltage of your battery in V",
+                    "dc_current": "The DC current limit of your battery in A"
                 }
             }
         }

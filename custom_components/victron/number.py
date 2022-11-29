@@ -8,6 +8,13 @@ from typing import Optional, cast
 from homeassistant import config_entries
 from homeassistant.components.number import NumberEntity, NumberEntityDescription, NumberMode, DOMAIN as NUMBER_DOMAIN
 
+from homeassistant.const import (
+    PERCENTAGE,
+    ELECTRIC_POTENTIAL_VOLT,
+    UnitOfPower,
+    ELECTRIC_CURRENT_AMPERE
+)
+
 import math
 
 from homeassistant.const import TIME_SECONDS
@@ -35,6 +42,7 @@ async def async_setup_entry(
     victron_coordinator: victronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
     _LOGGER.debug("attempting to setup number entities")
     descriptions = []
+    _LOGGER.debug(config_entry)
     #TODO cleanup
     register_set = victron_coordinator.processed_data()["register_set"]
     for unit, registerLedger in register_set.items():
@@ -52,8 +60,10 @@ async def async_setup_entry(
                         slave=unit,
                         native_unit_of_measurement=registerInfo.unit,
                         register_ledger_key=name,
-                        native_min_value=registerInfo.writeType.lowerLimit,
-                        native_max_value=registerInfo.writeType.upperLimit,
+                        # native_min_value=registerInfo.writeType.lowerLimit,
+                        # native_max_value=registerInfo.writeType.upperLimit,
+                        native_min_value=determine_min_value(registerInfo.unit, victron_coordinator),
+                        native_max_value=determine_max_value(registerInfo.unit, victron_coordinator),
                         entity_category=EntityCategory.CONFIG,
                         address=registerInfo.register
                     ))
@@ -70,6 +80,40 @@ async def async_setup_entry(
     _LOGGER.debug("adding number")
     async_add_entities(entities)
     _LOGGER.debug("adding numbering")
+
+
+def determine_min_value(unit, coordinator: victronEnergyDeviceUpdateCoordinator) -> int:
+    if unit == PERCENTAGE:
+        return 0
+    elif unit == ELECTRIC_POTENTIAL_VOLT:
+        series_type = coordinator.dc_voltage / 3 #statically based on lifepo4 cells
+        min_value = series_type * 2.5 #statically based on lifepo4 cells
+        return min_value
+    elif unit == UnitOfPower.WATT:
+        min_value = -(coordinator.ac_voltage * coordinator.ac_current)
+        return min_value
+    elif unit == ELECTRIC_CURRENT_AMPERE:
+        return 0
+    else:
+        return 0
+
+#TODO determine if AC or DC min/max is applicable
+#TODO perhaps remove min / max base data from coordinator
+def determine_max_value(unit, coordinator) -> int:
+    if unit == PERCENTAGE:
+        return 100
+    elif unit == ELECTRIC_POTENTIAL_VOLT:
+        series_type = coordinator.dc_voltage / 3 #statically based on lifepo4 cells
+        max_value = series_type * 3.65 #statically based on lifepo4 cells
+        return max_value
+    elif unit == UnitOfPower.WATT:
+        max_value = (coordinator.ac_voltage * coordinator.ac_current)
+        return max_value
+    elif unit == ELECTRIC_CURRENT_AMPERE:
+        return coordinator.ac_current
+    else:
+        return 0
+
 
 @dataclass
 class VictronNumberMixin:
@@ -117,6 +161,7 @@ class VictronNumber(NumberEntity):
         if value < 0:
             value = 65535 + value
         self.coordinator.write_register(unit=self.entity_description.slave, address=self.entity_description.address, value=int(value))
+        await self.coordinator.async_update_local_entry(self.data_key, int(value))
 
 
     @property

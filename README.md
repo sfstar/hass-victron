@@ -5,31 +5,27 @@ This integration scans for all available registers of a provided GX device.
 It then uses the defined register ledgers to create entities for each and every register that is provided by the GX device.
 
 # Project release state
-Please note that the integration is currently in an alpha state.
-This means that although the integration should work it might encounter unforeseen bugs, entity names that aren't locked in yet and breaking changes to configuration options.
+Please note that the integration is currently in an beta state.
+This means that although the integration should work it might encounter unforeseen bugs and breaking changes to configuration options.
 Testers are welcome to try out the integration and submit issues / feature requests.
 
 ## Limitations
 The current state of this integration provides the current limitations to it's use:
 - not all options are configureable after creation.
-- all available "slave" units are added as entities but not grouped into logical devices.
-- Read only, this integration doesn't (yet officially) provide write support for writeable registers.
+- Selection options are not yet correctly decoded / selectable
 - Configuring the integration will be relatively slow if a discovery scan is required.
 
 
 ## Currently planned improvements
 TODO
-- Switch to async
-- make register list smarter
+- Fully Switch to async
 - Investigate if scan without causing errors is possible
 - seperate options from data
-- Support write registers (initial working buggy setup for switches and numbers.)
-- expose write registers as types like button, slider etc.
+- allow users to set write register limitations (ac, dc ,amps, volt, watt)
 - Improve configuration options to allow users to explicitly enable write support
 - Expose this integration to hacs
 - Start using releases and release notes
 - Improve connection loss resilience
-- FIX string populated data vs max size
 
 # Installing the integration
 You can install this integration by following the steps for your preferred installation method

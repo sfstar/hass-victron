@@ -13,11 +13,18 @@ from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 
+from homeassistant.helpers.selector import (
+    SelectSelectorConfig,
+    SelectSelector,
+    SelectOptionDict,
+)
+
+
 from homeassistant.core import callback
 
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlow
 
-from .const import DOMAIN, CONF_HOST, CONF_PORT, CONF_INTERVAL, RegisterInfo, SCAN_REGISTERS
+from .const import DOMAIN, CONF_HOST, CONF_PORT, CONF_INTERVAL, RegisterInfo, SCAN_REGISTERS, CONF_ADVANCED_OPTIONS, CONF_DC_SYSTEM_VOLTAGE, CONF_AC_SYSTEM_VOLTAGE, CONF_DC_CURRENT_LIMIT, CONF_AC_CURRENT_LIMIT, DC_VOLTAGES, AC_VOLTAGES
 from .hub import VictronHub
 
 _LOGGER = logging.getLogger(__name__)
@@ -27,7 +34,8 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
         vol.Required(CONF_PORT, default=502): int,
-        vol.Required(CONF_INTERVAL, default=30): int
+        vol.Required(CONF_INTERVAL, default=30): int,
+        vol.Optional(CONF_ADVANCED_OPTIONS, default=False): bool,
     }
 )
 
@@ -89,6 +97,14 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_show_form(
                 step_id="user", data_schema=STEP_USER_DATA_SCHEMA
             )
+        else:
+            if user_input[CONF_ADVANCED_OPTIONS]:
+                _LOGGER.debug("configuring advanced options")
+                self.host = user_input[CONF_HOST]
+                self.port = user_input[CONF_PORT]
+                self.interval = user_input[CONF_INTERVAL]
+                self.advanced_options = user_input[CONF_ADVANCED_OPTIONS]
+                return await self.async_step_advanced()
 
         errors = {}
         already_configured = False
@@ -117,14 +133,65 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             
             #data property can't be changed in options flow if user wants to refresh
             options = user_input
-            options[SCAN_REGISTERS] = info["data"]
-            return self.async_create_entry(title=info["title"], data = {}, options=options)
+            return self.async_create_entry(title=info["title"], data = { SCAN_REGISTERS: info["data"] }, options=options)
 #            return self.async_create_entry(title=info["title"], data = { "registers": info["data"] }, options=user_input)
 
         return self.async_show_form(
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
         )
 
+    async def async_step_advanced(self, user_input=None):
+        """Handle write support and limit settings if requested."""
+        errors = {}
+
+        if user_input is not None:
+            if self.host is not None:
+
+
+                options = user_input
+                options[CONF_HOST] = self.host
+                options[CONF_PORT] = self.port
+                options[CONF_INTERVAL] = self.interval
+                options[CONF_ADVANCED_OPTIONS] = bool(self.advanced_options)
+                options[CONF_AC_SYSTEM_VOLTAGE] = int(user_input[CONF_AC_SYSTEM_VOLTAGE])
+                options[CONF_DC_SYSTEM_VOLTAGE] = int(user_input[CONF_DC_SYSTEM_VOLTAGE])
+
+                try:
+                    info = await validate_input(self.hass, user_input)
+                except CannotConnect:
+                    errors["base"] = "cannot_connect"
+                except InvalidAuth:
+                    errors["base"] = "invalid_auth"
+                except Exception:  # pylint: disable=broad-except
+                    _LOGGER.exception("Unexpected exception")
+                    errors["base"] = "unknown"
+                _LOGGER.debug("setting up extra entry")
+                return self.async_create_entry(title=info["title"], data = { SCAN_REGISTERS: info["data"] }, options=options)
+
+        return self.async_show_form(
+            step_id="advanced",
+            errors=errors,
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_AC_SYSTEM_VOLTAGE, default=str(AC_VOLTAGES["US"])): SelectSelector(
+                        SelectSelectorConfig(
+                            options=[
+                                SelectOptionDict(value=str(value), label=key)
+                                for key, value in AC_VOLTAGES.items()
+                            ]
+                        ),
+                    ),
+                    vol.Required(CONF_AC_CURRENT_LIMIT, default=0): vol.All(vol.Coerce(int, "must be a number")),
+                    vol.Required(CONF_DC_SYSTEM_VOLTAGE, default=str(DC_VOLTAGES["lifepo4_12v"])): SelectSelector(
+                        SelectSelectorConfig(
+                            options=[
+                                SelectOptionDict(value=str(value), label=key)
+                                for key, value in DC_VOLTAGES.items()
+                            ]
+                        ),
+                    ),
+                    vol.Required(CONF_DC_CURRENT_LIMIT, default= 0): vol.All(vol.Coerce(int, "must be a number"))
+                }))
 
 
 class parsedEntry():
@@ -160,7 +227,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
             try:
                 if user_input[CONF_RESCAN]:
                     info = await validate_input(self.hass, self.config_entry.options)
-                    config[SCAN_REGISTERS] = info["data"]
+                    #config[SCAN_REGISTERS] = info["data"]
                     _LOGGER.debug(info)
             except CannotConnect:
                 errors["base"] = "cannot_connect"
@@ -170,8 +237,31 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
                 _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
 
+    # @callback
+    # def finish_flow(
+    #     self, new_entry_data: KNXConfigEntryData, title: str | None
+    # ) -> FlowResult:
+    #     """Update the ConfigEntry and finish the flow."""
+    #     new_data = DEFAULT_ENTRY_DATA | self.initial_data | new_entry_data
+    #     self.hass.config_entries.async_update_entry(
+    #         self.config_entry,
+    #         data=new_data,
+    #         title=title or UNDEFINED,
+    #     )
+            if user_input[CONF_RESCAN]:
+                self.hass.config_entries.async_update_entry(self.config_entry,
+                    data = { SCAN_REGISTERS: info["data"] },
+                    title=""
+                )
+            #return self.async_create_entry(title="", data={})
 
             return self.async_create_entry(title="", data = config)
+
+        system_ac_voltage_default = self.config_entry.options.get(CONF_AC_SYSTEM_VOLTAGE, AC_VOLTAGES["US"])
+        system_dc_voltage_default = self.config_entry.options.get(CONF_DC_SYSTEM_VOLTAGE, DC_VOLTAGES["lifepo4_12v"])
+        _LOGGER.debug("defaults")
+        _LOGGER.debug(system_ac_voltage_default)
+        _LOGGER.debug(system_dc_voltage_default)
 
         return self.async_show_form(
             step_id="init",
@@ -181,12 +271,35 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
                     vol.Required(
                         CONF_INTERVAL, default=self.config_entry.options[CONF_INTERVAL]
                     ): vol.All(vol.Coerce(int)),
+                    vol.Required(CONF_AC_SYSTEM_VOLTAGE, default=str(system_ac_voltage_default)): SelectSelector(
+                        SelectSelectorConfig(
+                            options=[
+                                SelectOptionDict(value=str(value), label=key)
+                                for key, value in AC_VOLTAGES.items()
+                            ]
+                        ),
+                    ),
+                    vol.Required(CONF_AC_CURRENT_LIMIT, default=config[CONF_AC_CURRENT_LIMIT]): vol.All(vol.Coerce(int, "must be a number")),
+                    vol.Required(CONF_DC_SYSTEM_VOLTAGE, default=str(system_dc_voltage_default)): SelectSelector(
+                        SelectSelectorConfig(
+                            options=[
+                                SelectOptionDict(value=str(value), label=key)
+                                for key, value in DC_VOLTAGES.items()
+                            ]
+                        ),
+                    ),
+                    vol.Required(CONF_DC_CURRENT_LIMIT, default=config[CONF_DC_CURRENT_LIMIT]): vol.All(vol.Coerce(int, "must be a number")),
                     vol.Optional(CONF_RESCAN, default=False): bool,
                 },
             ),
         )
 
-
+    def get_dict_key(self, dict, val):
+        for key, value in dict.items():
+            if val == value:
+                return key
+ 
+        return "key doesn't exist"
 
 class CannotConnect(HomeAssistantError):
     """Error to indicate we cannot connect."""
@@ -194,35 +307,4 @@ class CannotConnect(HomeAssistantError):
 
 class InvalidAuth(HomeAssistantError):
     """Error to indicate there is invalid auth."""
-
-# class VictronSensorBase(CoordinatorEntity, SensorEntity):
-#     should_poll = False
-#     _attr_has_entity_name = True
-
-#     def __init__(self, platform, config_entry, coordinator):
-#         """Pass coordinator to CoordinatorEntity."""
-#         super().__init__(coordinator)
-#         """Initialize the sensor."""
-#         self._platform = platform
-#         self._config_entry = config_entry
-
-#     @property
-#     def device_info(self):
-#         return self._platform.device_info
-
-#     @property
-#     def config_entry_id(self):
-#         return self._config_entry.entry_id
-
-#     @property
-#     def config_entry_name(self):
-#         return self._config_entry.data["name"]
-
-#     @property
-#     def available(self) -> bool:
-#         return self._platform.online
-
-#     @callback
-#     def _handle_coordinator_update(self) -> None:
-#         self.async_write_ha_state()
 

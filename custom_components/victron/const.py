@@ -35,10 +35,20 @@ CONF_HOST = "host"
 CONF_PORT = "port"
 SCAN_REGISTERS = "registers"
 CONF_INTERVAL = "interval"
+CONF_ADVANCED_OPTIONS = "advanced"
+CONF_AC_CURRENT_LIMIT = "ac_current"
+CONF_DC_CURRENT_LIMIT = "dc_current"
+CONF_DC_SYSTEM_VOLTAGE = "dc_voltage"
+CONF_AC_SYSTEM_VOLTAGE = "ac_voltage"
+
+AC_VOLTAGES = { "US": 120, "EU": 230 } # For now only most common voltages supported
+DC_VOLTAGES = { "lifepo4_12v": 12, "lifepo4_24v": 24, "lifepo4_48v": 48 } #only 3 volt nominal 4s, 8s and 16s lifepo4 configurations currently supported
+
 
 class STRING():
-    def __init__(self, length=1):
+    def __init__(self, length=1, read_length=None):
         self.length = length
+        self.readLength =  read_length if read_length is not None else length*2
 
 #maybe change to enum Enum('UINT16', 'UINT32')
 UINT16 = "uint16"
@@ -893,177 +903,3 @@ register_info_dict = {
     "system_power_registers": system_power_registers, 
     "system_bus_registers": system_bus_registers
 }    
-
-
-
-            # ("system_battery_voltage", decoder.decode_16bit_uint()), #divide by 10
-            # ("system_battery_current", decoder.decode_16bit_int()),
-            # ("system_battery_power", decoder.decode_16bit_int()),
-            # ("system_battery_soc", decoder.decode_16bit_uint()),
-            # ("system_battery_state", decoder.decode_16bit_uint()),
-            # ("system_battery_amphours", decoder.decode_16bit_uint()),
-            # ("system_battery_time_to_go", decoder.decode_16bit_uint()),
-
-            # ("system_dc_pv_power", decoder.decode_16bit_uint()), #divide by 10
-            # ("victron_system_dc_pv_current", decoder.decode_16bit_int()), 
-
-            # ("system_charger_power", decoder.decode_16bit_uint()),          
-
-            # ("system_system_power", decoder.decode_16bit_int()),
-
-            # ("system_bus_charge_current", decoder.decode_16bit_int()), #divide by 10
-            # ("system_bus_charge_power", decoder.decode_16bit_int())
-
-
-            # ("vebus_activein_L1_voltage", decoder.decode_16bit_uint()),
-            # ("vebus_activein_L2_voltage", decoder.decode_16bit_uint()),
-            # ("vebus_activein_L3_voltage", decoder.decode_16bit_uint()),
-            # ("vebus_activein_L1_current", decoder.decode_16bit_int()),
-            # ("vebus_activein_L2_current", decoder.decode_16bit_int()),
-            # ("vebus_activein_L3_current", decoder.decode_16bit_int()),
-            # ("vebus_activein_L1_frequency", decoder.decode_16bit_int()),
-            # ("vebus_activein_L2_frequency", decoder.decode_16bit_int()),
-            # ("vebus_activein_L3_frequency", decoder.decode_16bit_int()),
-            # ("vebus_activein_L1_power", decoder.decode_16bit_int()),
-            # ("vebus_activein_L2_power", decoder.decode_16bit_int()),
-            # ("vebus_activein_L3_power", decoder.decode_16bit_int()),
-            # ("vebus_out_L1_voltage", decoder.decode_16bit_uint()),
-            # ("vebus_out_L2_voltage", decoder.decode_16bit_uint()),
-            # ("vebus_out_L3_voltage", decoder.decode_16bit_uint()),
-            # ("vebus_out_L1_current", decoder.decode_16bit_int()),
-            # ("vebus_out_L2_current", decoder.decode_16bit_int()),
-            # ("vebus_out_L3_current", decoder.decode_16bit_int()),
-            # ("vebus_out_L1_frequency", decoder.decode_16bit_int()),
-            # ("vebus_activein_currentlimit", decoder.decode_16bit_int()),
-            # ("vebus_out_L1_power", decoder.decode_16bit_int()),
-            # ("vebus_out_L2_power", decoder.decode_16bit_int()),
-            # ("vebus_out_L3_power", decoder.decode_16bit_int()),
-            # ("vebus_battery_voltage", decoder.decode_16bit_uint()),
-            # ("vebus_battery_current", decoder.decode_16bit_int()),
-            # ("vebus_numberofphases", decoder.decode_16bit_uint()),
-            # ("vebus_activein_activeinput", decoder.decode_16bit_uint()),
-            # ("vebus_soc", decoder.decode_16bit_uint()),
-            # ("vebus_state", decoder.decode_16bit_uint()),
-            # ("vebus_error", decoder.decode_16bit_uint()),
-            # ("vebus_mode", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_hightemperature", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_lowbattery", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_overload", decoder.decode_16bit_uint()),
-            # ("vebus_L1_acpowersetpoint", decoder.decode_16bit_int()),
-            # ("vebus_disablecharge", decoder.decode_16bit_uint()),
-            # ("vebus_disablefeedin", decoder.decode_16bit_uint()),
-            # ("vebus_L2_acpowersetpoint", decoder.decode_16bit_int()),
-            # ("vebus_L3_acpowersetpoint", decoder.decode_16bit_int()),
-            # ("vebus_alarm_temperaturesensor", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_voltagesensor", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_L1_higtemperature", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_L1_lowbattery", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_L1_overload", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_L1_ripple", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_L2_higtemperature", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_L2_lowbattery", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_L2_overload", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_L2_ripple", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_L3_higtemperature", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_L3_lowbattery", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_L3_overload", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_L3_ripple", decoder.decode_16bit_uint()),
-            # ("vebus_pvinverter_disable", decoder.decode_16bit_uint()),
-            # ("vebus_bms_allowtocharge", decoder.decode_16bit_uint()),
-            # ("vebus_bms_allowtodischarge", decoder.decode_16bit_uint()),
-            # ("vebus_bms_bmsexpected", decoder.decode_16bit_uint()),
-            # ("vebus_bms_error", decoder.decode_16bit_uint()),
-            # ("vebus_battery_temperature", decoder.decode_16bit_int()),
-            # ("vebus_systemreset", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_phaserotation", decoder.decode_16bit_uint()),
-            # ("vebus_alarm_gridlost", decoder.decode_16bit_uint()),
-            # ("vebus_donotfeedinovervoltage", decoder.decode_16bit_uint()),
-            # ("vebus_L1_maxfeedinpower", decoder.decode_16bit_uint()),
-            # ("vebus_L2_maxfeedinpower", decoder.decode_16bit_uint()),
-            # ("vebus_L3_maxfeedinpower", decoder.decode_16bit_uint()),
-            # ("vebus_state_ignoreacin1", decoder.decode_16bit_uint()),
-            # ("vebus_state_ignoreacin2", decoder.decode_16bit_uint()),
-            # ("vebus_targetpowerismaxfeedin", decoder.decode_16bit_uint()),
-            # ("vebus_fixsolaroffsetto100mv", decoder.decode_16bit_uint()),
-            # ("vebus_sustain", decoder.decode_16bit_uint()),
-            # ("vebus_acin1toacout", decoder.decode_32bit_uint()),
-            # ("vebus_acin1toinverter", decoder.decode_32bit_uint()),
-            # ("vebus_acin2toacout", decoder.decode_32bit_uint()),
-            # ("vebus_acin2toinverter", decoder.decode_32bit_uint()),
-            # ("vebus_acouttoacin1", decoder.decode_32bit_uint()),
-            # ("vebus_acouttoacin2", decoder.decode_32bit_uint()),
-            # ("vebus_invertertoacin1", decoder.decode_32bit_uint()),
-            # ("vebus_invertertoacin2", decoder.decode_32bit_uint()),
-            # ("vebus_invertertoacout", decoder.decode_32bit_uint()),
-            # ("vebus_outtoinverter", decoder.decode_32bit_uint())
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            # ("system_relay_0", decoder.decode_16bit_uint()),
-            # ("system_relay_1", decoder.decode_16bit_uint()),
-            # ("system_pvonoutput_l1", decoder.decode_16bit_uint()),
-            # ("system_pvonoutput_L2", decoder.decode_16bit_uint()),
-            # ("system_pvonoutput_L3", decoder.decode_16bit_uint()),
-            # ("system_pvongrid_L1", decoder.decode_16bit_uint()),
-            # ("system_pvongrid_L2", decoder.decode_16bit_uint()),
-            # ("system_pvongrid_L3", decoder.decode_16bit_uint()),
-            # ("system_pvongenset_L1", decoder.decode_16bit_uint()),
-            # ("system_pvongenset_L2", decoder.decode_16bit_uint()),
-            # ("system_pvongenset_L3", decoder.decode_16bit_uint()),
-            # ("system_consumption_L1", decoder.decode_16bit_uint()),
-            # ("system_consumption_L2", decoder.decode_16bit_uint()),
-            # ("system_consumption_L3", decoder.decode_16bit_uint()),
-            # ("system_grid_L1", decoder.decode_16bit_int()),
-            # ("system_grid_L2", decoder.decode_16bit_int()),
-            # ("system_grid_L3", decoder.decode_16bit_int()),
-            # ("system_genset_L1", decoder.decode_16bit_int()),
-            # ("system_genset_L2", decoder.decode_16bit_int()),
-            # ("system_genset_L3", decoder.decode_16bit_int()),
-            # ("system_input_source", decoder.decode_16bit_int())
-
-
-
-
-
-    #             decoded_ident = OrderedDict(
-    #     [
-    #         ("grid_L1_power", decoder.decode_16bit_int()),
-    #         ("grid_L2_power", decoder.decode_16bit_int()),
-    #         ("grid_L3_power", decoder.decode_16bit_int()),
-    #         ("grid_L1_energy_forward", decoder.decode_16bit_uint()),
-    #         ("grid_L2_energy_forward", decoder.decode_16bit_uint()),
-    #         ("grid_L3_energy_forward", decoder.decode_16bit_uint()),
-    #         ("grid_L1_energy_reverse", decoder.decode_16bit_uint()),
-    #         ("grid_L2_energy_reverse", decoder.decode_16bit_uint()),
-    #         ("grid_L3_energy_reverse", decoder.decode_16bit_uint()),    
-    #         ("grid_serial", decoder.decode_string(7)),
-    #         ("grid_L1_voltage", decoder.decode_16bit_uint()),
-    #         ("grid_L1_current",decoder.decode_16bit_int()), 
-    #         ("grid_L2_voltage", decoder.decode_16bit_uint()),
-    #         ("grid_L2_current",decoder.decode_16bit_int()), 
-    #         ("grid_L3_voltage", decoder.decode_16bit_uint()),  
-    #         ("grid_L3_current",decoder.decode_16bit_int()), 
-    #         ("grid_L1_energy_forward_total", decoder.decode_32bit_uint()),
-    #         ("grid_L2_energy_forward_total", decoder.decode_32bit_uint()),
-    #         ("grid_L3_energy_forward_total", decoder.decode_32bit_uint()),
-    #         ("grid_L1_energy_reverse_total", decoder.decode_32bit_uint()),
-    #         ("grid_L2_energy_reverse_total", decoder.decode_32bit_uint()),
-    #         ("grid_L3_energy_reverse_total", decoder.decode_32bit_uint()),
-    #         ("grid_energy_forward_total", decoder.decode_32bit_uint()),
-    #         ("grid_energy_reverse_total", decoder.decode_32bit_uint())
-    #     ]
-    # )
-

@@ -32,7 +32,12 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         host: str,
         port: str,
         decodeInfo: OrderedDict,
-        interval: int
+        interval: int,
+        ac_voltage: int,
+        ac_current: int,
+        dc_voltage: int,
+        dc_current: int
+
 
 
     ) -> None:
@@ -43,6 +48,10 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         self.api.connect()
         self.decodeInfo = decodeInfo
         self.interval = interval
+        self.ac_voltage = ac_voltage
+        self.ac_current = ac_current
+        self.dc_voltage = dc_voltage
+        self.dc_current = dc_current
 
     # async def force_update_data(self) -> None:
     #     data = await self._async_update_data()
@@ -90,7 +99,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             elif value.dataType == INT32:
                 decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_uint(), value.scale, value.unit)
             elif isinstance(value.dataType, STRING):
-                decoded_data[full_key] = decoder.decode_string(value.dataType.length*2) #TODO Accomodate for individual character length
+                decoded_data[full_key] = decoder.decode_string(value.dataType.readLength).split(b'\x00')[0] #TODO Accomodate for individual character length
             else:
                 #TODO raise error for not supported datatype
                 raise Exception("unknown datatype not supported")

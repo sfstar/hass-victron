@@ -5,7 +5,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN, CONF_HOST, CONF_PORT, SCAN_REGISTERS, CONF_INTERVAL
+from .const import DOMAIN, CONF_HOST, CONF_PORT, SCAN_REGISTERS, CONF_INTERVAL, CONF_AC_SYSTEM_VOLTAGE, CONF_AC_CURRENT_LIMIT, CONF_DC_SYSTEM_VOLTAGE, CONF_DC_CURRENT_LIMIT
 from .coordinator import victronEnergyDeviceUpdateCoordinator as Coordinator
 
 # TODO List the platforms that you want to support.
@@ -22,7 +22,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # TODO 3. Store an API object for your platforms to access
     # hass.data[DOMAIN][entry.entry_id] = MyApi(...)
     #TODO group register sets in devices
-    coordinator = Coordinator(hass, entry.options[CONF_HOST], entry.options[CONF_PORT], entry.options[SCAN_REGISTERS], entry.options[CONF_INTERVAL]) # TODO static first index reference needs to be changed for dynamic support
+    coordinator = Coordinator(hass, entry.options[CONF_HOST], entry.options[CONF_PORT], 
+                                       entry.data[SCAN_REGISTERS], entry.options[CONF_INTERVAL], 
+                                       entry.options[CONF_AC_SYSTEM_VOLTAGE], entry.options[CONF_AC_CURRENT_LIMIT],
+                                       entry.options[CONF_DC_SYSTEM_VOLTAGE], entry.options[CONF_DC_CURRENT_LIMIT]) # TODO static first index reference needs to be changed for dynamic support
     # try:
     #     await coordinator.async_config_entry_first_refresh()
     # except ConfigEntryNotReady:
