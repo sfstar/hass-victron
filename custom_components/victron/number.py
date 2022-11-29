@@ -63,10 +63,11 @@ async def async_setup_entry(
                             register_ledger_key=name,
                             # native_min_value=registerInfo.writeType.lowerLimit,
                             # native_max_value=registerInfo.writeType.upperLimit,
-                            native_min_value=determine_min_value(registerInfo.unit, victron_coordinator),
-                            native_max_value=determine_max_value(registerInfo.unit, victron_coordinator),
+                            native_min_value=determine_min_value(registerInfo.unit, victron_coordinator, registerInfo.writeType.powerType, registerInfo.writeType.negative),
+                            native_max_value=determine_max_value(registerInfo.unit, victron_coordinator, registerInfo.writeType.powerType, registerInfo.writeType.negative),
                             entity_category=EntityCategory.CONFIG,
-                            address=registerInfo.register
+                            address=registerInfo.register,
+                            scale = registerInfo.scale
                         ))
 
     entities = []
@@ -83,7 +84,7 @@ async def async_setup_entry(
     _LOGGER.debug("adding numbering")
 
 
-def determine_min_value(unit, coordinator: victronEnergyDeviceUpdateCoordinator) -> int:
+def determine_min_value(unit, coordinator: victronEnergyDeviceUpdateCoordinator, powerType, negative: bool) -> int:
     if unit == PERCENTAGE:
         return 0
     elif unit == ELECTRIC_POTENTIAL_VOLT:
@@ -91,17 +92,26 @@ def determine_min_value(unit, coordinator: victronEnergyDeviceUpdateCoordinator)
         min_value = series_type * 2.5 #statically based on lifepo4 cells
         return min_value
     elif unit == UnitOfPower.WATT:
-        min_value = -(coordinator.ac_voltage * coordinator.ac_current)
-        rounded_min = round(min_value/100)*100
-        return rounded_min
+        if negative:
+            min_value = -(coordinator.ac_voltage * coordinator.ac_current)
+            rounded_min = round(min_value/100)*100
+            return rounded_min
+        else:
+            return 0
     elif unit == ELECTRIC_CURRENT_AMPERE:
-        return 0
+        if negative:
+            if powerType == "AC":
+                return -coordinator.ac_current
+            elif powerType == "DC":
+                return -coordinator.dc_current
+        else:
+            return 0
     else:
         return 0
 
 #TODO determine if AC or DC min/max is applicable
 #TODO perhaps remove min / max base data from coordinator
-def determine_max_value(unit, coordinator) -> int:
+def determine_max_value(unit, coordinator:victronEnergyDeviceUpdateCoordinator, powerType, negative: bool) -> int:
     if unit == PERCENTAGE:
         return 100
     elif unit == ELECTRIC_POTENTIAL_VOLT:
@@ -113,7 +123,10 @@ def determine_max_value(unit, coordinator) -> int:
         rounded_max = round(max_value/100)*100
         return rounded_max
     elif unit == ELECTRIC_CURRENT_AMPERE:
-        return coordinator.ac_current
+        if powerType == "AC":
+            return coordinator.ac_current
+        elif powerType == "DC":
+            return coordinator.dc_current
     else:
         return 0
 
@@ -125,6 +138,7 @@ class VictronNumberMixin:
     value_fn: Callable[[dict], StateType]
     register_ledger_key: str
     address: int
+    scale: int
 
 @dataclass
 class VictronEntityDescription(NumberEntityDescription, VictronNumberMixin):
@@ -163,7 +177,7 @@ class VictronNumber(NumberEntity):
         #TODO convert float to int again with scale respected
         if value < 0:
             value = 65535 + value
-        self.coordinator.write_register(unit=self.entity_description.slave, address=self.entity_description.address, value=int(value))
+        self.coordinator.write_register(unit=self.entity_description.slave, address=self.entity_description.address, value=self.coordinator.encode_scaling(int(value), self.entity_description.native_unit_of_measurement, self.entity_description.scale))
         await self.coordinator.async_update_local_entry(self.data_key, int(value))
 
 

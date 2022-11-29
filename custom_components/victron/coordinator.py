@@ -114,6 +114,15 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             else:
                 return number / scale
 
+    def encode_scaling(self, value, unit, scale):
+        if scale == 0:
+            return value
+        else:
+            if unit == "" and scale == 1:
+                return round(value)
+            else:
+                return value * scale
+
     def get_data(self):
         return self.data
 

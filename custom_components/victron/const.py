@@ -65,10 +65,12 @@ class SwitchWriteType(WriteType):
         super().__init__(entityType="button")
 
 class SliderWriteType(WriteType):
-    def __init__(self, lowerLimit, upperLimit) -> None:
+    def __init__(self, lowerLimit, upperLimit, powerType="", negative: bool=False) -> None:
         super().__init__(entityType="slider")
         self.lowerLimit = lowerLimit
         self.upperLimit = upperLimit
+        self.powerType = powerType
+        self.negative = negative
     
 class SelectWriteType(WriteType):
     def __init__(self, optionsEnum: Enum) -> None:
@@ -143,7 +145,7 @@ vebus_registers = {
     "vebus_out_L2_current": RegisterInfo(19, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "vebus_out_L3_current": RegisterInfo(20, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "vebus_out_L1_frequency": RegisterInfo(21, INT16, FREQUENCY_HERTZ, 100),
-    "vebus_activein_currentlimit": RegisterInfo(22, INT16, ELECTRIC_CURRENT_AMPERE, 10, SliderWriteType(100,100)), #TODO make this not static but user configureable
+    "vebus_activein_currentlimit": RegisterInfo(22, INT16, ELECTRIC_CURRENT_AMPERE, 10, SliderWriteType(100,100, "AC", True)), #TODO make this not static but user configureable
     "vebus_out_L1_power": RegisterInfo(23, INT16, UnitOfPower.WATT, 0),
     "vebus_out_L2_power": RegisterInfo(24, INT16, UnitOfPower.WATT, 0),
     "vebus_out_L3_power": RegisterInfo(25, INT16, UnitOfPower.WATT, 0),
@@ -158,11 +160,11 @@ vebus_registers = {
     "vebus_alarm_hightemperature": RegisterInfo(34, UINT16), #This has no unit of measurement
     "vebus_alarm_lowbattery": RegisterInfo(35, UINT16), #This has no unit of measurement
     "vebus_alarm_overload": RegisterInfo(36, UINT16), #This has no unit of measurement
-    "vebus_L1_acpowersetpoint": RegisterInfo(register=37, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 9000)), #TODO determine valid limits
+    "vebus_L1_acpowersetpoint": RegisterInfo(register=37, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 9000, "AC", True)), #TODO determine valid limits
     "vebus_disablecharge": RegisterInfo(register=38, dataType=UINT16, writeType=SwitchWriteType()), #This has no unit of measurement
     "vebus_disablefeedin": RegisterInfo(39, UINT16, writeType=SwitchWriteType()), #This has no unit of measurement
-    "vebus_L2_acpowersetpoint": RegisterInfo(register=40, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 9000)),
-    "vebus_L3_acpowersetpoint": RegisterInfo(register=41, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 9000)),
+    "vebus_L2_acpowersetpoint": RegisterInfo(register=40, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 9000, "AC", True)),
+    "vebus_L3_acpowersetpoint": RegisterInfo(register=41, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 9000, "AC", True)),
     "vebus_alarm_temperaturesensor": RegisterInfo(42, UINT16), #This has no unit of measurement
     "vebus_alarm_voltagesensor": RegisterInfo(43, UINT16), #This has no unit of measurement
     "vebus_alarm_L1_higtemperature": RegisterInfo(44, UINT16), #This has no unit of measurement
@@ -187,9 +189,9 @@ vebus_registers = {
     "vebus_alarm_phaserotation": RegisterInfo(63, UINT16), #This has no unit of measurement
     "vebus_alarm_gridlost": RegisterInfo(64, UINT16), #This has no unit of measurement
     "vebus_donotfeedinovervoltage": RegisterInfo(register=65, dataType=UINT16, writeType=SwitchWriteType()), #This has no unit of measurement
-    "vebus_L1_maxfeedinpower": RegisterInfo(66, UINT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000)),
-    "vebus_L2_maxfeedinpower": RegisterInfo(67, UINT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000)),
-    "vebus_L3_maxfeedinpower": RegisterInfo(68, UINT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000)),
+    "vebus_L1_maxfeedinpower": RegisterInfo(66, UINT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", False)),
+    "vebus_L2_maxfeedinpower": RegisterInfo(67, UINT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", False)),
+    "vebus_L3_maxfeedinpower": RegisterInfo(68, UINT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", False)),
     "vebus_state_ignoreacin1": RegisterInfo(69, UINT16), #This has no unit of measurement
     "vebus_state_ignoreacin2": RegisterInfo(70, UINT16), #This has no unit of measurement
     "vebus_targetpowerismaxfeedin": RegisterInfo(register=71, dataType=UINT16, writeType=SwitchWriteType()), #This has no unit of measurement
@@ -379,7 +381,7 @@ pvinverter_registers = {
     "pvinverter_L3_energy_forward_total": RegisterInfo(1050, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "pvinverter_power_total": RegisterInfo(1052, INT32, POWER_KILO_WATT),
     "pvinverter_power_max_capacity": RegisterInfo(1054, UINT32, POWER_KILO_WATT),
-    "pvinverter_powerlimit": RegisterInfo(register=1056, dataType=UINT32, unit=UnitOfPower.WATT, writeType=SliderWriteType(0, 9000))  #TODO determine min max based on user config
+    "pvinverter_powerlimit": RegisterInfo(register=1056, dataType=UINT32, unit=UnitOfPower.WATT, writeType=SliderWriteType(0, 9000, "AC", False))  #TODO determine min max based on user config
 }
 
 motordrive_registers = {
@@ -401,7 +403,7 @@ charger_registers = {
     "charger_current_output_3": RegisterInfo(2313, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "charger_L1_current": RegisterInfo(2314, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "charger_L1_power": RegisterInfo(2315, UINT16, UnitOfPower.WATT),
-    "charger_current_limit": RegisterInfo(2316, INT16, ELECTRIC_CURRENT_AMPERE, 10, writeType=SliderWriteType(-100, 100)), #TODO make user configureable
+    "charger_current_limit": RegisterInfo(2316, INT16, ELECTRIC_CURRENT_AMPERE, 10, writeType=SliderWriteType(-100, 100, "AC", True)), #TODO make user configureable
     "charger_mode": RegisterInfo(2317, UINT16), #TODO support charger mode enum
     "charger_state": RegisterInfo(2318, UINT16),
     "charger_errorcode": RegisterInfo(2319, UINT16),
@@ -411,17 +413,17 @@ charger_registers = {
 }
 
 settings_registers = {
-    "settings_ess_acpowersetpoint": RegisterInfo(register=2700, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 9000)), #TODO make user configureable
+    "settings_ess_acpowersetpoint": RegisterInfo(register=2700, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 9000, "AC", True)), #TODO make user configureable
     "settings_ess_maxchargepercentage": RegisterInfo(register=2701, dataType=UINT16, unit=PERCENTAGE, writeType=SliderWriteType(0, 100)),
     "settings_ess_maxdischargepercentage": RegisterInfo(register=2702, dataType=UINT16, unit=PERCENTAGE, writeType=SliderWriteType(0, 100)),
-    "settings_ess_acpowersetpoint2": RegisterInfo(2703, INT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000)), # Duplicate register exposed by victron #TODO make user configureable
-    "settings_ess_maxdischargepower": RegisterInfo(2704, UINT16, UnitOfPower.WATT, 0, SliderWriteType(0, 9000)), #TODO make user configureable
-    "settings_ess_maxchargecurrent": RegisterInfo(register=2705, dataType=INT16, unit=ELECTRIC_CURRENT_AMPERE, writeType=SliderWriteType(-100, 100)), #TODO make user configureable
-    "settings_ess_maxfeedinpower": RegisterInfo(2706, INT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000)), #TODO make user configureable
+    "settings_ess_acpowersetpoint2": RegisterInfo(2703, INT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", True)), # Duplicate register exposed by victron #TODO make user configureable
+    "settings_ess_maxdischargepower": RegisterInfo(2704, UINT16, UnitOfPower.WATT, 0, SliderWriteType(0, 9000, "AC", False)), #TODO make user configureable
+    "settings_ess_maxchargecurrent": RegisterInfo(register=2705, dataType=INT16, unit=ELECTRIC_CURRENT_AMPERE, writeType=SliderWriteType(-100, 100, "DC", True)), #TODO make user configureable
+    "settings_ess_maxfeedinpower": RegisterInfo(2706, INT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", True)), #TODO make user configureable
     "settings_ess_overvoltagefeedin": RegisterInfo(register=2707, dataType=INT16, writeType=SwitchWriteType()),
     "settings_ess_preventfeedback": RegisterInfo(register=2708, dataType=INT16, writeType=SwitchWriteType()),
     "settings_ess_feedinpowerlimit": RegisterInfo(2709, INT16), #TODO introduce binary sensor here?
-    "settings_systemsetup_maxchargevoltage": RegisterInfo(2710, UINT16, ELECTRIC_POTENTIAL_VOLT, 10, SliderWriteType(0, 60)) #TODO make user configureable
+    "settings_systemsetup_maxchargevoltage": RegisterInfo(2710, UINT16, ELECTRIC_POTENTIAL_VOLT, 10, SliderWriteType(0, 60, "DC", False)) #TODO make user configureable
 }
 
 gps_registers = {
@@ -599,7 +601,7 @@ evcharger_registers = {
     "evcharger_firmwareversion": RegisterInfo(3802, UINT32),
     "evcharger_serial": RegisterInfo(3804, STRING(6)),
     "evcharger_model": RegisterInfo(3810, STRING(4)),
-    "evcharger_maxcurrent": RegisterInfo(register=3814, dataType=UINT16, unit=ELECTRIC_CURRENT_AMPERE, writeType=SliderWriteType(0, 100)), #TODO make user configureable
+    "evcharger_maxcurrent": RegisterInfo(register=3814, dataType=UINT16, unit=ELECTRIC_CURRENT_AMPERE, writeType=SliderWriteType(0, 100, "AC", False)), #TODO make user configureable
     "evcharger_mode": RegisterInfo(3815, UINT16),#TODO introduce mode enums
     "evcharger_energy_forward": RegisterInfo(3816, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "evcharger_L1_power": RegisterInfo(3818, UINT16, UnitOfPower.WATT),
@@ -609,7 +611,7 @@ evcharger_registers = {
     "evcharger_chargingtime": RegisterInfo(3822, UINT16, TIME_SECONDS, 0),
     "evcharger_current": RegisterInfo(3823, UINT16, ELECTRIC_CURRENT_AMPERE),
     "evcharger_status": RegisterInfo(3824, UINT16),
-    "evcharger_setcurrent": RegisterInfo(register=3825, dataType=UINT16, unit=ELECTRIC_CURRENT_AMPERE, writeType=SliderWriteType(0, 100)), #TODO make user configureable
+    "evcharger_setcurrent": RegisterInfo(register=3825, dataType=UINT16, unit=ELECTRIC_CURRENT_AMPERE, writeType=SliderWriteType(0, 100, "AC", False)), #TODO make user configureable
     "evcharger_startstop": RegisterInfo(register=3826, dataType=UINT16, writeType=SwitchWriteType()),
     "evcharger_position": RegisterInfo(3827, UINT16), #TODO introduce position enums
 
@@ -730,8 +732,8 @@ multi_registers = {
     "multi_output_L1_frequency": RegisterInfo(4519, UINT16, FREQUENCY_HERTZ, 100),
     "multi_input_1_type": RegisterInfo(4520, UINT16),
     "multi_input_2_type": RegisterInfo(4521, UINT16),
-    "multi_input_1_currentlimit": RegisterInfo(4522, UINT16, ELECTRIC_CURRENT_AMPERE, 10, SliderWriteType(0, 100)), #TODO make user configureable
-    "multi_input_2_currentlimit": RegisterInfo(4523, UINT16, ELECTRIC_CURRENT_AMPERE, 10, SliderWriteType(0,100)), #TODO make user configureable
+    "multi_input_1_currentlimit": RegisterInfo(4522, UINT16, ELECTRIC_CURRENT_AMPERE, 10, SliderWriteType(0, 100, "AC", False)), #TODO make user configureable
+    "multi_input_2_currentlimit": RegisterInfo(4523, UINT16, ELECTRIC_CURRENT_AMPERE, 10, SliderWriteType(0,100, "AC", False)), #TODO make user configureable
     "multi_numberofphases": RegisterInfo(4524, UINT16),
     "multi_activein_activeinput": RegisterInfo(4525, UINT16),
     "multi_battery_voltage": RegisterInfo(4526, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
