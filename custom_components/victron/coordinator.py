@@ -17,6 +17,8 @@ from datetime import timedelta
 
 from .const import DOMAIN, UINT16, UINT32, INT16, INT32, STRING, RegisterInfo, register_info_dict
 
+import math
+
 _LOGGER = logging.getLogger(__name__)
 
 class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
@@ -80,13 +82,13 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         for key,value in registerInfo.items():
             full_key = str(unit) + "." + key
             if value.dataType == UINT16:
-                decoded_data[full_key] = self.decode_scaling(decoder.decode_16bit_uint(), value.scale)
+                decoded_data[full_key] = self.decode_scaling(decoder.decode_16bit_uint(), value.scale, value.unit)
             elif value.dataType == INT16:
-                decoded_data[full_key] = self.decode_scaling(decoder.decode_16bit_int(), value.scale)
+                decoded_data[full_key] = self.decode_scaling(decoder.decode_16bit_int(), value.scale, value.unit)
             elif value.dataType == UINT32:
-                decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_uint(), value.scale)
+                decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_uint(), value.scale, value.unit)
             elif value.dataType == INT32:
-                decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_uint(), value.scale)
+                decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_uint(), value.scale, value.unit)
             elif isinstance(value.dataType, STRING):
                 decoded_data[full_key] = decoder.decode_string(value.dataType.length*2) #TODO Accomodate for individual character length
             else:
@@ -94,11 +96,14 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                 raise Exception("unknown datatype not supported")
         return decoded_data
 
-    def decode_scaling(self, number, scale):
+    def decode_scaling(self, number, scale, unit):
         if scale == 0:
             return number
         else:
-            return number / scale
+            if unit == "" and scale == 1:
+                return round(number)
+            else:
+                return number / scale
 
     def get_data(self):
         return self.data

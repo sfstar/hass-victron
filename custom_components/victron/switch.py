@@ -12,6 +12,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from .coordinator import victronEnergyDeviceUpdateCoordinator
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.helpers import entity
 
 from .const import DOMAIN, register_info_dict, SwitchWriteType
 
@@ -109,3 +110,16 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
         # self._attr_native_value = data
         """Return true if switch is on."""
         return cast(bool, data)
+
+    @property
+    def device_info(self) -> entity.DeviceInfo:
+        """Return the device info."""
+        return entity.DeviceInfo(
+            identifiers={
+                # Serial numbers are unique identifiers within a specific domain
+                (DOMAIN, self.unique_id.split('_')[0])
+            },
+            name=self.unique_id.split('_')[1],
+            model=self.unique_id.split('_')[0],
+            manufacturer="victron", # to be dynamically set for gavazzi and redflow
+        )

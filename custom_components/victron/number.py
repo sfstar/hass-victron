@@ -20,6 +20,7 @@ from .coordinator import victronEnergyDeviceUpdateCoordinator
 from .const import DOMAIN, register_info_dict, SliderWriteType
 
 from homeassistant.helpers.typing import StateType
+from homeassistant.helpers import entity
 
 import logging
 
@@ -135,3 +136,16 @@ class VictronNumber(NumberEntity):
     @property
     def native_max_value(self) -> float:
         return self.entity_description.native_max_value
+
+    @property
+    def device_info(self) -> entity.DeviceInfo:
+        """Return the device info."""
+        return entity.DeviceInfo(
+            identifiers={
+                # Serial numbers are unique identifiers within a specific domain
+                (DOMAIN, self.unique_id.split('_')[0])
+            },
+            name=self.unique_id.split('_')[1],
+            model=self.unique_id.split('_')[0],
+            manufacturer="victron", # to be dynamically set for gavazzi and redflow
+        )
