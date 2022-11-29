@@ -24,7 +24,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .coordinator import victronEnergyDeviceUpdateCoordinator
-from .const import DOMAIN, register_info_dict, SliderWriteType
+from .const import DOMAIN, register_info_dict, SliderWriteType, CONF_ADVANCED_OPTIONS
 
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers import entity
@@ -44,29 +44,30 @@ async def async_setup_entry(
     descriptions = []
     _LOGGER.debug(config_entry)
     #TODO cleanup
-    register_set = victron_coordinator.processed_data()["register_set"]
-    for unit, registerLedger in register_set.items():
-        for name in registerLedger:
-            for register_name, registerInfo in register_info_dict[name].items():
-                # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
-                # _LOGGER.debug(str(registerInfo.unit))
-                # _LOGGER.debug("register_name")
-                # _LOGGER.debug(register_name)
-                if isinstance(registerInfo.writeType, SliderWriteType):
-                    descriptions.append(VictronEntityDescription(
-                        key=register_name,
-                        name=register_name.replace('_', ' '),
-                        value_fn=lambda data, unit, key: data["data"][str(unit) + "." + str(key)],
-                        slave=unit,
-                        native_unit_of_measurement=registerInfo.unit,
-                        register_ledger_key=name,
-                        # native_min_value=registerInfo.writeType.lowerLimit,
-                        # native_max_value=registerInfo.writeType.upperLimit,
-                        native_min_value=determine_min_value(registerInfo.unit, victron_coordinator),
-                        native_max_value=determine_max_value(registerInfo.unit, victron_coordinator),
-                        entity_category=EntityCategory.CONFIG,
-                        address=registerInfo.register
-                    ))
+    if config_entry.options[CONF_ADVANCED_OPTIONS]:
+        register_set = victron_coordinator.processed_data()["register_set"]
+        for unit, registerLedger in register_set.items():
+            for name in registerLedger:
+                for register_name, registerInfo in register_info_dict[name].items():
+                    # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
+                    # _LOGGER.debug(str(registerInfo.unit))
+                    # _LOGGER.debug("register_name")
+                    # _LOGGER.debug(register_name)
+                    if isinstance(registerInfo.writeType, SliderWriteType):
+                        descriptions.append(VictronEntityDescription(
+                            key=register_name,
+                            name=register_name.replace('_', ' '),
+                            value_fn=lambda data, unit, key: data["data"][str(unit) + "." + str(key)],
+                            slave=unit,
+                            native_unit_of_measurement=registerInfo.unit,
+                            register_ledger_key=name,
+                            # native_min_value=registerInfo.writeType.lowerLimit,
+                            # native_max_value=registerInfo.writeType.upperLimit,
+                            native_min_value=determine_min_value(registerInfo.unit, victron_coordinator),
+                            native_max_value=determine_max_value(registerInfo.unit, victron_coordinator),
+                            entity_category=EntityCategory.CONFIG,
+                            address=registerInfo.register
+                        ))
 
     entities = []
     entity = {}

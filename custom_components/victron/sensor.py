@@ -1,5 +1,5 @@
 
-from .const import DOMAIN, register_info_dict
+from .const import DOMAIN, register_info_dict, CONF_ADVANCED_OPTIONS
 
 from dataclasses import dataclass
 
@@ -38,15 +38,17 @@ async def async_setup_entry(
             for register_name, registerInfo in register_info_dict[name].items():
                 # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
                 # _LOGGER.debug(str(registerInfo.unit))
-                if registerInfo.writeType is None:
-                    descriptions.append(VictronEntityDescription(
-                        key=register_name,
-                        name=register_name.replace('_', ' '),
-                        native_unit_of_measurement=registerInfo.unit,
-                        value_fn=lambda data: data["data"][unit + "." + register_name],
-                        state_class=registerInfo.determine_stateclass(),
-                        unit=unit
-                    ))
+                if config_entry.options[CONF_ADVANCED_OPTIONS]:
+                    if registerInfo.writeType is not None:
+                        continue
+                descriptions.append(VictronEntityDescription(
+                    key=register_name,
+                    name=register_name.replace('_', ' '),
+                    native_unit_of_measurement=registerInfo.unit,
+                    value_fn=lambda data: data["data"][unit + "." + register_name],
+                    state_class=registerInfo.determine_stateclass(),
+                    unit=unit
+                ))
 
     entities = []
     entity = {}

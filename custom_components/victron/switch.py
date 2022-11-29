@@ -14,7 +14,7 @@ from .coordinator import victronEnergyDeviceUpdateCoordinator
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers import entity
 
-from .const import DOMAIN, register_info_dict, SwitchWriteType
+from .const import DOMAIN, register_info_dict, SwitchWriteType, CONF_ADVANCED_OPTIONS
 
 from collections.abc import Callable
 from homeassistant.helpers.typing import StateType
@@ -31,22 +31,23 @@ async def async_setup_entry(
     _LOGGER.debug("attempting to setup switch entities")
     descriptions = []
     #TODO cleanup
-    register_set = victron_coordinator.processed_data()["register_set"]
-    for unit, registerLedger in register_set.items():
-        for name in registerLedger:
-            for register_name, registerInfo in register_info_dict[name].items():
-                # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
-                # _LOGGER.debug(str(registerInfo.unit))
-                # _LOGGER.debug("register_name")
-                # _LOGGER.debug(register_name)
-                if isinstance(registerInfo.writeType, SwitchWriteType):
-                    descriptions.append(VictronEntityDescription(
-                        key=register_name,
-                        name=register_name.replace('_', ' '),
-                        value_fn=lambda data: data["data"][register_name],
-                        unit=unit,
-                        register_ledger_key=name
-                    ))
+    if config_entry.options[CONF_ADVANCED_OPTIONS]:
+        register_set = victron_coordinator.processed_data()["register_set"]
+        for unit, registerLedger in register_set.items():
+            for name in registerLedger:
+                for register_name, registerInfo in register_info_dict[name].items():
+                    # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
+                    # _LOGGER.debug(str(registerInfo.unit))
+                    # _LOGGER.debug("register_name")
+                    # _LOGGER.debug(register_name)
+                    if isinstance(registerInfo.writeType, SwitchWriteType):
+                        descriptions.append(VictronEntityDescription(
+                            key=register_name,
+                            name=register_name.replace('_', ' '),
+                            value_fn=lambda data: data["data"][register_name],
+                            unit=unit,
+                            register_ledger_key=name
+                        ))
 
     entities = []
     entity = {}
