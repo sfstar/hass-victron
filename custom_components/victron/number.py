@@ -92,7 +92,8 @@ def determine_min_value(unit, coordinator: victronEnergyDeviceUpdateCoordinator)
         return min_value
     elif unit == UnitOfPower.WATT:
         min_value = -(coordinator.ac_voltage * coordinator.ac_current)
-        return min_value
+        rounded_min = round(min_value/100)*100
+        return rounded_min
     elif unit == ELECTRIC_CURRENT_AMPERE:
         return 0
     else:
@@ -109,7 +110,8 @@ def determine_max_value(unit, coordinator) -> int:
         return max_value
     elif unit == UnitOfPower.WATT:
         max_value = (coordinator.ac_voltage * coordinator.ac_current)
-        return max_value
+        rounded_max = round(max_value/100)*100
+        return rounded_max
     elif unit == ELECTRIC_CURRENT_AMPERE:
         return coordinator.ac_current
     else:
@@ -174,6 +176,18 @@ class VictronNumber(NumberEntity):
             #TODO remove magic numbers
             value = value - 65535
         return value
+
+    @property
+    def native_step(self) -> float | None:
+        max = self.native_max_value
+        min = self.native_min_value
+        gap = len(list(range(int(min), int(max), 1)))
+        if gap >= 3000:
+            return 100
+        elif gap < 3000 and gap > 100:
+            return 10
+        else:
+            return 1
 
     @property
     def native_min_value(self) -> float:

@@ -10,9 +10,9 @@ This means that although the integration should work it might encounter unforese
 Testers are welcome to try out the integration and submit issues / feature requests.
 
 ## Limitations
-The current state of this integration provides the current limitations to it's use:
-- not all options are configureable after creation.
-- Selection options are not yet correctly decoded / selectable
+The current state of this integration provides the following limitations regarding it's use:
+- Applying config changes requires a reload/restart of the integration
+- Selection (write) options are not yet correctly decoded / selectable
 - Configuring the integration will be relatively slow if a discovery scan is required.
 
 
@@ -20,8 +20,7 @@ The current state of this integration provides the current limitations to it's u
 TODO
 - Fully Switch to async
 - Investigate if scan without causing errors is possible
-- seperate options from data
-- allow users to set write register limitations (ac, dc ,amps, volt, watt)
+- Determine limit applicability by specifying AC or DC in register info writetype
 - Improve configuration options to allow users to explicitly enable write support
 - Expose this integration to hacs
 - Start using releases and release notes
