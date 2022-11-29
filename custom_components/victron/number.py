@@ -47,7 +47,7 @@ async def async_setup_entry(
                     descriptions.append(VictronEntityDescription(
                         key=register_name,
                         name=register_name.replace('_', ' '),
-                        value_fn=lambda data, unit, key: data["data"][str(unit) + "." + str(key)].value,
+                        value_fn=lambda data, unit, key: data["data"][str(unit) + "." + str(key)],
                         slave=unit,
                         native_unit_of_measurement=registerInfo.unit,
                         register_ledger_key=name,

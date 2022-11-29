@@ -43,7 +43,7 @@ async def async_setup_entry(
                         key=register_name,
                         name=register_name.replace('_', ' '),
                         native_unit_of_measurement=registerInfo.unit,
-                        value_fn=lambda data: data["data"][unit + "." + register_name].value,
+                        value_fn=lambda data: data["data"][unit + "." + register_name],
                         state_class=registerInfo.determine_stateclass(),
                         unit=unit
                     ))
@@ -103,7 +103,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         try:
             #TODO see if entitydescription can be updated to include unit info and set it in init
             data = self.coordinator.processed_data()["data"][self.data_key]
-            self._attr_native_value = data.value
+            self._attr_native_value = data
 #TODO FURTHER DEBUG AND USE THIS FUNCTION IN DESCRIPTION INSTEAD
 #            self._attr_native_value =  self.entity_description.value_fn(self.coordinator.processed_data())
         except (TypeError, IndexError):

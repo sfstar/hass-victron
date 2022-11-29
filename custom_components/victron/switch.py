@@ -42,7 +42,7 @@ async def async_setup_entry(
                     descriptions.append(VictronEntityDescription(
                         key=register_name,
                         name=register_name.replace('_', ' '),
-                        value_fn=lambda data: data["data"][register_name].value,
+                        value_fn=lambda data: data["data"][register_name],
                         unit=unit,
                         register_ledger_key=name
                     ))
@@ -53,6 +53,7 @@ async def async_setup_entry(
         entity = description
         entities.append(
             VictronSwitch(
+                hass,
                 victron_coordinator,
                 entity
                 ))
@@ -72,7 +73,7 @@ class VictronEntityDescription(SwitchEntityDescription):
 class VictronSwitch(CoordinatorEntity, SwitchEntity):
     """Representation of an Victron switch."""
 
-    def __init__(self, coordinator: victronEnergyDeviceUpdateCoordinator, description: VictronEntityDescription) -> None:
+    def __init__(self, hass: HomeAssistant, coordinator: victronEnergyDeviceUpdateCoordinator, description: VictronEntityDescription) -> None:
         self.coordinator = coordinator
         self.description: VictronEntityDescription = description
         #this needs to be changed to allow multiple of the same type
@@ -90,20 +91,21 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
         super().__init__(coordinator)
 
 
-    def turn_on(self, **kwargs: Any) -> None:
+    async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn on the device."""
         self.coordinator.write_register(unit=self.description.unit, address=register_info_dict[self.description.register_ledger_key][self.description.key].register, value=1)
+        await self.coordinator.async_update_local_entry(self.data_key, 1)
 
-    def turn_off(self, **kwargs: Any) -> None:
+    async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn off the device."""
         #TODO fix bouncing toggle due to data not directly being updated after this action
         self.coordinator.write_register(unit=self.description.unit, address=register_info_dict[self.description.register_ledger_key][self.description.key].register, value=0)
-        
+        await self.coordinator.async_update_local_entry(self.data_key, 0) #TODO update data locally without requiring full refresh
 
     @property
     def is_on(self) -> bool:
         #TODO see if entitydescription can be updated to include unit info and set it in init
         data = self.coordinator.processed_data()["data"][self.data_key]
-        self._attr_native_value = data.value
+        # self._attr_native_value = data
         """Return true if switch is on."""
-        return cast(bool, data.value)
+        return cast(bool, data)

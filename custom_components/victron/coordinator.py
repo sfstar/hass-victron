@@ -42,6 +42,11 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         self.decodeInfo = decodeInfo
         self.interval = interval
 
+    # async def force_update_data(self) -> None:
+    #     data = await self._async_update_data()
+    #     self.async_set_updated_data(data)
+
+
     async def _async_update_data(self) -> dict:
         """Fetch all device and sensor data from api."""
         data = ""
@@ -75,15 +80,15 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         for key,value in registerInfo.items():
             full_key = str(unit) + "." + key
             if value.dataType == UINT16:
-                decoded_data[full_key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_16bit_uint(), value.scale))
+                decoded_data[full_key] = self.decode_scaling(decoder.decode_16bit_uint(), value.scale)
             elif value.dataType == INT16:
-                decoded_data[full_key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_16bit_int(), value.scale))
+                decoded_data[full_key] = self.decode_scaling(decoder.decode_16bit_int(), value.scale)
             elif value.dataType == UINT32:
-                decoded_data[full_key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_32bit_uint(), value.scale))
+                decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_uint(), value.scale)
             elif value.dataType == INT32:
-                decoded_data[full_key] = DataEntry(unit=unit, value=self.decode_scaling(decoder.decode_32bit_uint(), value.scale))
+                decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_uint(), value.scale)
             elif isinstance(value.dataType, STRING):
-                decoded_data[full_key] = DataEntry(unit=unit, value=decoder.decode_string(value.dataType.length*2)) #TODO Accomodate for individual character length
+                decoded_data[full_key] = decoder.decode_string(value.dataType.length*2) #TODO Accomodate for individual character length
             else:
                 #TODO raise error for not supported datatype
                 raise Exception("unknown datatype not supported")
@@ -97,6 +102,11 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
 
     def get_data(self):
         return self.data
+
+    async def async_update_local_entry(self, key, value):
+        data = self.data
+        data["data"][key] = value
+        self.async_set_updated_data(data)
 
 
     def processed_data(self):

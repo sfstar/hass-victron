@@ -13,9 +13,8 @@ Testers are welcome to try out the integration and submit issues / feature reque
 The current state of this integration provides the current limitations to it's use:
 - not all options are configureable after creation.
 - all available "slave" units are added as entities but not grouped into logical devices.
-- Read only, this integration doesn't (yet) provide write support for writeable registers.
+- Read only, this integration doesn't (yet officially) provide write support for writeable registers.
 - Configuring the integration will be relatively slow if a discovery scan is required.
-- Only one instance of a unit type (multi, gavazzi grid meters) is currently supported (due to unique entity naming constrants)
 
 
 ## Currently planned improvements
@@ -23,6 +22,7 @@ TODO
 - Switch to async
 - make register list smarter
 - Investigate if scan without causing errors is possible
+- seperate options from data
 - Support write registers (initial working buggy setup for switches and numbers.)
 - expose write registers as types like button, slider etc.
 - Improve configuration options to allow users to explicitly enable write support
