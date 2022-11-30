@@ -53,7 +53,7 @@ async def async_setup_entry(
                     # _LOGGER.debug(str(registerInfo.unit))
                     # _LOGGER.debug("register_name")
                     # _LOGGER.debug(register_name)
-                    if isinstance(registerInfo.writeType, SliderWriteType):
+                    if isinstance(registerInfo.entityType, SliderWriteType):
                         descriptions.append(VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace('_', ' '),
@@ -63,8 +63,8 @@ async def async_setup_entry(
                             register_ledger_key=name,
                             # native_min_value=registerInfo.writeType.lowerLimit,
                             # native_max_value=registerInfo.writeType.upperLimit,
-                            native_min_value=determine_min_value(registerInfo.unit, victron_coordinator, registerInfo.writeType.powerType, registerInfo.writeType.negative),
-                            native_max_value=determine_max_value(registerInfo.unit, victron_coordinator, registerInfo.writeType.powerType, registerInfo.writeType.negative),
+                            native_min_value=determine_min_value(registerInfo.unit, victron_coordinator, registerInfo.entityType.powerType, registerInfo.entityType.negative),
+                            native_max_value=determine_max_value(registerInfo.unit, victron_coordinator, registerInfo.entityType.powerType, registerInfo.entityType.negative),
                             entity_category=EntityCategory.CONFIG,
                             address=registerInfo.register,
                             scale = registerInfo.scale

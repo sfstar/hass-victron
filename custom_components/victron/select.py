@@ -42,7 +42,7 @@ async def async_setup_entry(
         for unit, registerLedger in register_set.items():
             for name in registerLedger:
                 for register_name, registerInfo in register_info_dict[name].items():
-                    if isinstance(registerInfo.writeType, SelectWriteType):
+                    if isinstance(registerInfo.entityType, SelectWriteType):
                         _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
                         _LOGGER.debug("register_name")
                         _LOGGER.debug(register_name)
@@ -53,7 +53,7 @@ async def async_setup_entry(
                             slave=unit,
                             unit=unit,
                             register_ledger_key=name,
-                            options=registerInfo.writeType.options,
+                            options=registerInfo.entityType.options,
                             address=registerInfo.register,
                             scale = registerInfo.scale
                         ))

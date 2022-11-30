@@ -40,7 +40,7 @@ async def async_setup_entry(
                     # _LOGGER.debug(str(registerInfo.unit))
                     # _LOGGER.debug("register_name")
                     # _LOGGER.debug(register_name)
-                    if isinstance(registerInfo.writeType, SwitchWriteType):
+                    if isinstance(registerInfo.entityType, SwitchWriteType):
                         descriptions.append(VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace('_', ' '),

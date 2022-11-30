@@ -56,36 +56,36 @@ INT16  = "int16"
 UINT32 = "uint32"
 INT32  = "int32"
 
-class WriteType():
-    def __init__(self, entityType) -> None:
-        self.entityType = entityType
+class EntityType():
+    def __init__(self, entityTypeName) -> None:
+        self.entityTypeName = entityTypeName
 
-class SwitchWriteType(WriteType):
+class SwitchWriteType(EntityType):
     def __init__(self) -> None:
-        super().__init__(entityType="button")
+        super().__init__(entityTypeName="button")
 
-class SliderWriteType(WriteType):
+class SliderWriteType(EntityType):
     def __init__(self, lowerLimit, upperLimit, powerType="", negative: bool=False) -> None:
-        super().__init__(entityType="slider")
+        super().__init__(entityTypeName="slider")
         self.lowerLimit = lowerLimit #TODO remove when configuration options are fully used
         self.upperLimit = upperLimit #TODO remove when configuration options are fully used
         self.powerType = powerType
         self.negative = negative
     
-class SelectWriteType(WriteType):
+class SelectWriteType(EntityType):
     def __init__(self, optionsEnum: Enum) -> None:
-        super().__init__(entityType="select")
+        super().__init__(entityTypeName="select")
         self.options = optionsEnum
 
 
 class RegisterInfo():
-    def __init__(self, register, dataType, unit="", scale=1, writeType: WriteType = None) -> None:
+    def __init__(self, register, dataType, unit="", scale=1, entityType: EntityType = None) -> None:
         self.register = register
         self.dataType = dataType
         self.unit = unit
         self.scale = scale
         #Only used for writeable entities
-        self.writeType = writeType
+        self.entityType = entityType
         
     def determine_stateclass(self):
         if self.unit == UnitOfEnergy.KILO_WATT_HOUR:
@@ -161,15 +161,15 @@ vebus_registers = {
     "vebus_soc": RegisterInfo(30, UINT16, PERCENTAGE, 10, SliderWriteType(0, 100)),
     "vebus_state": RegisterInfo(31, UINT16), #This has no unit of measurement
     "vebus_error": RegisterInfo(32, UINT16), #This has no unit of measurement
-    "vebus_mode": RegisterInfo(register=33, dataType=UINT16, writeType=SelectWriteType(vebus_mode)), #This has no unit of measurement #TODO make mode selection writeable
+    "vebus_mode": RegisterInfo(register=33, dataType=UINT16, entityType=SelectWriteType(vebus_mode)), #This has no unit of measurement #TODO make mode selection writeable
     "vebus_alarm_hightemperature": RegisterInfo(34, UINT16), #This has no unit of measurement
     "vebus_alarm_lowbattery": RegisterInfo(35, UINT16), #This has no unit of measurement
     "vebus_alarm_overload": RegisterInfo(36, UINT16), #This has no unit of measurement
-    "vebus_L1_acpowersetpoint": RegisterInfo(register=37, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 9000, "AC", True)), #TODO determine valid limits
-    "vebus_disablecharge": RegisterInfo(register=38, dataType=UINT16, writeType=SwitchWriteType()), #This has no unit of measurement
-    "vebus_disablefeedin": RegisterInfo(39, UINT16, writeType=SwitchWriteType()), #This has no unit of measurement
-    "vebus_L2_acpowersetpoint": RegisterInfo(register=40, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 9000, "AC", True)),
-    "vebus_L3_acpowersetpoint": RegisterInfo(register=41, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 9000, "AC", True)),
+    "vebus_L1_acpowersetpoint": RegisterInfo(register=37, dataType=INT16, unit=UnitOfPower.WATT, entityType=SliderWriteType(-9000, 9000, "AC", True)), #TODO determine valid limits
+    "vebus_disablecharge": RegisterInfo(register=38, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
+    "vebus_disablefeedin": RegisterInfo(39, UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
+    "vebus_L2_acpowersetpoint": RegisterInfo(register=40, dataType=INT16, unit=UnitOfPower.WATT, entityType=SliderWriteType(-9000, 9000, "AC", True)),
+    "vebus_L3_acpowersetpoint": RegisterInfo(register=41, dataType=INT16, unit=UnitOfPower.WATT, entityType=SliderWriteType(-9000, 9000, "AC", True)),
     "vebus_alarm_temperaturesensor": RegisterInfo(42, UINT16), #This has no unit of measurement
     "vebus_alarm_voltagesensor": RegisterInfo(43, UINT16), #This has no unit of measurement
     "vebus_alarm_L1_higtemperature": RegisterInfo(44, UINT16), #This has no unit of measurement
@@ -184,23 +184,23 @@ vebus_registers = {
     "vebus_alarm_L3_lowbattery": RegisterInfo(53, UINT16), #This has no unit of measurement
     "vebus_alarm_L3_overload": RegisterInfo(54, UINT16), #This has no unit of measurement
     "vebus_alarm_L3_ripple": RegisterInfo(55, UINT16), #This has no unit of measurement
-    "vebus_pvinverter_disable": RegisterInfo(register=56, dataType=UINT16, writeType=SwitchWriteType()), #This has no unit of measurement
+    "vebus_pvinverter_disable": RegisterInfo(register=56, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
     "vebus_bms_allowtocharge": RegisterInfo(57, UINT16), #This has no unit of measurement
     "vebus_bms_allowtodischarge": RegisterInfo(58, UINT16), #This has no unit of measurement
     "vebus_bms_bmsexpected": RegisterInfo(59, UINT16), #This has no unit of measurement
     "vebus_bms_error": RegisterInfo(60, UINT16), #This has no unit of measurement
     "vebus_battery_temperature": RegisterInfo(61, INT16, UnitOfTemperature.CELSIUS, 10),
-    "vebus_systemreset": RegisterInfo(register=62, dataType=UINT16, writeType=SwitchWriteType()), #This has no unit of measurement # TODO use option selection here?
+    "vebus_systemreset": RegisterInfo(register=62, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement # TODO use option selection here?
     "vebus_alarm_phaserotation": RegisterInfo(63, UINT16), #This has no unit of measurement
     "vebus_alarm_gridlost": RegisterInfo(64, UINT16), #This has no unit of measurement
-    "vebus_donotfeedinovervoltage": RegisterInfo(register=65, dataType=UINT16, writeType=SwitchWriteType()), #This has no unit of measurement
+    "vebus_donotfeedinovervoltage": RegisterInfo(register=65, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
     "vebus_L1_maxfeedinpower": RegisterInfo(66, UINT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", False)),
     "vebus_L2_maxfeedinpower": RegisterInfo(67, UINT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", False)),
     "vebus_L3_maxfeedinpower": RegisterInfo(68, UINT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", False)),
     "vebus_state_ignoreacin1": RegisterInfo(69, UINT16), #This has no unit of measurement
     "vebus_state_ignoreacin2": RegisterInfo(70, UINT16), #This has no unit of measurement
-    "vebus_targetpowerismaxfeedin": RegisterInfo(register=71, dataType=UINT16, writeType=SwitchWriteType()), #This has no unit of measurement
-    "vebus_fixsolaroffsetto100mv": RegisterInfo(register=72, dataType=UINT16, writeType=SwitchWriteType()), #This has no unit of measurement
+    "vebus_targetpowerismaxfeedin": RegisterInfo(register=71, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
+    "vebus_fixsolaroffsetto100mv": RegisterInfo(register=72, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
     "vebus_sustain": RegisterInfo(73, UINT16), #This has no unit of measurement
     "vebus_acin1toacout": RegisterInfo(74, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "vebus_acin1toinverter": RegisterInfo(76, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
@@ -236,7 +236,7 @@ battery_registers = {
     "battery_alarm_highfusedvoltage": RegisterInfo(277, UINT16),
     "battery_alarm_fuseblown": RegisterInfo(278, UINT16),
     "battery_alarm_highinternaltemperature": RegisterInfo(279, UINT16),
-    "battery_relay": RegisterInfo(register=280, dataType=UINT16, writeType=SwitchWriteType()),
+    "battery_relay": RegisterInfo(register=280, dataType=UINT16, entityType=SwitchWriteType()),
     "battery_history_deepestdischarge": RegisterInfo(281, UINT16, ELECTRIC_CURRENT_AMPERE, -10),
     "battery_history_lastdischarge": RegisterInfo(282, UINT16, ELECTRIC_CURRENT_AMPERE, -10),
     "battery_history_averagedischarge": RegisterInfo(283, UINT16, ELECTRIC_CURRENT_AMPERE, -10),
@@ -320,7 +320,7 @@ solarcharger_registers = {
     "solarcharger_battery_voltage": RegisterInfo(771, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "solarcharger_battery_current": RegisterInfo(772, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "solarcharger_battery_temperature": RegisterInfo(773, INT16, UnitOfTemperature.CELSIUS, 10),
-    "solarcharger_mode": RegisterInfo(register=774, dataType=UINT16, writeType=SelectWriteType(solarcharger_mode)), #TODO setup enum selection option for mode
+    "solarcharger_mode": RegisterInfo(register=774, dataType=UINT16, entityType=SelectWriteType(solarcharger_mode)), #TODO setup enum selection option for mode
     "solarcharger_state": RegisterInfo(775, UINT16),
     "solarcharger_pv_voltage": RegisterInfo(776, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "solarcharger_pv_current": RegisterInfo(777, INT16, ELECTRIC_CURRENT_AMPERE, 10),
@@ -390,7 +390,7 @@ pvinverter_registers = {
     "pvinverter_L3_energy_forward_total": RegisterInfo(1050, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "pvinverter_power_total": RegisterInfo(1052, INT32, POWER_KILO_WATT),
     "pvinverter_power_max_capacity": RegisterInfo(1054, UINT32, POWER_KILO_WATT),
-    "pvinverter_powerlimit": RegisterInfo(register=1056, dataType=UINT32, unit=UnitOfPower.WATT, writeType=SliderWriteType(0, 9000, "AC", False))  #TODO determine min max based on user config
+    "pvinverter_powerlimit": RegisterInfo(register=1056, dataType=UINT32, unit=UnitOfPower.WATT, entityType=SliderWriteType(0, 9000, "AC", False))  #TODO determine min max based on user config
 }
 
 motordrive_registers = {
@@ -419,8 +419,8 @@ charger_registers = {
     "charger_current_output_3": RegisterInfo(2313, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "charger_L1_current": RegisterInfo(2314, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "charger_L1_power": RegisterInfo(2315, UINT16, UnitOfPower.WATT),
-    "charger_current_limit": RegisterInfo(2316, INT16, ELECTRIC_CURRENT_AMPERE, 10, writeType=SliderWriteType(-100, 100, "AC", True)), #TODO make user configureable
-    "charger_mode": RegisterInfo(register=2317, dataType=UINT16, writeType=SelectWriteType(charger_mode)), #TODO support charger mode enum
+    "charger_current_limit": RegisterInfo(2316, INT16, ELECTRIC_CURRENT_AMPERE, 10, entityType=SliderWriteType(-100, 100, "AC", True)), #TODO make user configureable
+    "charger_mode": RegisterInfo(register=2317, dataType=UINT16, entityType=SelectWriteType(charger_mode)), #TODO support charger mode enum
     "charger_state": RegisterInfo(2318, UINT16),
     "charger_errorcode": RegisterInfo(2319, UINT16),
     "charger_relay": RegisterInfo(2320, UINT16),
@@ -429,15 +429,15 @@ charger_registers = {
 }
 
 settings_registers = {
-    "settings_ess_acpowersetpoint": RegisterInfo(register=2700, dataType=INT16, unit=UnitOfPower.WATT, writeType=SliderWriteType(-9000, 9000, "AC", True)), #TODO make user configureable
-    "settings_ess_maxchargepercentage": RegisterInfo(register=2701, dataType=UINT16, unit=PERCENTAGE, writeType=SliderWriteType(0, 100)),
-    "settings_ess_maxdischargepercentage": RegisterInfo(register=2702, dataType=UINT16, unit=PERCENTAGE, writeType=SliderWriteType(0, 100)),
+    "settings_ess_acpowersetpoint": RegisterInfo(register=2700, dataType=INT16, unit=UnitOfPower.WATT, entityType=SliderWriteType(-9000, 9000, "AC", True)), #TODO make user configureable
+    "settings_ess_maxchargepercentage": RegisterInfo(register=2701, dataType=UINT16, unit=PERCENTAGE, entityType=SliderWriteType(0, 100)),
+    "settings_ess_maxdischargepercentage": RegisterInfo(register=2702, dataType=UINT16, unit=PERCENTAGE, entityType=SliderWriteType(0, 100)),
     "settings_ess_acpowersetpoint2": RegisterInfo(2703, INT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", True)), # Duplicate register exposed by victron #TODO make user configureable
     "settings_ess_maxdischargepower": RegisterInfo(2704, UINT16, UnitOfPower.WATT, 0, SliderWriteType(0, 9000, "AC", False)), #TODO make user configureable
-    "settings_ess_maxchargecurrent": RegisterInfo(register=2705, dataType=INT16, unit=ELECTRIC_CURRENT_AMPERE, writeType=SliderWriteType(-100, 100, "DC", True)), #TODO make user configureable
+    "settings_ess_maxchargecurrent": RegisterInfo(register=2705, dataType=INT16, unit=ELECTRIC_CURRENT_AMPERE, entityType=SliderWriteType(-100, 100, "DC", True)), #TODO make user configureable
     "settings_ess_maxfeedinpower": RegisterInfo(2706, INT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", True)), #TODO make user configureable
-    "settings_ess_overvoltagefeedin": RegisterInfo(register=2707, dataType=INT16, writeType=SwitchWriteType()),
-    "settings_ess_preventfeedback": RegisterInfo(register=2708, dataType=INT16, writeType=SwitchWriteType()),
+    "settings_ess_overvoltagefeedin": RegisterInfo(register=2707, dataType=INT16, entityType=SwitchWriteType()),
+    "settings_ess_preventfeedback": RegisterInfo(register=2708, dataType=INT16, entityType=SwitchWriteType()),
     "settings_ess_feedinpowerlimit": RegisterInfo(2709, INT16), #TODO introduce binary sensor here?
     "settings_systemsetup_maxchargevoltage": RegisterInfo(2710, UINT16, ELECTRIC_POTENTIAL_VOLT, 10, SliderWriteType(0, 60, "DC", False)) #TODO make user configureable
 }
@@ -473,9 +473,9 @@ class ess_mode(Enum):
     EXTERNAL_CONTROL = 3
 
 settings_ess_registers = {
-    "settings_ess_batterylife_state": RegisterInfo(register=2900, dataType=UINT16, writeType=SelectWriteType(ess_batterylife_state)), #TODO introduce enum for selection writetype
+    "settings_ess_batterylife_state": RegisterInfo(register=2900, dataType=UINT16, entityType=SelectWriteType(ess_batterylife_state)), #TODO introduce enum for selection writetype
     "settings_ess_batterylife_minimumsoc": RegisterInfo(2901, UINT16, PERCENTAGE, 10, SliderWriteType(0, 100)), #TODO make user configureable
-    "settings_ess_mode": RegisterInfo(register=2902, dataType=UINT16, writeType=SelectWriteType(ess_mode)), #TODO introduce enum for mode selection
+    "settings_ess_mode": RegisterInfo(register=2902, dataType=UINT16, entityType=SelectWriteType(ess_mode)), #TODO introduce enum for mode selection
     "settings_ess_batterylife_soclimit": RegisterInfo(2903, UINT16, PERCENTAGE, 10), #TODO not writeable
 }
 
@@ -517,7 +517,7 @@ class inverter_mode(Enum):
 
 inverter_info_registers = {
     "inverter_info_firmwareversion": RegisterInfo(3125, UINT16),
-    "inverter_info_mode": RegisterInfo(register=3126, dataType=UINT16, writeType=SelectWriteType(inverter_mode)), #TODO introduce selection mode enum
+    "inverter_info_mode": RegisterInfo(register=3126, dataType=UINT16, entityType=SelectWriteType(inverter_mode)), #TODO introduce selection mode enum
     "inverter_info_productid": RegisterInfo(3127, UINT16),
     "inverter_info_state": RegisterInfo(3128, UINT16),
 }
@@ -586,7 +586,7 @@ genset_registers = {
     "genset_engine_windingtemperature": RegisterInfo(3220, INT16, UnitOfTemperature.CELSIUS, 10),
     "genset_engine_exhausttemperature": RegisterInfo(3221, INT16, UnitOfTemperature.CELSIUS, 10),
     "genset_startervoltage": RegisterInfo(3222, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
-    "genset_start": RegisterInfo(register=3223, dataType=UINT16, writeType=SwitchWriteType())
+    "genset_start": RegisterInfo(register=3223, dataType=UINT16, entityType=SwitchWriteType())
 }
 
 temperature_registers = {
@@ -614,7 +614,7 @@ digitalinput_registers = {
 }
 
 generator_registers = {
-    "generator_manualstart": RegisterInfo(register=3500, dataType=UINT16, writeType=SwitchWriteType()), #TODO check setting inversion for value interpretation
+    "generator_manualstart": RegisterInfo(register=3500, dataType=UINT16, entityType=SwitchWriteType()), #TODO check setting inversion for value interpretation
     "generator_runningbyconditioncode": RegisterInfo(3501, UINT16),
     "generator_runtime": RegisterInfo(3502, UINT16, TIME_SECONDS, 0), #documentation says 1 scale. assuming this is incorrect and 0 should be used like all other seconds registers
     "generator_quiethours": RegisterInfo(3503, UINT16),
@@ -622,7 +622,7 @@ generator_registers = {
     "generator_state": RegisterInfo(3506, UINT16),
     "generator_error": RegisterInfo(3507, UINT16),
     "generator_alarm_nogeneratoratacin": RegisterInfo(3508, UINT16),
-    "generator_autostartenabled": RegisterInfo(register=3509, dataType=UINT16, writeType=SwitchWriteType())
+    "generator_autostartenabled": RegisterInfo(register=3509, dataType=UINT16, entityType=SwitchWriteType())
 }
 
 #not processed yet
@@ -646,8 +646,8 @@ evcharger_registers = {
     "evcharger_firmwareversion": RegisterInfo(3802, UINT32),
     "evcharger_serial": RegisterInfo(3804, STRING(6)),
     "evcharger_model": RegisterInfo(3810, STRING(4)),
-    "evcharger_maxcurrent": RegisterInfo(register=3814, dataType=UINT16, unit=ELECTRIC_CURRENT_AMPERE, writeType=SliderWriteType(0, 100, "AC", False)), #TODO make user configureable
-    "evcharger_mode": RegisterInfo(register=3815, dataType=UINT16, writeType=SelectWriteType(evcharger_mode)),#TODO introduce mode enums
+    "evcharger_maxcurrent": RegisterInfo(register=3814, dataType=UINT16, unit=ELECTRIC_CURRENT_AMPERE, entityType=SliderWriteType(0, 100, "AC", False)), #TODO make user configureable
+    "evcharger_mode": RegisterInfo(register=3815, dataType=UINT16, entityType=SelectWriteType(evcharger_mode)),#TODO introduce mode enums
     "evcharger_energy_forward": RegisterInfo(3816, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "evcharger_L1_power": RegisterInfo(3818, UINT16, UnitOfPower.WATT),
     "evcharger_L2_power": RegisterInfo(3819, UINT16, UnitOfPower.WATT),
@@ -656,8 +656,8 @@ evcharger_registers = {
     "evcharger_chargingtime": RegisterInfo(3822, UINT16, TIME_SECONDS, 0),
     "evcharger_current": RegisterInfo(3823, UINT16, ELECTRIC_CURRENT_AMPERE),
     "evcharger_status": RegisterInfo(3824, UINT16),
-    "evcharger_setcurrent": RegisterInfo(register=3825, dataType=UINT16, unit=ELECTRIC_CURRENT_AMPERE, writeType=SliderWriteType(0, 100, "AC", False)), #TODO make user configureable
-    "evcharger_startstop": RegisterInfo(register=3826, dataType=UINT16, writeType=SwitchWriteType()),
+    "evcharger_setcurrent": RegisterInfo(register=3825, dataType=UINT16, unit=ELECTRIC_CURRENT_AMPERE, entityType=SliderWriteType(0, 100, "AC", False)), #TODO make user configureable
+    "evcharger_startstop": RegisterInfo(register=3826, dataType=UINT16, entityType=SwitchWriteType()),
     "evcharger_position": RegisterInfo(3827, UINT16), #TODO introduce position enums
 
 }
@@ -792,7 +792,7 @@ multi_registers = {
     "multi_battery_temperature": RegisterInfo(4528, INT16, UnitOfTemperature.CELSIUS, 10),
     "multi_battery_soc": RegisterInfo(4529, UINT16, PERCENTAGE, 10),
     "multi_state": RegisterInfo(4530, UINT16),
-    "multi_mode": RegisterInfo(register=4531, dataType=UINT16, writeType=SelectWriteType(multi_mode)), #TODO introduce mode enums
+    "multi_mode": RegisterInfo(register=4531, dataType=UINT16, entityType=SelectWriteType(multi_mode)), #TODO introduce mode enums
     "multi_alarm_hightemperature": RegisterInfo(4532, UINT16),
     "multi_alarm_highvoltage": RegisterInfo(4533, UINT16),
     "multi_alarm_highvoltageacout": RegisterInfo(4534, UINT16),
@@ -855,8 +855,8 @@ multi_registers = {
 
 system_registers = {
     "system_serial": RegisterInfo(800, STRING(6)),
-    "system_relay_0": RegisterInfo(register=806, dataType=UINT16, writeType=SwitchWriteType()),
-    "system_relay_1": RegisterInfo(register=807, dataType=UINT16, writeType=SwitchWriteType()),
+    "system_relay_0": RegisterInfo(register=806, dataType=UINT16, entityType=SwitchWriteType()),
+    "system_relay_1": RegisterInfo(register=807, dataType=UINT16, entityType=SwitchWriteType()),
     "system_pvonoutput_L1": RegisterInfo(808, UINT16, UnitOfPower.WATT),
     "system_pvonoutput_l1": RegisterInfo(809, UINT16, UnitOfPower.WATT),
     "system_pvonoutput_l1": RegisterInfo(810, UINT16, UnitOfPower.WATT),

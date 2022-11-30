@@ -53,7 +53,7 @@ async def async_setup_entry(
                 # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
                 # _LOGGER.debug(str(registerInfo.unit))
                 if config_entry.options[CONF_ADVANCED_OPTIONS]:
-                    if registerInfo.writeType is not None:
+                    if registerInfo.entityType is not None:
                         continue
                 descriptions.append(VictronEntityDescription(
                     key=register_name,
