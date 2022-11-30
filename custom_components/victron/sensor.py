@@ -12,8 +12,22 @@ from homeassistant.core import HomeAssistant, HassJob
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.components.sensor import SensorEntityDescription, SensorStateClass, SensorEntity, DOMAIN as SENSOR_DOMAIN
+from homeassistant.components.sensor import SensorEntityDescription, SensorStateClass, SensorDeviceClass, SensorEntity, DOMAIN as SENSOR_DOMAIN
 from .coordinator import victronEnergyDeviceUpdateCoordinator
+
+from homeassistant.const import (
+    PERCENTAGE, 
+    UnitOfEnergy, 
+    UnitOfPower,
+    ELECTRIC_POTENTIAL_VOLT,
+    ELECTRIC_CURRENT_AMPERE,
+    FREQUENCY_HERTZ,
+    TIME_SECONDS,
+    UnitOfTemperature,
+    UnitOfVolume,
+    UnitOfSpeed,
+    UnitOfPressure
+)
 
 from collections.abc import Callable
 from homeassistant.helpers.typing import StateType
@@ -47,7 +61,8 @@ async def async_setup_entry(
                     native_unit_of_measurement=registerInfo.unit,
                     value_fn=lambda data: data["data"][unit + "." + register_name],
                     state_class=registerInfo.determine_stateclass(),
-                    unit=unit
+                    unit=unit,
+                    device_class=determine_victron_device_class(registerInfo.unit)
                 ))
 
     entities = []
@@ -62,6 +77,32 @@ async def async_setup_entry(
 
     # Add an entity for each sensor type
     async_add_entities(entities, True)
+
+def determine_victron_device_class(unit):
+    if unit == PERCENTAGE:
+        return SensorDeviceClass.BATTERY
+    elif unit in [member.value for member in UnitOfPower]:
+        return SensorDeviceClass.POWER
+    elif unit in [member.value for member in UnitOfEnergy]:
+        _LOGGER.debug("unit of energy")
+        return SensorDeviceClass.ENERGY
+    elif unit == FREQUENCY_HERTZ:
+        return SensorDeviceClass.FREQUENCY
+    elif unit == TIME_SECONDS:
+        return SensorDeviceClass.DURATION
+    elif unit in [member.value for member in UnitOfTemperature]:
+        return  SensorDeviceClass.TEMPERATURE
+    elif unit in [member.value for member in UnitOfVolume]:
+        return SensorDeviceClass.VOLUME # Perhaps change this to water if only water is measured in volume units
+    elif unit in [member.value for member in UnitOfSpeed]:
+        return SensorDeviceClass.SPEED # TODO return windspeed for meteo unit of speed register
+    elif unit in [member.value for member in UnitOfPressure]:
+        return SensorDeviceClass.PRESSURE
+    elif unit in ELECTRIC_POTENTIAL_VOLT:
+        return SensorDeviceClass.VOLTAGE
+    elif unit in ELECTRIC_CURRENT_AMPERE:
+        return SensorDeviceClass.CURRENT
+    return None
 
 @dataclass
 class VictronEntityDescription(SensorEntityDescription):
@@ -82,6 +123,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         """Initialize the sensor."""
         self.description: VictronEntityDescription = description
         #this needs to be changed to allow multiple of the same type
+        self._attr_device_class = description.device_class
         self._attr_name = f"{description.name}"
         self._attr_native_unit_of_measurement = description.native_unit_of_measurement
         self._attr_state_class = description.state_class
