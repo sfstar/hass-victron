@@ -38,7 +38,7 @@
                     "ac_current": "The AC current limit of your grid in A",
                     "dc_voltage": "The DC voltage of your battery in V",
                     "dc_current": "The DC current limit of your battery in A",
-                    "advanced": "switch to read only mode if unchecked"
+                    "advanced": "switch to read only mode if unchecked (when submitted)"
                 }
             },
             "init_read": {

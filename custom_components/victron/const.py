@@ -67,8 +67,8 @@ class SwitchWriteType(WriteType):
 class SliderWriteType(WriteType):
     def __init__(self, lowerLimit, upperLimit, powerType="", negative: bool=False) -> None:
         super().__init__(entityType="slider")
-        self.lowerLimit = lowerLimit
-        self.upperLimit = upperLimit
+        self.lowerLimit = lowerLimit #TODO remove when configuration options are fully used
+        self.upperLimit = upperLimit #TODO remove when configuration options are fully used
         self.powerType = powerType
         self.negative = negative
     
@@ -123,7 +123,12 @@ gavazi_grid_registers = {
     "grid_energy_forward_total": RegisterInfo(2634, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "grid_energy_reverse_total": RegisterInfo(2636, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100)
 }
-
+ 
+class vebus_mode(Enum):
+    CHARGER = 1
+    INVERTER = 2
+    ON = 3
+    OFF = 4
 
 vebus_registers = { 
     "vebus_activein_L1_voltage": RegisterInfo(3, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
@@ -156,7 +161,7 @@ vebus_registers = {
     "vebus_soc": RegisterInfo(30, UINT16, PERCENTAGE, 10, SliderWriteType(0, 100)),
     "vebus_state": RegisterInfo(31, UINT16), #This has no unit of measurement
     "vebus_error": RegisterInfo(32, UINT16), #This has no unit of measurement
-    "vebus_mode": RegisterInfo(33, UINT16), #This has no unit of measurement #TODO make mode selection writeable
+    "vebus_mode": RegisterInfo(register=33, dataType=UINT16, writeType=SelectWriteType(vebus_mode)), #This has no unit of measurement #TODO make mode selection writeable
     "vebus_alarm_hightemperature": RegisterInfo(34, UINT16), #This has no unit of measurement
     "vebus_alarm_lowbattery": RegisterInfo(35, UINT16), #This has no unit of measurement
     "vebus_alarm_overload": RegisterInfo(36, UINT16), #This has no unit of measurement
@@ -307,11 +312,15 @@ battery_detail_registers = {
     "battery_system_maxtemperaturecellid": RegisterInfo(1318, STRING(4))
 }
 
+class solarcharger_mode(Enum):
+    ON = 1
+    OFF = 4
+
 solarcharger_registers = {
     "solarcharger_battery_voltage": RegisterInfo(771, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "solarcharger_battery_current": RegisterInfo(772, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "solarcharger_battery_temperature": RegisterInfo(773, INT16, UnitOfTemperature.CELSIUS, 10),
-    "solarcharger_mode": RegisterInfo(774, UINT16), #TODO setup enum selection option for mode
+    "solarcharger_mode": RegisterInfo(register=774, dataType=UINT16, writeType=SelectWriteType(solarcharger_mode)), #TODO setup enum selection option for mode
     "solarcharger_state": RegisterInfo(775, UINT16),
     "solarcharger_pv_voltage": RegisterInfo(776, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "solarcharger_pv_current": RegisterInfo(777, INT16, ELECTRIC_CURRENT_AMPERE, 10),
@@ -393,6 +402,13 @@ motordrive_registers = {
     "motordrive_controller_temperature": RegisterInfo(2053, INT16, UnitOfTemperature.CELSIUS, 10)
 }
 
+class charger_mode(Enum):
+    OFF = 0
+    ON = 1
+    ERROR = 2
+    UNAVAILABLE = 3
+
+
 charger_registers = {
     "charger_voltage_output_1": RegisterInfo(2307, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "charger_current_output_1": RegisterInfo(2308, INT16, ELECTRIC_CURRENT_AMPERE, 10),
@@ -404,7 +420,7 @@ charger_registers = {
     "charger_L1_current": RegisterInfo(2314, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "charger_L1_power": RegisterInfo(2315, UINT16, UnitOfPower.WATT),
     "charger_current_limit": RegisterInfo(2316, INT16, ELECTRIC_CURRENT_AMPERE, 10, writeType=SliderWriteType(-100, 100, "AC", True)), #TODO make user configureable
-    "charger_mode": RegisterInfo(2317, UINT16), #TODO support charger mode enum
+    "charger_mode": RegisterInfo(register=2317, dataType=UINT16, writeType=SelectWriteType(charger_mode)), #TODO support charger mode enum
     "charger_state": RegisterInfo(2318, UINT16),
     "charger_errorcode": RegisterInfo(2319, UINT16),
     "charger_relay": RegisterInfo(2320, UINT16),
@@ -435,13 +451,32 @@ gps_registers = {
     "gps_numberofsatellites": RegisterInfo(2807, UINT16),
     "gps_altitude": RegisterInfo(2808, INT32, UnitOfSpeed.METERS_PER_SECOND, 10)
 }
+#0=Unused, BL disabled;1=Restarting;2=Self-consumption;3=Self-consumption;4=Self-consumption;5=Discharge disabled;6=Force charge;7=Sustain;8=Low Soc Recharge;9=Keep batteries charged;10=BL Disabled;11=BL Disabled (Low SoC);12=BL Disabled (Low SOC recharge)
+class ess_batterylife_state(Enum):
+    #BL_DISABLED = 0
+    RESTARTING = 1
+    SELF_CONSUMPTION = 2
+    #SELF_CONSUMPTION = 3 #TODO check if there are really three codes used for the same state info?
+    #SELF_CONSUMPTION = 4
+    DISCHARGE_DISABLED = 5
+    FORCE_CHARGE = 6
+    SUSTAIN = 7
+    LOW_SOC_RECHARGE = 8
+    KEEP_BATTERIES_CHARGED = 9
+    BL_DISABLED = 10
+    BL_DISABLED_LOW_SOC = 11
+    BL_DISABLED_LOC_SOC_RECHARGE = 12
+
+class ess_mode(Enum):
+    ESS_PHASE_COMPENSATION = 1
+    ESS_NO_PHASE_COMPENSATION = 2
+    EXTERNAL_CONTROL = 3
 
 settings_ess_registers = {
-    "settings_ess_batterylife_state": RegisterInfo(2900, UINT16), #TODO introduce enum for selection writetype
+    "settings_ess_batterylife_state": RegisterInfo(register=2900, dataType=UINT16, writeType=SelectWriteType(ess_batterylife_state)), #TODO introduce enum for selection writetype
     "settings_ess_batterylife_minimumsoc": RegisterInfo(2901, UINT16, PERCENTAGE, 10, SliderWriteType(0, 100)), #TODO make user configureable
-    "settings_ess_mode": RegisterInfo(2902, UINT16), #TODO introduce enum for mode selection
+    "settings_ess_mode": RegisterInfo(register=2902, dataType=UINT16, writeType=SelectWriteType(ess_mode)), #TODO introduce enum for mode selection
     "settings_ess_batterylife_soclimit": RegisterInfo(2903, UINT16, PERCENTAGE, 10), #TODO not writeable
-
 }
 
 tank_registers = {
@@ -475,9 +510,14 @@ inverter_alarm_registers = {
     "inverter_alarm_ripple": RegisterInfo(3117, UINT16),
 }
 
+class inverter_mode(Enum):
+    ON = 2
+    OFF = 4
+    ECO = 5
+
 inverter_info_registers = {
     "inverter_info_firmwareversion": RegisterInfo(3125, UINT16),
-    "inverter_info_mode": RegisterInfo(3126, UINT16), #TODO introduce selection mode enum
+    "inverter_info_mode": RegisterInfo(register=3126, dataType=UINT16, writeType=SelectWriteType(inverter_mode)), #TODO introduce selection mode enum
     "inverter_info_productid": RegisterInfo(3127, UINT16),
     "inverter_info_state": RegisterInfo(3128, UINT16),
 }
@@ -597,12 +637,17 @@ evcharger_productid_registers = {
     "evcharger_productid": RegisterInfo(3800, UINT16)
 }
 
+class evcharger_mode(Enum):
+    AC_INPUT_1 = 0
+    AC_OUTPUT = 1
+    AC_INPUT_2 = 2
+
 evcharger_registers = {
     "evcharger_firmwareversion": RegisterInfo(3802, UINT32),
     "evcharger_serial": RegisterInfo(3804, STRING(6)),
     "evcharger_model": RegisterInfo(3810, STRING(4)),
     "evcharger_maxcurrent": RegisterInfo(register=3814, dataType=UINT16, unit=ELECTRIC_CURRENT_AMPERE, writeType=SliderWriteType(0, 100, "AC", False)), #TODO make user configureable
-    "evcharger_mode": RegisterInfo(3815, UINT16),#TODO introduce mode enums
+    "evcharger_mode": RegisterInfo(register=3815, dataType=UINT16, writeType=SelectWriteType(evcharger_mode)),#TODO introduce mode enums
     "evcharger_energy_forward": RegisterInfo(3816, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "evcharger_L1_power": RegisterInfo(3818, UINT16, UnitOfPower.WATT),
     "evcharger_L2_power": RegisterInfo(3819, UINT16, UnitOfPower.WATT),
@@ -709,6 +754,12 @@ dcsystem_registers = {
     "dcsystem_alarm_hightemperature": RegisterInfo(4413, UINT16)
 }
 
+class multi_mode(Enum):
+    CHARGER = 1
+    INVERTER = 2
+    ON = 3
+    OFF = 4
+
 multi_registers = {
     "multi_input_L1_voltage": RegisterInfo(4500, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
     "multi_input_L2_voltage": RegisterInfo(4501, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
@@ -741,7 +792,7 @@ multi_registers = {
     "multi_battery_temperature": RegisterInfo(4528, INT16, UnitOfTemperature.CELSIUS, 10),
     "multi_battery_soc": RegisterInfo(4529, UINT16, PERCENTAGE, 10),
     "multi_state": RegisterInfo(4530, UINT16),
-    "multi_mode": RegisterInfo(4531, UINT16), #TODO introduce mode enums
+    "multi_mode": RegisterInfo(register=4531, dataType=UINT16, writeType=SelectWriteType(multi_mode)), #TODO introduce mode enums
     "multi_alarm_hightemperature": RegisterInfo(4532, UINT16),
     "multi_alarm_highvoltage": RegisterInfo(4533, UINT16),
     "multi_alarm_highvoltageacout": RegisterInfo(4534, UINT16),
