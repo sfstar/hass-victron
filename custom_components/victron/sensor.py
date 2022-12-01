@@ -1,5 +1,5 @@
 
-from .const import DOMAIN, register_info_dict, CONF_ADVANCED_OPTIONS, ReadEntityType, TextReadEntityType
+from .const import DOMAIN, register_info_dict, CONF_ADVANCED_OPTIONS, ReadEntityType, TextReadEntityType, BoolReadEntityType
 
 from dataclasses import dataclass
 
@@ -65,7 +65,7 @@ async def async_setup_entry(
                     state_class=registerInfo.determine_stateclass(),
                     unit=unit,
                     device_class=determine_victron_device_class(registerInfo.unit),
-                    entity_type=registerInfo.entityType if isinstance(registerInfo.entityType, TextReadEntityType) else None
+                    entity_type=registerInfo.entityType if isinstance(registerInfo.entityType, TextReadEntityType) or isinstance(registerInfo.entityType, BoolReadEntityType) else None
                 ))
 
     entities = []
@@ -152,7 +152,14 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         try:
             #TODO see if entitydescription can be updated to include unit info and set it in init
             data = self.coordinator.processed_data()["data"][self.data_key]
-            self._attr_native_value = self.entity_type.decodeEnum(data).name if self.entity_type is not None else data
+
+            if self.entity_type is not None:
+                if isinstance(self.entity_type, TextReadEntityType):
+                    self._attr_native_value = self.entity_type.decodeEnum(data).name
+                elif isinstance(self.entity_type, BoolReadEntityType):
+                    self._attr_native_value = True if data == 1 else False
+            else:
+                self._attr_native_value = data
 #            self._attr_native_value = data
 #TODO FURTHER DEBUG AND USE THIS FUNCTION IN DESCRIPTION INSTEAD
 #            self._attr_native_value =  self.entity_description.value_fn(self.coordinator.processed_data())

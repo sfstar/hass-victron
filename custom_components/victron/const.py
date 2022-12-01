@@ -69,6 +69,10 @@ class TextReadEntityType(ReadEntityType):
         super().__init__()
         self.decodeEnum = decodeEnum
 
+class BoolReadEntityType(ReadEntityType):
+    def __init__(self) -> None:
+        super().__init__(entityTypeName="bool")
+
 class SwitchWriteType(EntityType):
     def __init__(self) -> None:
         super().__init__(entityTypeName="button")
@@ -163,8 +167,24 @@ class vebus_state(Enum):
     POWER_SUPPLY = 11
     EXTERNAL_CONTROL = 252
 
-#TODO decode vebus error and onwards for read entities
-#0=No error;1=VE.Bus Error 1: Device is switched off because one of the other phases in the system has switched off;2=VE.Bus Error 2: New and old types MK2 are mixed in the system;3=VE.Bus Error 3: Not all- or more than- the expected devices were found in the system;4=VE.Bus Error 4: No other device whatsoever detected;5=VE.Bus Error 5: Overvoltage on AC-out;6=VE.Bus Error 6: Error in DDC Program;7=VE.Bus BMS connected- which requires an Assistant- but no assistant found;10=VE.Bus Error 10: System time synchronisation problem occurred;14=VE.Bus Error 14: Device cannot transmit data;16=VE.Bus Error 16: Dongle missing;17=VE.Bus Error 17: One of the devices assumed master status because the original master failed;18=VE.Bus Error 18: AC Overvoltage on the output of a slave has occurred while already switched off;22=VE.Bus Error 22: This device cannot function as slave;24=VE.Bus Error 24: Switch-over system protection initiated;25=VE.Bus Error 25: Firmware incompatibility. The firmware of one of the connected device is not sufficiently up to date to operate in conjunction with this device;26=VE.Bus Error 26: Internal error
+class vebus_error(Enum):
+    OK = 0
+    EXTERNAL_PHASE_TRIGGERED_SWITCHOFF = 1
+    MK2_TYPE_MISMATCH = 2
+    DEVICE_COUNT_MISMATCH = 3
+    NO_OTHER_DEVICES = 4
+    AC_OVERVOLTAGE_OUT = 5
+    DDC_PROGRAM = 6
+    BMS_WITHOUT_ASSISTANT_CONNECTED = 7
+    TIME_SYNC_MISMATCH = 10
+    CANNOT_TRANSMIT = 14
+    DONGLE_ABSENT = 16
+    MASTER_FAILOVER = 17
+    AC_OVERVOLTAGE_SLAVE_OFF = 18
+    CANNOT_BE_SLAVE = 22
+    SWITCH_OVER_PROTECTION = 24
+    FIRMWARE_INCOMPATIBILTIY = 25
+    INTERNAL_ERROR = 26
 
 vebus_registers = { 
     "vebus_activein_L1_voltage": RegisterInfo(3, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
@@ -196,7 +216,7 @@ vebus_registers = {
     "vebus_activein_activeinput": RegisterInfo(register=29, dataType=UINT16, ),
     "vebus_soc": RegisterInfo(30, UINT16, PERCENTAGE, 10, SliderWriteType(0, 100)),
     "vebus_state": RegisterInfo(register=31, dataType=UINT16, entityType=TextReadEntityType(vebus_state)), #This has no unit of measurement
-    "vebus_error": RegisterInfo(32, UINT16), #This has no unit of measurement
+    "vebus_error": RegisterInfo(register=32, dataType=UINT16, entityType=TextReadEntityType(vebus_error)), #This has no unit of measurement
     "vebus_mode": RegisterInfo(register=33, dataType=UINT16, entityType=SelectWriteType(vebus_mode)), #This has no unit of measurement #TODO make mode selection writeable
     "vebus_alarm_hightemperature": RegisterInfo(register=34, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_alarm_lowbattery": RegisterInfo(register=35, dataType=UINT16,  entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
@@ -221,10 +241,10 @@ vebus_registers = {
     "vebus_alarm_L3_overload": RegisterInfo(register=54, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_alarm_L3_ripple": RegisterInfo(register=55, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_pvinverter_disable": RegisterInfo(register=56, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
-    "vebus_bms_allowtocharge": RegisterInfo(57, UINT16), #This has no unit of measurement
-    "vebus_bms_allowtodischarge": RegisterInfo(58, UINT16), #This has no unit of measurement
-    "vebus_bms_bmsexpected": RegisterInfo(59, UINT16), #This has no unit of measurement
-    "vebus_bms_error": RegisterInfo(60, UINT16), #This has no unit of measurement
+    "vebus_bms_allowtocharge": RegisterInfo(register=57, dataType=UINT16, entityType=BoolReadEntityType()), #This has no unit of measurement
+    "vebus_bms_allowtodischarge": RegisterInfo(register=58, dataType=UINT16, entityType=BoolReadEntityType()), #This has no unit of measurement
+    "vebus_bms_bmsexpected": RegisterInfo(register=59, dataType=UINT16, entityType=BoolReadEntityType()), #This has no unit of measurement
+    "vebus_bms_error": RegisterInfo(register=60, dataType=UINT16, entityType=BoolReadEntityType()), #This has no unit of measurement
     "vebus_battery_temperature": RegisterInfo(61, INT16, UnitOfTemperature.CELSIUS, 10),
     "vebus_systemreset": RegisterInfo(register=62, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement # TODO use option selection here?
     "vebus_alarm_phaserotation": RegisterInfo(register=63, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
@@ -233,11 +253,11 @@ vebus_registers = {
     "vebus_L1_maxfeedinpower": RegisterInfo(66, UINT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", False)),
     "vebus_L2_maxfeedinpower": RegisterInfo(67, UINT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", False)),
     "vebus_L3_maxfeedinpower": RegisterInfo(68, UINT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", False)),
-    "vebus_state_ignoreacin1": RegisterInfo(69, UINT16), #This has no unit of measurement
-    "vebus_state_ignoreacin2": RegisterInfo(70, UINT16), #This has no unit of measurement
+    "vebus_state_ignoreacin1": RegisterInfo(register=69, dataType=UINT16, entityType=BoolReadEntityType()), #This has no unit of measurement
+    "vebus_state_ignoreacin2": RegisterInfo(register=70, dataType=UINT16, entityType=BoolReadEntityType()), #This has no unit of measurement
     "vebus_targetpowerismaxfeedin": RegisterInfo(register=71, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
     "vebus_fixsolaroffsetto100mv": RegisterInfo(register=72, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
-    "vebus_sustain": RegisterInfo(73, UINT16), #This has no unit of measurement
+    "vebus_sustain": RegisterInfo(register=73, dataType=UINT16, entityType=BoolReadEntityType()), #This has no unit of measurement
     "vebus_acin1toacout": RegisterInfo(74, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "vebus_acin1toinverter": RegisterInfo(76, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "vebus_acin2toacout": RegisterInfo(78, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
@@ -352,17 +372,53 @@ class solarcharger_mode(Enum):
     ON = 1
     OFF = 4
 
+class solarcharger_state(Enum):
+    OFF = 0
+    FAULT = 2
+    BULK = 3
+    ABSORPTION = 4
+    FLOAT = 5
+    STORAGE = 6
+    EQUALIZE = 7
+    OTHER_HUB_1 = 11
+    EXTERNAL_CONTROL = 252
+
+class solarcharger_equalization_pending(Enum):
+    NO = 0
+    YES = 1
+    ERROR = 2
+    UNAVAILABLE = 3
+
+#TODO continue from 788 with decode parsing into readable entities
+# 0=No error;
+# 1=Battery temperature too high;
+# 2=Battery voltage too high;
+# 3=Battery temperature sensor miswired (+);
+# 4=Battery temperature sensor miswired (-);
+# 5=Battery temperature sensor disconnected;
+# 6=Battery voltage sense miswired (+);
+# 7=Battery voltage sense miswired (-);
+# 8=Battery voltage sense disconnected;
+# 9=Battery voltage wire losses too high;
+# 17=Charger temperature too high;
+# 18=Charger over-current;
+# 19=Charger current polarity reversed;
+# 20=Bulk time limit reached;
+# 22=Charger temperature sensor miswired;
+# 23=Charger temperature sensor disconnected;
+# 34=Input current too high
+
 solarcharger_registers = {
     "solarcharger_battery_voltage": RegisterInfo(771, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "solarcharger_battery_current": RegisterInfo(772, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "solarcharger_battery_temperature": RegisterInfo(773, INT16, UnitOfTemperature.CELSIUS, 10),
     "solarcharger_mode": RegisterInfo(register=774, dataType=UINT16, entityType=SelectWriteType(solarcharger_mode)), #TODO setup enum selection option for mode
-    "solarcharger_state": RegisterInfo(775, UINT16),
+    "solarcharger_state": RegisterInfo(register=775, dataType=UINT16, entityType=TextReadEntityType(solarcharger_state)),
     "solarcharger_pv_voltage": RegisterInfo(776, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "solarcharger_pv_current": RegisterInfo(777, INT16, ELECTRIC_CURRENT_AMPERE, 10),
-    "solarcharger_equallization_pending": RegisterInfo(778, UINT16),
+    "solarcharger_equallization_pending": RegisterInfo(register=778, dataType=UINT16, entityType=TextReadEntityType(solarcharger_equalization_pending)),
     "solarcharger_equalization_time_remaining": RegisterInfo(779, UINT16, TIME_SECONDS, 10),
-    "solarcharger_relay": RegisterInfo(780, UINT16),
+    "solarcharger_relay": RegisterInfo(register=780, dataType=UINT16, entityType=BoolReadEntityType()),
     "solarcharger_alarm": RegisterInfo(register=781, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
     "solarcharger_alarm_lowvoltage": RegisterInfo(register=782, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
     "solarcharger_alarm_highvoltage": RegisterInfo(register=783, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
