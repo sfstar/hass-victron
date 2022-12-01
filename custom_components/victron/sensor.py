@@ -1,5 +1,5 @@
 
-from .const import DOMAIN, register_info_dict, CONF_ADVANCED_OPTIONS
+from .const import DOMAIN, register_info_dict, CONF_ADVANCED_OPTIONS, ReadEntityType, TextReadEntityType
 
 from dataclasses import dataclass
 
@@ -53,8 +53,10 @@ async def async_setup_entry(
                 # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
                 # _LOGGER.debug(str(registerInfo.unit))
                 if config_entry.options[CONF_ADVANCED_OPTIONS]:
-                    if registerInfo.entityType is not None:
+                    if not isinstance(registerInfo.entityType, ReadEntityType):
                         continue
+
+
                 descriptions.append(VictronEntityDescription(
                     key=register_name,
                     name=register_name.replace('_', ' '),
@@ -62,7 +64,8 @@ async def async_setup_entry(
                     value_fn=lambda data: data["data"][unit + "." + register_name],
                     state_class=registerInfo.determine_stateclass(),
                     unit=unit,
-                    device_class=determine_victron_device_class(registerInfo.unit)
+                    device_class=determine_victron_device_class(registerInfo.unit),
+                    entity_type=registerInfo.entityType if isinstance(registerInfo.entityType, TextReadEntityType) else None
                 ))
 
     entities = []
@@ -110,6 +113,7 @@ class VictronEntityDescription(SensorEntityDescription):
     #TODO write unit references into this class and convert to base for all entity types
     unit: int = None
     value_fn: Callable[[dict], StateType] = None
+    entity_type: ReadEntityType = None
 
 class VictronSensor(CoordinatorEntity, SensorEntity):
     """Representation of a ENTSO-e sensor."""
@@ -128,6 +132,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         self._attr_native_unit_of_measurement = description.native_unit_of_measurement
         self._attr_state_class = description.state_class
         self.data_key = str(self.description.unit) + "." + str(self.description.key)
+        self.entity_type = description.entity_type
 
         self._attr_unique_id = f"{description.unit}_{self.description.key}"
         if description.unit not in (100, 225):
@@ -147,7 +152,8 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         try:
             #TODO see if entitydescription can be updated to include unit info and set it in init
             data = self.coordinator.processed_data()["data"][self.data_key]
-            self._attr_native_value = data
+            self._attr_native_value = self.entity_type.decodeEnum(data).name if self.entity_type is not None else data
+#            self._attr_native_value = data
 #TODO FURTHER DEBUG AND USE THIS FUNCTION IN DESCRIPTION INSTEAD
 #            self._attr_native_value =  self.entity_description.value_fn(self.coordinator.processed_data())
         except (TypeError, IndexError):
