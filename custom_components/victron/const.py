@@ -143,6 +143,29 @@ class vebus_mode(Enum):
     ON = 3
     OFF = 4
 
+class vebus_activeinput(Enum):
+    AC_INPUT_1 = 0
+    AC_INPUT_2 = 1
+    DISCONNECTED = 240
+
+class vebus_state(Enum):
+    OFF = 0
+    LOW_POWER = 1
+    FAULT = 2
+    BULK = 3
+    ABSORPTION = 4
+    FLOAT = 5
+    STORAGE = 6
+    EQUALIZE = 7
+    PASSTHRU = 8
+    INVERTING = 9
+    POWER_ASSIST = 10
+    POWER_SUPPLY = 11
+    EXTERNAL_CONTROL = 252
+
+#TODO decode vebus error and onwards for read entities
+#0=No error;1=VE.Bus Error 1: Device is switched off because one of the other phases in the system has switched off;2=VE.Bus Error 2: New and old types MK2 are mixed in the system;3=VE.Bus Error 3: Not all- or more than- the expected devices were found in the system;4=VE.Bus Error 4: No other device whatsoever detected;5=VE.Bus Error 5: Overvoltage on AC-out;6=VE.Bus Error 6: Error in DDC Program;7=VE.Bus BMS connected- which requires an Assistant- but no assistant found;10=VE.Bus Error 10: System time synchronisation problem occurred;14=VE.Bus Error 14: Device cannot transmit data;16=VE.Bus Error 16: Dongle missing;17=VE.Bus Error 17: One of the devices assumed master status because the original master failed;18=VE.Bus Error 18: AC Overvoltage on the output of a slave has occurred while already switched off;22=VE.Bus Error 22: This device cannot function as slave;24=VE.Bus Error 24: Switch-over system protection initiated;25=VE.Bus Error 25: Firmware incompatibility. The firmware of one of the connected device is not sufficiently up to date to operate in conjunction with this device;26=VE.Bus Error 26: Internal error
+
 vebus_registers = { 
     "vebus_activein_L1_voltage": RegisterInfo(3, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
     "vebus_activein_L2_voltage": RegisterInfo(4, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
@@ -170,9 +193,9 @@ vebus_registers = {
     "vebus_battery_voltage": RegisterInfo(26, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "vebus_battery_current": RegisterInfo(27, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "vebus_numberofphases": RegisterInfo(28, UINT16), #the number count has no unit of measurement
-    "vebus_activein_activeinput": RegisterInfo(29, UINT16),
+    "vebus_activein_activeinput": RegisterInfo(register=29, dataType=UINT16, ),
     "vebus_soc": RegisterInfo(30, UINT16, PERCENTAGE, 10, SliderWriteType(0, 100)),
-    "vebus_state": RegisterInfo(31, UINT16), #This has no unit of measurement
+    "vebus_state": RegisterInfo(register=31, dataType=UINT16, entityType=TextReadEntityType(vebus_state)), #This has no unit of measurement
     "vebus_error": RegisterInfo(32, UINT16), #This has no unit of measurement
     "vebus_mode": RegisterInfo(register=33, dataType=UINT16, entityType=SelectWriteType(vebus_mode)), #This has no unit of measurement #TODO make mode selection writeable
     "vebus_alarm_hightemperature": RegisterInfo(register=34, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
@@ -866,6 +889,13 @@ multi_registers = {
 
 }
 
+class register_input_source(Enum):
+    UNKNOWN = 0
+    GRID = 1
+    GENERATOR = 2
+    SHORE = 3
+    NOT_CONNECTED = 240
+
 system_registers = {
     "system_serial": RegisterInfo(800, STRING(6)),
     "system_relay_0": RegisterInfo(register=806, dataType=UINT16, entityType=SwitchWriteType()),
@@ -888,15 +918,20 @@ system_registers = {
     "system_genset_L1": RegisterInfo(823, INT16, UnitOfPower.WATT),
     "system_genset_L2": RegisterInfo(824, INT16, UnitOfPower.WATT),
     "system_genset_L3": RegisterInfo(825, INT16, UnitOfPower.WATT),
-    "system_input_source": RegisterInfo(826, INT16)
+    "system_input_source": RegisterInfo(register=826, dataType=INT16, entityType=TextReadEntityType(register_input_source))
 }
+
+class system_battery_state(Enum):
+    IDLE = 0
+    CHARGING = 1
+    DISCHARGING = 2
 
 system_battery_registers = {
     "system_battery_voltage": RegisterInfo(840, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
     "system_battery_current": RegisterInfo(841, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "system_battery_power": RegisterInfo(842, INT16, UnitOfPower.WATT),
     "system_battery_soc": RegisterInfo(843, UINT16, PERCENTAGE),
-    "system_battery_state": RegisterInfo(844, UINT16),
+    "system_battery_state": RegisterInfo(register=844, dataType=UINT16, entityType=TextReadEntityType(system_battery_state)),
     "system_battery_amphours": RegisterInfo(845, UINT16, ELECTRIC_CURRENT_AMPERE, -10), # should be amp hours
     "system_battery_time_to_go": RegisterInfo(846, UINT16, TIME_SECONDS, 0)
 }
