@@ -15,7 +15,7 @@ from homeassistant.const import (
     UnitOfTemperature,
     UnitOfVolume,
     UnitOfSpeed,
-    UnitOfPressure
+    UnitOfPressure,
 )
  
 from homeassistant.components.sensor import SensorStateClass

@@ -14,10 +14,10 @@ The current state of this integration provides the following limitations regardi
 - Applying config changes requires a reload/restart of the integration
 - Number slider options aren't yet fully based on user specified limits
 - Configuring the integration will be relatively slow if a discovery scan is required.
+- This system wasn't tested with a three phase system. Although basic functionality should work minor bugs could have gone unnoticed
 
 
 ## Currently planned improvements
-TODO
 - Fully Switch to async
 - Investigate if scan without causing errors is possible
 - Determine limit applicability by specifying AC or DC in register info writetype
@@ -73,11 +73,50 @@ Therefore the following applies to anyone using this code:
 - Use at your own risk.
 
 # Options
+The integration provides end users with the following configuration options.
 
-## interval
+## Host
+The IP address of the victron GX device running the modbusTCP service.
+It's only configureable during setup and it's recommended to make the GX device static in your router
+
+## Port
+The port on which victron exposes the modbusTCP service.
+Victron exposes the service on port 502, but this configuration option is present to allow for proxy configuration (via nginx etc).
+The average user doesn't need to change the port being used
+
+## Interval
 interval determines the number of rounded seconds to use between updating the entities provided by this integration.
 For slower systems setting the interval to lower than 5 seconds might cause issues.
 Setting a interval of 0 will result in an interval of 1 seconds being used.
+
+## Advanced
+Ticking the write support option enables an "advanced" users mode.
+If write support is disabled the integration is "safer" to use.
+Since you can't accidentally change any setting that might cause damage (i.e. to High currents for your cabling).
+
+It is currently unknown and untested if the ModbusTCP server write registers are guard-railed. (Have protections/limits in place that prevent damage)
+Therefore, this integration offers users the ability to set "soft" guard rails by requiring current and voltage settings and limits to be specified by the end user.
+Although this make the integration safer, one should always double check if the provided write entities aren't capable of going to high / low for your system.
+
+Currently the options are tailored to the US / EU base settings and lifepo4 battery voltages.
+If you use another grid specification or battery type you can submit an issue to have them included.
+
+## AC Current
+The maximum current in Amps that your system is designed to handle.
+This doesn't make a difference between the AC OUT and the AC IN side of your setup.
+Please keep a small margin below your rated grid connection current (for example if you have 1x40A then set the integration to max 39 AMPS).
+
+This advice does assume that your system is fully setup to handle these currents.
+
+## DC current
+The maximum current in Amps that your battery and battery cabling/busbars are rated to handle.
+
+## DC Voltage
+The voltage profile to use in order to calculate the voltage boundaries (i.e. 4s, 8s and 16s lifepo4 configurations).
+
+## AC Voltage
+The AC voltage for a single phase in your region (currently supported is US: 120v and EU: 230v)
+This setting is used in combination with AC current to automatically calcultate the max wattage for applicable wattage settings.
 
 # Resources 
 The following links can be helpfull resources:
