@@ -12,7 +12,7 @@ Testers are welcome to try out the integration and submit issues / feature reque
 ## Limitations
 The current state of this integration provides the following limitations regarding it's use:
 - Applying config changes requires a reload/restart of the integration
-- Selection (write) options are not yet correctly decoded / selectable
+- Number slider options aren't yet fully based on user specified limits
 - Configuring the integration will be relatively slow if a discovery scan is required.
 
 
@@ -21,7 +21,6 @@ TODO
 - Fully Switch to async
 - Investigate if scan without causing errors is possible
 - Determine limit applicability by specifying AC or DC in register info writetype
-- Improve configuration options to allow users to explicitly enable write support
 - Expose this integration to hacs
 - Start using releases and release notes
 - Improve connection loss resilience

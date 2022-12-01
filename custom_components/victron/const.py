@@ -1,12 +1,10 @@
 """Constants for the victron integration."""
 from collections import OrderedDict
 from enum import Enum
-#TODO change POWER_WATT and POWER_KILO_WATT to enum instead of static entry
 from homeassistant.const import (
     PERCENTAGE,
     UnitOfPower,
     UnitOfEnergy,
-    POWER_KILO_WATT,
     ELECTRIC_POTENTIAL_VOLT,
     ELECTRIC_CURRENT_AMPERE,
     FREQUENCY_HERTZ,
@@ -217,7 +215,7 @@ vebus_registers = {
     "vebus_soc": RegisterInfo(30, UINT16, PERCENTAGE, 10, SliderWriteType(0, 100)),
     "vebus_state": RegisterInfo(register=31, dataType=UINT16, entityType=TextReadEntityType(generic_charger_state)), #This has no unit of measurement
     "vebus_error": RegisterInfo(register=32, dataType=UINT16, entityType=TextReadEntityType(vebus_error)), #This has no unit of measurement
-    "vebus_mode": RegisterInfo(register=33, dataType=UINT16, entityType=SelectWriteType(vebus_mode)), #This has no unit of measurement #TODO make mode selection writeable
+    "vebus_mode": RegisterInfo(register=33, dataType=UINT16, entityType=SelectWriteType(vebus_mode)), #This has no unit of measurement
     "vebus_alarm_hightemperature": RegisterInfo(register=34, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_alarm_lowbattery": RegisterInfo(register=35, dataType=UINT16,  entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_alarm_overload": RegisterInfo(register=36,dataType=UINT16,  entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
@@ -246,7 +244,7 @@ vebus_registers = {
     "vebus_bms_bmsexpected": RegisterInfo(register=59, dataType=UINT16, entityType=BoolReadEntityType()), #This has no unit of measurement
     "vebus_bms_error": RegisterInfo(register=60, dataType=UINT16, entityType=BoolReadEntityType()), #This has no unit of measurement
     "vebus_battery_temperature": RegisterInfo(61, INT16, UnitOfTemperature.CELSIUS, 10),
-    "vebus_systemreset": RegisterInfo(register=62, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement # TODO use option selection here?
+    "vebus_systemreset": RegisterInfo(register=62, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
     "vebus_alarm_phaserotation": RegisterInfo(register=63, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_alarm_gridlost": RegisterInfo(register=64, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_donotfeedinovervoltage": RegisterInfo(register=65, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
@@ -477,7 +475,7 @@ solarcharger_registers = {
     "solarcharger_battery_voltage": RegisterInfo(771, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "solarcharger_battery_current": RegisterInfo(772, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "solarcharger_battery_temperature": RegisterInfo(773, INT16, UnitOfTemperature.CELSIUS, 10),
-    "solarcharger_mode": RegisterInfo(register=774, dataType=UINT16, entityType=SelectWriteType(solarcharger_mode)), #TODO setup enum selection option for mode
+    "solarcharger_mode": RegisterInfo(register=774, dataType=UINT16, entityType=SelectWriteType(solarcharger_mode)),
     "solarcharger_state": RegisterInfo(register=775, dataType=UINT16, entityType=TextReadEntityType(solarcharger_state)),
     "solarcharger_pv_voltage": RegisterInfo(776, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "solarcharger_pv_current": RegisterInfo(777, INT16, ELECTRIC_CURRENT_AMPERE, 10),
@@ -550,8 +548,8 @@ pvinverter_registers = {
     "pvinverter_L1_energy_forward_total": RegisterInfo(1046, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "pvinverter_L2_energy_forward_total": RegisterInfo(1048, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "pvinverter_L3_energy_forward_total": RegisterInfo(1050, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
-    "pvinverter_power_total": RegisterInfo(1052, INT32, POWER_KILO_WATT),
-    "pvinverter_power_max_capacity": RegisterInfo(1054, UINT32, POWER_KILO_WATT),
+    "pvinverter_power_total": RegisterInfo(1052, INT32, UnitOfPower.KILO_WATT),
+    "pvinverter_power_max_capacity": RegisterInfo(1054, UINT32, UnitOfPower.KILO_WATT),
     "pvinverter_powerlimit": RegisterInfo(register=1056, dataType=UINT32, unit=UnitOfPower.WATT, entityType=SliderWriteType(0, 9000, "AC", False))  #TODO determine min max based on user config
 }
 
@@ -582,7 +580,7 @@ charger_registers = {
     "charger_L1_current": RegisterInfo(2314, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "charger_L1_power": RegisterInfo(2315, UINT16, UnitOfPower.WATT),
     "charger_current_limit": RegisterInfo(2316, INT16, ELECTRIC_CURRENT_AMPERE, 10, entityType=SliderWriteType(-100, 100, "AC", True)), #TODO make user configureable
-    "charger_mode": RegisterInfo(register=2317, dataType=UINT16, entityType=SelectWriteType(charger_mode)), #TODO support charger mode enum
+    "charger_mode": RegisterInfo(register=2317, dataType=UINT16, entityType=SelectWriteType(charger_mode)),
     "charger_state": RegisterInfo(register=2318, dataType=UINT16, entityType=TextReadEntityType(generic_charger_state)),
     "charger_errorcode": RegisterInfo(register=2319, dataType=UINT16, entityType=TextReadEntityType(generic_charger_errorcode)),
     "charger_relay": RegisterInfo(register=2320, dataType=UINT16, entityType=BoolReadEntityType()),
@@ -635,9 +633,9 @@ class ess_mode(Enum):
     EXTERNAL_CONTROL = 3
 
 settings_ess_registers = {
-    "settings_ess_batterylife_state": RegisterInfo(register=2900, dataType=UINT16, entityType=SelectWriteType(ess_batterylife_state)), #TODO introduce enum for selection writetype
+    "settings_ess_batterylife_state": RegisterInfo(register=2900, dataType=UINT16, entityType=SelectWriteType(ess_batterylife_state)),
     "settings_ess_batterylife_minimumsoc": RegisterInfo(2901, UINT16, PERCENTAGE, 10, SliderWriteType(0, 100)), #TODO make user configureable
-    "settings_ess_mode": RegisterInfo(register=2902, dataType=UINT16, entityType=SelectWriteType(ess_mode)), #TODO introduce enum for mode selection
+    "settings_ess_mode": RegisterInfo(register=2902, dataType=UINT16, entityType=SelectWriteType(ess_mode)),
     "settings_ess_batterylife_soclimit": RegisterInfo(2903, UINT16, PERCENTAGE, 10), #TODO not writeable
 }
 
@@ -700,7 +698,7 @@ class inverter_mode(Enum):
 
 inverter_info_registers = {
     "inverter_info_firmwareversion": RegisterInfo(3125, UINT16),
-    "inverter_info_mode": RegisterInfo(register=3126, dataType=UINT16, entityType=SelectWriteType(inverter_mode)), #TODO introduce selection mode enum
+    "inverter_info_mode": RegisterInfo(register=3126, dataType=UINT16, entityType=SelectWriteType(inverter_mode)),
     "inverter_info_productid": RegisterInfo(3127, UINT16),
     "inverter_info_state": RegisterInfo(register=3128, dataType=UINT16, entityType=TextReadEntityType(generic_charger_state)),
 }
@@ -960,7 +958,7 @@ class generator_error(Enum):
     REMOTE_FAULT = 2
 
 generator_registers = {
-    "generator_manualstart": RegisterInfo(register=3500, dataType=UINT16, entityType=SwitchWriteType()), #TODO check setting inversion for value interpretation
+    "generator_manualstart": RegisterInfo(register=3500, dataType=UINT16, entityType=SwitchWriteType()),
     "generator_runningbyconditioncode": RegisterInfo(register=3501, dataType=UINT16, entityType=TextReadEntityType(generator_runningbyconditioncode)),
     "generator_runtime": RegisterInfo(3502, UINT16, TIME_SECONDS, 0), #documentation says 1 scale. assuming this is incorrect and 0 should be used like all other seconds registers
     "generator_quiethours": RegisterInfo(register=3503, dataType=UINT16, entityType=BoolReadEntityType()),

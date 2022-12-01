@@ -64,7 +64,7 @@ async def async_setup_entry(
                     value_fn=lambda data: data["data"][unit + "." + register_name],
                     state_class=registerInfo.determine_stateclass(),
                     unit=unit,
-                    device_class=determine_victron_device_class(registerInfo.unit),
+                    device_class=determine_victron_device_class(register_name, registerInfo.unit),
                     entity_type=registerInfo.entityType if isinstance(registerInfo.entityType, TextReadEntityType) or isinstance(registerInfo.entityType, BoolReadEntityType) else None
                 ))
 
@@ -81,7 +81,7 @@ async def async_setup_entry(
     # Add an entity for each sensor type
     async_add_entities(entities, True)
 
-def determine_victron_device_class(unit):
+def determine_victron_device_class(name, unit):
     if unit == PERCENTAGE:
         return SensorDeviceClass.BATTERY
     elif unit in [member.value for member in UnitOfPower]:
@@ -98,7 +98,9 @@ def determine_victron_device_class(unit):
     elif unit in [member.value for member in UnitOfVolume]:
         return SensorDeviceClass.VOLUME # Perhaps change this to water if only water is measured in volume units
     elif unit in [member.value for member in UnitOfSpeed]:
-        return SensorDeviceClass.SPEED # TODO return windspeed for meteo unit of speed register
+        if "meteo" in name:
+            return SensorDeviceClass.WIND_SPEED
+        return SensorDeviceClass.SPEED
     elif unit in [member.value for member in UnitOfPressure]:
         return SensorDeviceClass.PRESSURE
     elif unit in ELECTRIC_POTENTIAL_VOLT:

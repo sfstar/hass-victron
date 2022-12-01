@@ -43,19 +43,17 @@ async def async_setup_entry(
             for name in registerLedger:
                 for register_name, registerInfo in register_info_dict[name].items():
                     if isinstance(registerInfo.entityType, SelectWriteType):
-                        _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
-                        _LOGGER.debug("register_name")
-                        _LOGGER.debug(register_name)
+                        # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
+                        # _LOGGER.debug("register_name")
+                        # _LOGGER.debug(register_name)
                         descriptions.append(VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace('_', ' '),
                             value_fn=lambda data: data["data"][register_name],
                             slave=unit,
-                            unit=unit,
                             register_ledger_key=name,
                             options=registerInfo.entityType.options,
                             address=registerInfo.register,
-                            scale = registerInfo.scale
                         ))
 
     entities = []
@@ -81,8 +79,6 @@ class VictronEntityDescription(SelectEntityDescription):
     #TODO cleanup unused
     slave: int = None
     address: int = None
-    scale: int = None
-    unit: int = None #TODO cleanup
     value_fn: Callable[[dict], StateType] = None#TODO cleanup
     register_ledger_key: str = None #TODO cleanup
 
@@ -95,29 +91,17 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
         self.description: VictronEntityDescription = description
         #this needs to be changed to allow multiple of the same type
         self._attr_name = f"{description.name}"
-        self.data_key = str(self.description.unit) + "." + str(self.description.key)
+        self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
-        self._attr_unique_id = f"{self.description.unit}_{self.description.key}"
-        if self.description.unit not in (100, 225):
-            self.entity_id = f"{SELECT_DOMAIN}.{DOMAIN}_{self.description.key}_{self.description.unit}"
+        self._attr_unique_id = f"{self.description.slave}_{self.description.key}"
+        if self.description.slave not in (100, 225):
+            self.entity_id = f"{SELECT_DOMAIN}.{DOMAIN}_{self.description.key}_{self.description.slave}"
         else:
             self.entity_id = f"{SELECT_DOMAIN}.{DOMAIN}_{self.description.key}"
 
         self._update_job = HassJob(self.async_schedule_update_ha_state)
         self._unsub_update = None
         super().__init__(coordinator)
-
-
-    # async def async_turn_on(self, **kwargs: Any) -> None:
-    #     """Turn on the device."""
-    #     self.coordinator.write_register(unit=self.description.unit, address=register_info_dict[self.description.register_ledger_key][self.description.key].register, value=1)
-    #     await self.coordinator.async_update_local_entry(self.data_key, 1)
-
-    # async def async_turn_off(self, **kwargs: Any) -> None:
-    #     """Turn off the device."""
-    #     #TODO fix bouncing toggle due to data not directly being updated after this action
-    #     self.coordinator.write_register(unit=self.description.unit, address=register_info_dict[self.description.register_ledger_key][self.description.key].register, value=0)
-    #     await self.coordinator.async_update_local_entry(self.data_key, 0) #TODO update data locally without requiring full refresh
 
     async def async_update(self) -> None:
         """Get the latest data and updates the states."""
@@ -160,15 +144,6 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
         """Change the selected option."""
         self.coordinator.write_register(unit=self.description.slave, address=self.description.address, value=self.coordinator.encode_scaling(int(self.description.options[option].value), "", 0))
 
-
-    # @property
-    # def is_on(self) -> bool:
-    #     #TODO see if entitydescription can be updated to include unit info and set it in init
-    #     data = self.coordinator.processed_data()["data"][self.data_key]
-    #     # self._attr_native_value = data
-    #     """Return true if switch is on."""
-    #     return cast(bool, data)
-
     @property
     def device_info(self) -> entity.DeviceInfo:
         """Return the device info."""
@@ -179,5 +154,5 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
             },
             name=self.unique_id.split('_')[1],
             model=self.unique_id.split('_')[0],
-            manufacturer="victron", # to be dynamically set for gavazzi and redflow
+            manufacturer="victron", # TODO to be dynamically set for gavazzi and redflow
         )

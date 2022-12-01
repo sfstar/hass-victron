@@ -31,7 +31,6 @@ _LOGGER = logging.getLogger(__name__)
 
 CONF_RESCAN = "rescan"
 
-# TODO adjust the data schema to the data that you need
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
         vol.Required(CONF_HOST): str,
@@ -73,9 +72,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
 
 
 async def scan_connected_devices(hub: VictronHub) -> list:
-    #TODO check all known unit ids automatically
     return hub.determine_present_devices()
-    #return
 
 
 class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
