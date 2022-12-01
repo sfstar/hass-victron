@@ -152,7 +152,7 @@ class vebus_activeinput(Enum):
     AC_INPUT_2 = 1
     DISCONNECTED = 240
 
-class vebus_state(Enum):
+class generic_charger_state(Enum):
     OFF = 0
     LOW_POWER = 1
     FAULT = 2
@@ -215,7 +215,7 @@ vebus_registers = {
     "vebus_numberofphases": RegisterInfo(28, UINT16), #the number count has no unit of measurement
     "vebus_activein_activeinput": RegisterInfo(register=29, dataType=UINT16, ),
     "vebus_soc": RegisterInfo(30, UINT16, PERCENTAGE, 10, SliderWriteType(0, 100)),
-    "vebus_state": RegisterInfo(register=31, dataType=UINT16, entityType=TextReadEntityType(vebus_state)), #This has no unit of measurement
+    "vebus_state": RegisterInfo(register=31, dataType=UINT16, entityType=TextReadEntityType(generic_charger_state)), #This has no unit of measurement
     "vebus_error": RegisterInfo(register=32, dataType=UINT16, entityType=TextReadEntityType(vebus_error)), #This has no unit of measurement
     "vebus_mode": RegisterInfo(register=33, dataType=UINT16, entityType=SelectWriteType(vebus_mode)), #This has no unit of measurement #TODO make mode selection writeable
     "vebus_alarm_hightemperature": RegisterInfo(register=34, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
@@ -337,11 +337,70 @@ battery_registers = {
     "battery_alarm_lowcellvoltage": RegisterInfo(register=326, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger))
 }
 
+class battery_state(Enum):
+    WAIT_START_INIT = 0
+    BEFORE_BOOT_INIT = 1
+    BEFORE_BOOT_DELAY_INIT = 2
+    WAIT_BOOT_INIT = 3
+    INITIALIZING = 4
+    BATTERY_VOLTAGE_MEASURE_INIT = 5
+    BATTERY_CALCULATE_VOLTAGE_INIT = 6
+    WAIT_BUS_VOLTAGE_INIT = 7
+    WAIT_LYNX_SHUNT_INIT = 8
+    RUNNING = 9
+    ERROR = 10
+    UNUSED = 11
+    SHUTDOWN = 12
+    SLAVE_UPDATING = 13
+    STANDBY = 14
+    GOING_TO_RUN = 15
+    PRE_CHARGING = 16
+
+class battery_error(Enum):
+    NONE = 0
+    BATTERY_INIT_ERROR = 1
+    NO_BATTERIES_CONNECTED = 2
+    UNKNOWN_BATTERY_CONNECTED = 3
+    DIFFERENT_BATTERY_TYPE = 4
+    NUMBER_OF_BATTERIES_INCORRECT = 5
+    LYNX_SHUNT_NOT_FOUND = 6
+    BATTERY_MEASURE_ERROR = 7
+    INTERNAL_CALCULATION_ERROR = 8
+    BATTERIES_IN_SERIES_NOT_OK = 9
+    # NUMBER_OF_BATTERIES_INCORRECT = 10 #TODO determine what todo with this duplicate entry
+    HARDWARE_ERROR = 11
+    WATCHDOG_ERROR = 12
+    OVER_VOLTAGE = 13
+    UNDER_VOLTAGE = 14
+    OVER_TEMPERATURE = 15
+    UNDER_TEMPERATURE = 16
+    HARDWARE_FAULT = 17
+    STANDBY_SHUTDOWN = 18
+    PRE_CHARGE_CHARGE_ERROR = 19
+    SAFETY_CONTACTOR_CHECK_ERROR = 20
+    PRE_CHARGE_DISCHARGE_ERROR = 21
+    ADC_ERROR = 22
+    SLAVE_ERROR = 23
+    SLAVE_WARNING = 24
+    PRE_CHARGE_ERROR = 25
+    SAFETY_CONTACTOR_ERROR = 26
+    OVER_CURRENT = 27
+    SLAVE_UPDATE_FAILED = 28
+    SLAVE_UPDATE_UNAVAILABLE = 29
+    CALIBRATION_DATA_LOST = 30
+    SETTINGS_INVALID = 31
+    BMS_CABLE = 32
+    REFERENCE_FAILURE = 33
+    WRONG_SYSTEM_VOLTAGE = 34
+    PRE_CHARGE_TIMEOUT = 35
+
+
+
 battery_detail_registers = {
-    "battery_state": RegisterInfo(1282, UINT16),
-    "battery_error": RegisterInfo(1283, UINT16),
-    "battery_system_switch": RegisterInfo(1284, UINT16),
-    "battery_balancing": RegisterInfo(1285, UINT16),
+    "battery_state": RegisterInfo(register=1282, dataType=UINT16, entityType=TextReadEntityType(battery_state)),
+    "battery_error": RegisterInfo(register=1283, dataType=UINT16, entityType=TextReadEntityType(battery_error)),
+    "battery_system_switch": RegisterInfo(register=1284, dataType=UINT16, entityType=BoolReadEntityType()),
+    "battery_balancing": RegisterInfo(register=1285, dataType=UINT16, entityType=BoolReadEntityType()),
     "battery_system_numberofbatteries": RegisterInfo(1286, UINT16),
     "battery_system_batteriesparallel": RegisterInfo(1287, UINT16),
     "battery_system_batteriesseries": RegisterInfo(1288, UINT16),
@@ -349,13 +408,13 @@ battery_detail_registers = {
     "battery_system_mincellvoltage": RegisterInfo(1290, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "battery_system_maxcellvoltage": RegisterInfo(1291, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "battery_diagnostics_shutdownsdueerror": RegisterInfo(1292, UINT16),
-    "battery_diagnostics_lasterror_1": RegisterInfo(1293, UINT16),
-    "battery_diagnostics_lasterror_2": RegisterInfo(1294, UINT16),
-    "battery_diagnostics_lasterror_3": RegisterInfo(1295, UINT16),
-    "battery_diagnostics_lasterror_4": RegisterInfo(1296, UINT16),
-    "battery_io_allowtocharge": RegisterInfo(1297, UINT16),
-    "battery_io_allowtodischarge": RegisterInfo(1298, UINT16),
-    "battery_io_externalrelay": RegisterInfo(1299, UINT16),
+    "battery_diagnostics_lasterror_1": RegisterInfo(register=1293, dataType=UINT16, entityType=TextReadEntityType(battery_error)),
+    "battery_diagnostics_lasterror_2": RegisterInfo(register=1294, dataType=UINT16, entityType=TextReadEntityType(battery_error)),
+    "battery_diagnostics_lasterror_3": RegisterInfo(register=1295, dataType=UINT16, entityType=TextReadEntityType(battery_error)),
+    "battery_diagnostics_lasterror_4": RegisterInfo(register=1296, dataType=UINT16, entityType=TextReadEntityType(battery_error)),
+    "battery_io_allowtocharge": RegisterInfo(register=1297, dataType=UINT16, entityType=BoolReadEntityType()),
+    "battery_io_allowtodischarge": RegisterInfo(register=1298, dataType=UINT16, entityType=BoolReadEntityType()),
+    "battery_io_externalrelay": RegisterInfo(register=1299, dataType=UINT16, entityType=BoolReadEntityType()),
     "battery_history_minimumcellvoltage": RegisterInfo(1300, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "battery_history_maximumcellvoltage": RegisterInfo(1301, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "battery_system_numberofmodulesoffline": RegisterInfo(1302, UINT16),
@@ -389,24 +448,30 @@ class solarcharger_equalization_pending(Enum):
     ERROR = 2
     UNAVAILABLE = 3
 
-#TODO continue from 788 with decode parsing into readable entities
-# 0=No error;
-# 1=Battery temperature too high;
-# 2=Battery voltage too high;
-# 3=Battery temperature sensor miswired (+);
-# 4=Battery temperature sensor miswired (-);
-# 5=Battery temperature sensor disconnected;
-# 6=Battery voltage sense miswired (+);
-# 7=Battery voltage sense miswired (-);
-# 8=Battery voltage sense disconnected;
-# 9=Battery voltage wire losses too high;
-# 17=Charger temperature too high;
-# 18=Charger over-current;
-# 19=Charger current polarity reversed;
-# 20=Bulk time limit reached;
-# 22=Charger temperature sensor miswired;
-# 23=Charger temperature sensor disconnected;
-# 34=Input current too high
+class generic_charger_errorcode(Enum):
+    NONE = 0
+    TEMPERATURE_HIGH = 1
+    VOLTAGE_HIGH = 2
+    TEMPERATURE_SENSOR_PLUS_MISWIRED = 3
+    TEMPERATURE_SENSOR_MIN_MISWIRED = 4
+    TEMPERATURE_SENSOR_DISCONNECTED = 5
+    VOLTAGE_SENSE_PLUS_MISWIRED = 6
+    VOLTAGE_SENSE_MIN_MISWIRED = 7
+    VOLTAGE_SENSE_DISCONNECTED = 8
+    VOLTAGE_WIRE_LOSSES_TOO_HIGH = 9
+    CHARGER_TEMPERATURE_TOO_HIGH = 17
+    CHARGER_OVER_CURRENT = 18
+    CHARGER_POLARITY_REVERSED = 19
+    BULK_TIME_LIMIT = 20
+    CHARGER_TEMPERATURE_SENSOR_MISWIRED = 22
+    CHARGER_TEMPERATURE_SENSOR_DISCONNECTED = 23
+    INPUT_CURRENT_TOO_HIGH = 34
+
+class solarcharger_mppoperationmode(Enum):
+    OFF = 0
+    LIMITED = 1
+    ACTIVE = 2
+    UNAVAILABLE = 255
 
 solarcharger_registers = {
     "solarcharger_battery_voltage": RegisterInfo(771, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
@@ -426,10 +491,10 @@ solarcharger_registers = {
     "solarcharger_maxpower_today": RegisterInfo(785, UINT16, UnitOfPower.WATT),
     "solarcharger_yield_yesterday": RegisterInfo(786, UINT16, UnitOfEnergy.KILO_WATT_HOUR, 10),
     "solarcharger_maxpower_yesterday": RegisterInfo(787, UINT16, UnitOfPower.WATT),
-    "solarcharger_errorcode": RegisterInfo(788, UINT16),
+    "solarcharger_errorcode": RegisterInfo(register=788, dataType=UINT16, entityType=TextReadEntityType(generic_charger_errorcode)),
     "solarcharger_yield_power": RegisterInfo(789, UINT16, UnitOfPower.WATT, 10),
     "solarcharger_yield_user": RegisterInfo(790, UINT16, UnitOfEnergy.KILO_WATT_HOUR, 10),
-    "solarcharger_mppoperationmode": RegisterInfo(791, UINT16)
+    "solarcharger_mppoperationmode": RegisterInfo(register=791, dataType=UINT16, entityType=TextReadEntityType(solarcharger_mppoperationmode))
 }
 
 solarcharger_tracker_voltage_registers = {
@@ -462,8 +527,13 @@ solarcharger_tracker_registers = {
     "solarcharger_tracker_3_pv_power": RegisterInfo(3727, UINT16, UnitOfPower.WATT),    
 }
 
+class pvinverter_position(Enum):
+    AC_INPUT_1 = 0
+    AC_OUTPUT = 1
+    AC_INPUT_2 = 2
+
 pvinverter_registers = {
-    "pvinverter_position": RegisterInfo(1026, UINT16),
+    "pvinverter_position": RegisterInfo(register=1026, dataType=UINT16, entityType=TextReadEntityType(pvinverter_position)),
     "pvinverter_L1_voltage": RegisterInfo(1027, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
     "pvinverter_L1_current": RegisterInfo(1028, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "pvinverter_L1_power": RegisterInfo(1029, UINT16, UnitOfPower.WATT),
@@ -513,9 +583,9 @@ charger_registers = {
     "charger_L1_power": RegisterInfo(2315, UINT16, UnitOfPower.WATT),
     "charger_current_limit": RegisterInfo(2316, INT16, ELECTRIC_CURRENT_AMPERE, 10, entityType=SliderWriteType(-100, 100, "AC", True)), #TODO make user configureable
     "charger_mode": RegisterInfo(register=2317, dataType=UINT16, entityType=SelectWriteType(charger_mode)), #TODO support charger mode enum
-    "charger_state": RegisterInfo(2318, UINT16),
-    "charger_errorcode": RegisterInfo(2319, UINT16),
-    "charger_relay": RegisterInfo(2320, UINT16),
+    "charger_state": RegisterInfo(register=2318, dataType=UINT16, entityType=TextReadEntityType(generic_charger_state)),
+    "charger_errorcode": RegisterInfo(register=2319, dataType=UINT16, entityType=TextReadEntityType(generic_charger_errorcode)),
+    "charger_relay": RegisterInfo(register=2320, dataType=UINT16, entityType=BoolReadEntityType()),
     "charger_alarm_lowvoltage": RegisterInfo(register=2321, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
     "charger_alarm_highvoltage": RegisterInfo(register=2322, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger))
 }
@@ -530,7 +600,7 @@ settings_registers = {
     "settings_ess_maxfeedinpower": RegisterInfo(2706, INT16, UnitOfPower.WATT, 0, SliderWriteType(-9000, 9000, "AC", True)), #TODO make user configureable
     "settings_ess_overvoltagefeedin": RegisterInfo(register=2707, dataType=INT16, entityType=SwitchWriteType()),
     "settings_ess_preventfeedback": RegisterInfo(register=2708, dataType=INT16, entityType=SwitchWriteType()),
-    "settings_ess_feedinpowerlimit": RegisterInfo(2709, INT16), #TODO introduce binary sensor here?
+    "settings_ess_feedinpowerlimit": RegisterInfo(register=2709, dataType=INT16, entityType=BoolReadEntityType()), #TODO introduce binary sensor here?
     "settings_systemsetup_maxchargevoltage": RegisterInfo(2710, UINT16, ELECTRIC_POTENTIAL_VOLT, 10, SliderWriteType(0, 60, "DC", False)) #TODO make user configureable
 }
 
@@ -539,7 +609,7 @@ gps_registers = {
     "gps_longitude": RegisterInfo(2802, INT32, "", 10000000),
     "gps_course": RegisterInfo(2804, UINT16, "", 100),
     "gps_speed": RegisterInfo(2805, UINT16, UnitOfSpeed.METERS_PER_SECOND, 100),
-    "gps_fix": RegisterInfo(2806, UINT16),
+    "gps_fix": RegisterInfo(register=2806, dataType=UINT16, entityType=BoolReadEntityType()),
     "gps_numberofsatellites": RegisterInfo(2807, UINT16),
     "gps_altitude": RegisterInfo(2808, INT32, UnitOfSpeed.METERS_PER_SECOND, 10)
 }
@@ -571,13 +641,34 @@ settings_ess_registers = {
     "settings_ess_batterylife_soclimit": RegisterInfo(2903, UINT16, PERCENTAGE, 10), #TODO not writeable
 }
 
+class tank_fluidtype(Enum):
+    FUEL = 0
+    FRESH_WATER = 1
+    WASTE_WATER = 2
+    LIVE_WELL = 3
+    OIL = 4
+    SEWAGE_WATER = 5
+    GASOLINE = 6
+    DIESEL = 7
+    LPG = 8
+    LNG = 9
+    HYDRAULIC_OIL = 10
+    RAW_WATER = 11
+
+class tank_status(Enum):
+    OK = 0
+    DISCONNECTED = 1
+    SHORT_CIRCUITED = 2
+    REVERSE_POLARITY = 3
+    UNKNOWN = 4
+
 tank_registers = {
     "tank_productid": RegisterInfo(3000, UINT16),
     "tank_capacity": RegisterInfo(3001, UINT32, UnitOfVolume.CUBIC_METERS, 10000),
-    "tank_fluidtype": RegisterInfo(3003, UINT16),
+    "tank_fluidtype": RegisterInfo(register=3003, dataType=UINT16, entityType=TextReadEntityType(tank_fluidtype)),
     "tank_level": RegisterInfo(3004, UINT16, PERCENTAGE, 10),
     "tank_remaining": RegisterInfo(3005, UINT32, UnitOfVolume.CUBIC_METERS, 10000),
-    "tank_status": RegisterInfo(3007, UINT16)
+    "tank_status": RegisterInfo(register=3007, dataType=UINT16, entityType=TextReadEntityType(tank_status))
 }
 
 inverter_output_registers = {
@@ -611,7 +702,7 @@ inverter_info_registers = {
     "inverter_info_firmwareversion": RegisterInfo(3125, UINT16),
     "inverter_info_mode": RegisterInfo(register=3126, dataType=UINT16, entityType=SelectWriteType(inverter_mode)), #TODO introduce selection mode enum
     "inverter_info_productid": RegisterInfo(3127, UINT16),
-    "inverter_info_state": RegisterInfo(3128, UINT16),
+    "inverter_info_state": RegisterInfo(register=3128, dataType=UINT16, entityType=TextReadEntityType(generic_charger_state)),
 }
 
 #PV voltage is present here due to poor register id selection by victron
@@ -654,6 +745,124 @@ inverter_tracker_statistics_registers = {
     "inverter_alarm_lowsoc": RegisterInfo(register=3168, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger))
 }
 
+class genset_status(Enum):
+    STANDBY = 0
+    STARTUP_1 = 1
+    STARTUP_2 = 2
+    STARTUP_3 = 3
+    STARTUP_4 = 4
+    STARTUP_5 = 5
+    STARTUP_6 = 6
+    STARTUP_7 = 7
+    RUNNING = 8
+    STOPPING = 9
+    ERROR = 10
+
+#TODO continue from 3214 with decode parsing into readable entities
+
+# 0=No error;
+# 1=AC voltage L1 too low;
+# 2=AC frequency L1 too low;
+# 3=AC current too low;
+# 4=AC power too low;
+# 5=Emergency stop;
+# 6=Servo current too low;
+# 7=Oil pressure too low;
+# 8=Engine temperature too low;
+# 9=Winding temperature too low;
+# 10=Exhaust temperature too low;
+# 13=Starter current too low;
+# 14=Glow current too low;
+# 15=Glow current too low;
+# 16=Fuel holding magnet current too low;
+# 17=Stop solenoid hold coil current too low;
+# 18=Stop solenoid pull coil current too low;
+# 19=Optional DC out current too low;
+# 20=5V output voltage too low;
+# 21=Boost output current too low;
+# 22=Panel supply current too high;
+# 25=Starter battery voltage too low;
+# 26=Startup aborted (rotation too low);
+# 28=Rotation too low;
+# 29=Power contactor current too low;
+# 30=AC voltage L2 too low;
+# 31=AC frequency L2 too low;
+# 32=AC current L2 too low;
+# 33=AC power L2 too low;
+# 34=AC voltage L3 too low;
+# 35=AC frequency L3 too low;
+# 36=AC current L3 too low;
+# 37=AC power L3 too low;
+# 62=Fuel temperature too low;
+# 63=Fuel level too low;
+# 65=AC voltage L1 too high;
+# 66=AC frequency too high;
+# 67=AC current too high;
+# 68=AC power too high;
+# 70=Servo current too high;
+# 71=Oil pressure too high;
+# 72=Engine temperature too high;
+# 73=Winding temperature too high;7
+# 4=Exhaust temperature too low;
+# 77=Starter current too low;
+# 78=Glow current too high;
+# 79=Glow current too high;
+# 80=Fuel holding magnet current too high;
+# 81=Stop solenoid hold coil current too high;
+# 82=Stop solenoid pull coil current too high;
+# 83=Optional DC out current too high;
+# 84=5V output voltage too high;
+# 85=Boost output current too high;
+# 89=Starter battery voltage too high;
+# 90=Startup aborted (rotation too high);
+# 92=Rotation too high;
+# 93=Power contactor current too high;
+# 94=AC voltage L2 too high;
+# 95=AC frequency L2 too high;
+# 96=AC current L2 too high;
+# 97=AC power L2 too high;
+# 98=AC voltage L3 too high;
+# 99=AC frequency L3 too high;
+# 100=AC current L3 too high;
+# 101=AC power L3 too high;
+# 126=Fuel temperature too high;
+# 127=Fuel level too high;
+# 130=Lost control unit;
+# 131=Lost panel;
+# 132=Service needed;
+# 133=Lost 3-phase module;
+# 134=Lost AGT module;
+# 135=Synchronization failure;
+# 137=Intake airfilter;
+# 139=Lost sync. module;
+# 140=Load-balance failed;
+# 141=Sync-mode deactivated;
+# 142=Engine controller;
+# 148=Rotating field wrong;
+# 149=Fuel level sensor lost;
+# 150=Init failed;
+# 151=Watchdog;
+# 152=Out: 
+# winding;
+# 153=Out: exhaust;
+# 154=Out: Cyl. head;
+# 155=Inverter over temperature;
+# 156=Inverter overload;
+# 157=Inverter communication lost;
+# 158=Inverter sync failed;
+# 159=CAN communication lost;1
+# 60=L1 overload;
+# 161=L2 overload;
+# 162=L3 overload;
+# 163=DC overload;
+# 164=DC overvoltage;
+# 165=Emergency stop;
+# 166=No connection
+
+class genset_errorcode(Enum):
+    TEMP = 0
+
+
 genset_registers = {
     "genset_L1_voltage": RegisterInfo(3200, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
     "genset_L2_voltage": RegisterInfo(3201, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
@@ -668,7 +877,7 @@ genset_registers = {
     "genset_L2_frequency": RegisterInfo(3210, UINT16, FREQUENCY_HERTZ, 100),
     "genset_L3_frequency": RegisterInfo(3211, UINT16, FREQUENCY_HERTZ, 100),
     "genset_productid": RegisterInfo(3212, UINT16),
-    "genset_statuscode": RegisterInfo(3213, UINT16),
+    "genset_statuscode": RegisterInfo(register=3213, dataType=UINT16, entityType=TextReadEntityType(genset_status)),
     "genset_errorcode": RegisterInfo(3214, UINT16),
     "genset_autostart": RegisterInfo(3215, UINT16),
     "genset_engine_load": RegisterInfo(3216, UINT16, PERCENTAGE),
