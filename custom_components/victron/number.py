@@ -24,6 +24,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .coordinator import victronEnergyDeviceUpdateCoordinator
+from .base import VictronWriteBaseEntityDescription
 from .const import DOMAIN, register_info_dict, SliderWriteType, CONF_ADVANCED_OPTIONS, UINT16_MAX
 
 from homeassistant.helpers.typing import StateType
@@ -46,21 +47,20 @@ async def async_setup_entry(
     #TODO cleanup
     if config_entry.options[CONF_ADVANCED_OPTIONS]:
         register_set = victron_coordinator.processed_data()["register_set"]
-        for unit, registerLedger in register_set.items():
+        for slave, registerLedger in register_set.items():
             for name in registerLedger:
                 for register_name, registerInfo in register_info_dict[name].items():
-                    # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
-                    # _LOGGER.debug(str(registerInfo.unit))
+                    # _LOGGER.debug("unit == " + str(slave) + " registerLedger == " + str(registerLedger) + " registerInfo ")
+                    # _LOGGER.debug(str(registerInfo.slave))
                     # _LOGGER.debug("register_name")
                     # _LOGGER.debug(register_name)
                     if isinstance(registerInfo.entityType, SliderWriteType):
                         descriptions.append(VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace('_', ' '),
-                            value_fn=lambda data, unit, key: data["data"][str(unit) + "." + str(key)],
-                            slave=unit,
+                            value_fn=lambda data, slave, key: data["data"][str(slave) + "." + str(key)],
+                            slave=slave,
                             native_unit_of_measurement=registerInfo.unit,
-                            register_ledger_key=name,
                             # native_min_value=registerInfo.writeType.lowerLimit,
                             # native_max_value=registerInfo.writeType.upperLimit,
                             native_min_value=determine_min_value(registerInfo.unit, victron_coordinator, registerInfo.entityType.powerType, registerInfo.entityType.negative),
@@ -110,8 +110,7 @@ def determine_min_value(unit, coordinator: victronEnergyDeviceUpdateCoordinator,
     else:
         return 0
 
-#TODO determine if AC or DC min/max is applicable
-#TODO perhaps remove min / max base data from coordinator
+#TODO remove min / max base data from coordinator
 def determine_max_value(unit, coordinator:victronEnergyDeviceUpdateCoordinator, powerType) -> int:
     if unit == PERCENTAGE:
         return 100
@@ -135,14 +134,10 @@ def determine_max_value(unit, coordinator:victronEnergyDeviceUpdateCoordinator, 
 @dataclass
 class VictronNumberMixin:
     """A class that describes number entities."""
-    slave: int
-    value_fn: Callable[[dict], StateType]
-    register_ledger_key: str
-    address: int
     scale: int
 
 @dataclass
-class VictronEntityDescription(NumberEntityDescription, VictronNumberMixin):
+class VictronEntityDescription(NumberEntityDescription, VictronWriteBaseEntityDescription, VictronNumberMixin):
     """Describes victron number entity."""
     #TODO write unit references into this class and convert to base for all entity types
 
@@ -184,7 +179,7 @@ class VictronNumber(NumberEntity):
     @property
     def native_value(self) -> int:
         """Return the state of the entity."""
-        value = self.entity_description.value_fn(data=self.coordinator.processed_data(), unit=self.entity_description.slave, key=self.entity_description.key)
+        value = self.entity_description.value_fn(data=self.coordinator.processed_data(), slave=self.entity_description.slave, key=self.entity_description.key)
         if value > round(UINT16_MAX/2): #Half of the UINT16 is reserved for positive and half for negative values 
             value = value - UINT16_MAX
         return value

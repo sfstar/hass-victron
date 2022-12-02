@@ -15,6 +15,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers import entity
 
 from .const import DOMAIN, register_info_dict, SwitchWriteType, CONF_ADVANCED_OPTIONS
+from .base import VictronWriteBaseEntityDescription
 
 from collections.abc import Callable
 from homeassistant.helpers.typing import StateType
@@ -33,7 +34,7 @@ async def async_setup_entry(
     #TODO cleanup
     if config_entry.options[CONF_ADVANCED_OPTIONS]:
         register_set = victron_coordinator.processed_data()["register_set"]
-        for unit, registerLedger in register_set.items():
+        for slave, registerLedger in register_set.items():
             for name in registerLedger:
                 for register_name, registerInfo in register_info_dict[name].items():
                     # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
@@ -45,8 +46,8 @@ async def async_setup_entry(
                             key=register_name,
                             name=register_name.replace('_', ' '),
                             value_fn=lambda data: data["data"][register_name],
-                            unit=unit,
-                            register_ledger_key=name
+                            slave=slave,
+                            address=registerInfo.register,
                         ))
 
     entities = []
@@ -65,12 +66,8 @@ async def async_setup_entry(
 
 
 @dataclass
-class VictronEntityDescription(SwitchEntityDescription):
+class VictronEntityDescription(SwitchEntityDescription, VictronWriteBaseEntityDescription):
     """Describes victron sensor entity."""
-    #TODO convert to base for all entity types
-    unit: int = None
-    value_fn: Callable[[dict], StateType] = None
-    register_ledger_key: str = None
 
 class VictronSwitch(CoordinatorEntity, SwitchEntity):
     """Representation of an Victron switch."""
@@ -80,11 +77,11 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
         self.description: VictronEntityDescription = description
         #this needs to be changed to allow multiple of the same type
         self._attr_name = f"{description.name}"
-        self.data_key = str(self.description.unit) + "." + str(self.description.key)
+        self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
-        self._attr_unique_id = f"{self.description.unit}_{self.description.key}"
-        if self.description.unit not in (100, 225):
-            self.entity_id = f"{SWITCH_DOMAIN}.{DOMAIN}_{self.description.key}_{self.description.unit}"
+        self._attr_unique_id = f"{self.description.slave}_{self.description.key}"
+        if self.description.slave not in (100, 225):
+            self.entity_id = f"{SWITCH_DOMAIN}.{DOMAIN}_{self.description.key}_{self.description.slave}"
         else:
             self.entity_id = f"{SWITCH_DOMAIN}.{DOMAIN}_{self.description.key}"
 
@@ -95,12 +92,12 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn on the device."""
-        self.coordinator.write_register(unit=self.description.unit, address=register_info_dict[self.description.register_ledger_key][self.description.key].register, value=1)
+        self.coordinator.write_register(unit=self.description.slave, address=self.description.address, value=1)
         await self.coordinator.async_update_local_entry(self.data_key, 1)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn off the device."""
-        self.coordinator.write_register(unit=self.description.unit, address=register_info_dict[self.description.register_ledger_key][self.description.key].register, value=0)
+        self.coordinator.write_register(unit=self.description.slave, address=self.description.address, value=0)
         await self.coordinator.async_update_local_entry(self.data_key, 0)
 
     @property

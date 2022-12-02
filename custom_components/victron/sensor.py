@@ -1,5 +1,4 @@
 """Support for Victron energy sensors."""
-from .const import DOMAIN, register_info_dict, CONF_ADVANCED_OPTIONS, ReadEntityType, TextReadEntityType, BoolReadEntityType
 
 from dataclasses import dataclass
 
@@ -13,7 +12,10 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.sensor import SensorEntityDescription, SensorDeviceClass, SensorEntity, DOMAIN as SENSOR_DOMAIN
+
 from .coordinator import victronEnergyDeviceUpdateCoordinator
+from .base import VictronBaseEntityDescription
+from .const import DOMAIN, register_info_dict, CONF_ADVANCED_OPTIONS, ReadEntityType, TextReadEntityType, BoolReadEntityType
 
 from homeassistant.const import (
     PERCENTAGE, 
@@ -47,11 +49,11 @@ async def async_setup_entry(
     descriptions = []
     #TODO cleanup
     register_set = victron_coordinator.processed_data()["register_set"]
-    for unit, registerLedger in register_set.items():
+    for slave, registerLedger in register_set.items():
         for name in registerLedger:
             for register_name, registerInfo in register_info_dict[name].items():
-                # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
-                # _LOGGER.debug(str(registerInfo.unit))
+                # _LOGGER.debug("unit == " + str(slave) + " registerLedger == " + str(registerLedger) + " registerInfo ")
+                # _LOGGER.debug(str(registerInfo.slave))
                 if config_entry.options[CONF_ADVANCED_OPTIONS]:
                     if not isinstance(registerInfo.entityType, ReadEntityType) or isinstance(registerInfo.entityType, BoolReadEntityType):
                         continue
@@ -61,9 +63,9 @@ async def async_setup_entry(
                     key=register_name,
                     name=register_name.replace('_', ' '),
                     native_unit_of_measurement=registerInfo.unit,
-                    value_fn=lambda data: data["data"][unit + "." + register_name],
+                    value_fn=lambda data: data["data"][slave + "." + register_name],
                     state_class=registerInfo.determine_stateclass(),
-                    unit=unit,
+                    slave=slave,
                     device_class=determine_victron_device_class(register_name, registerInfo.unit),
                     entity_type=registerInfo.entityType if isinstance(registerInfo.entityType, TextReadEntityType) else None
                 ))
@@ -109,21 +111,14 @@ def determine_victron_device_class(name, unit):
         return SensorDeviceClass.CURRENT
     return None
 
+
 @dataclass
-class VictronEntityDescription(SensorEntityDescription):
+class VictronEntityDescription(SensorEntityDescription, VictronBaseEntityDescription):
     """Describes victron sensor entity."""
-    #TODO convert to base for all entity types
-    unit: int = None
-    value_fn: Callable[[dict], StateType] = None
     entity_type: ReadEntityType = None
 
 class VictronSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Victron energy sensor."""
-    # todo determine in other method
-    # _attr_attribution = ATTRIBUTION
-    # _attr_icon = ICON
-    # _attr_device_class = SensorDeviceClass.MONETARY
-
 
     def __init__(self, coordinator: victronEnergyDeviceUpdateCoordinator, description: VictronEntityDescription) -> None:
         """Initialize the sensor."""
@@ -132,12 +127,12 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         self._attr_name = f"{description.name}"
         self._attr_native_unit_of_measurement = description.native_unit_of_measurement
         self._attr_state_class = description.state_class
-        self.data_key = str(self.description.unit) + "." + str(self.description.key)
+        self.data_key = str(self.description.slave) + "." + str(self.description.key)
         self.entity_type = description.entity_type
 
-        self._attr_unique_id = f"{description.unit}_{self.description.key}"
-        if description.unit not in (100, 225):
-            self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}_{description.unit}"
+        self._attr_unique_id = f"{description.slave}_{self.description.key}"
+        if description.slave not in (100, 225):
+            self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}_{description.slave}"
         else:
             self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}"
 

@@ -1,13 +1,7 @@
 """Support for Victron energy button sensors."""
 from __future__ import annotations
 
-from contextlib import suppress
-from typing import cast
-
 from homeassistant.core import HomeAssistant, HassJob
-
-from collections.abc import Callable
-from homeassistant.helpers.typing import StateType
 
 from dataclasses import dataclass
 
@@ -20,8 +14,8 @@ from homeassistant.helpers import entity
 
 from homeassistant.components.button import ButtonEntityDescription, ButtonDeviceClass, ButtonEntity, DOMAIN as BUTTON_DOMAIN
 
+from .base import VictronWriteBaseEntityDescription
 from .coordinator import victronEnergyDeviceUpdateCoordinator
-
 from .const import DOMAIN, CONF_ADVANCED_OPTIONS, register_info_dict, ButtonWriteType
 
 import logging
@@ -40,23 +34,22 @@ async def async_setup_entry(
     descriptions = []
     #TODO cleanup
     register_set = victron_coordinator.processed_data()["register_set"]
-    for unit, registerLedger in register_set.items():
+    for slave, registerLedger in register_set.items():
         for name in registerLedger:
             for register_name, registerInfo in register_info_dict[name].items():
-                # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
-                # _LOGGER.debug(str(registerInfo.unit))
+                # _LOGGER.debug("unit == " + str(slave) + " registerLedger == " + str(registerLedger) + " registerInfo ")
+                # _LOGGER.debug(str(registerInfo.slave))
                 if config_entry.options[CONF_ADVANCED_OPTIONS]:
-                    if not isinstance(registerInfo.entityType, ButtonWriteType): #TODO change to button
+                    if not isinstance(registerInfo.entityType, ButtonWriteType):
                         continue
-
 
                 descriptions.append(VictronEntityDescription(
                     key=register_name,
                     name=register_name.replace('_', ' '),
-                    value_fn=lambda data: data["data"][unit + "." + register_name],
-                    unit=unit,
+                    value_fn=lambda data: data["data"][slave + "." + register_name],
+                    slave=slave,
                     device_class=ButtonDeviceClass.RESTART,
-                    register_ledger_key=name
+                    address=registerInfo.register,
                 ))
 
     entities = []
@@ -74,33 +67,23 @@ async def async_setup_entry(
     )
 
 @dataclass
-class VictronEntityDescription(ButtonEntityDescription):
+class VictronEntityDescription(ButtonEntityDescription, VictronWriteBaseEntityDescription):
     """Describes victron sensor entity."""
-    #TODO write unit references into this class and convert to base for all entity types
-    unit: int = None
-    value_fn: Callable[[dict], StateType] = None
-    register_ledger_key: str = None
 
 
 class VictronBinarySensor(CoordinatorEntity, ButtonEntity):
     """A button implementation for Victron energy device."""
-    # TODO determine in other method
-    # _attr_attribution = ATTRIBUTION
-    # _attr_icon = ICON
-    # _attr_device_class = SensorDeviceClass.MONETARY
-
 
     def __init__(self, coordinator: victronEnergyDeviceUpdateCoordinator, description: VictronEntityDescription) -> None:
         """Initialize the sensor."""
         self.description: VictronEntityDescription = description
-        #this needs to be changed to allow multiple of the same type
         self._attr_device_class = description.device_class
         self._attr_name = f"{description.name}"
-        self.data_key = str(self.description.unit) + "." + str(self.description.key)
+        self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
-        self._attr_unique_id = f"{description.unit}_{self.description.key}"
-        if description.unit not in (100, 225):
-            self.entity_id = f"{BUTTON_DOMAIN}.{DOMAIN}_{self.description.key}_{description.unit}"
+        self._attr_unique_id = f"{description.slave}_{self.description.key}"
+        if description.slave not in (100, 225):
+            self.entity_id = f"{BUTTON_DOMAIN}.{DOMAIN}_{self.description.key}_{description.slave}"
         else:
             self.entity_id = f"{BUTTON_DOMAIN}.{DOMAIN}_{self.description.key}"
 
@@ -111,7 +94,7 @@ class VictronBinarySensor(CoordinatorEntity, ButtonEntity):
 
     async def async_press(self) -> None:
         """Handle the button press."""
-        self.coordinator.write_register(unit=self.description.unit, address=register_info_dict[self.description.register_ledger_key][self.description.key].register, value=1)
+        self.coordinator.write_register(unit=self.description.slave, address=self.description.address, value=1)
 
     @property
     def device_info(self) -> entity.DeviceInfo:

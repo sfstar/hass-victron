@@ -15,6 +15,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers import entity
 
 from .const import DOMAIN, register_info_dict, SelectWriteType, CONF_ADVANCED_OPTIONS
+from .base import VictronWriteBaseEntityDescription
 
 from collections.abc import Callable
 from homeassistant.helpers.typing import StateType
@@ -69,14 +70,9 @@ async def async_setup_entry(
 
 
 @dataclass
-class VictronEntityDescription(SelectEntityDescription):
+class VictronEntityDescription(SelectEntityDescription, VictronWriteBaseEntityDescription):
     """Describes victron sensor entity."""
     options: Enum = None
-    #TODO convert to base for all entity types
-    #TODO cleanup unused
-    slave: int = None
-    address: int = None
-    value_fn: Callable[[dict], StateType] = None#TODO cleanup
 
 class VictronSelect(CoordinatorEntity, SelectEntity):
     """Representation of an Victron switch."""

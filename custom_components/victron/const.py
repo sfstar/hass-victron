@@ -504,7 +504,7 @@ solarcharger_tracker_voltage_registers = {
     "solarcharger_tracker_2_voltage": RegisterInfo(3702, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "solarcharger_tracker_3_voltage": RegisterInfo(3703, UINT16, ELECTRIC_POTENTIAL_VOLT, 100)
 }
-#TODO check if this register gap can be read skipped.
+
 solarcharger_tracker_registers = {
     "solarcharger_tracker_0_yield_today": RegisterInfo(3708, UINT16, UnitOfEnergy.KILO_WATT_HOUR, 10),
     "solarcharger_tracker_1_yield_today": RegisterInfo(3709, UINT16, UnitOfEnergy.KILO_WATT_HOUR, 10),
