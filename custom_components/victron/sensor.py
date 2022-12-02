@@ -1,4 +1,4 @@
-
+"""Support for Victron energy sensors."""
 from .const import DOMAIN, register_info_dict, CONF_ADVANCED_OPTIONS, ReadEntityType, TextReadEntityType, BoolReadEntityType
 
 from dataclasses import dataclass
@@ -12,7 +12,7 @@ from homeassistant.core import HomeAssistant, HassJob
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.components.sensor import SensorEntityDescription, SensorStateClass, SensorDeviceClass, SensorEntity, DOMAIN as SENSOR_DOMAIN
+from homeassistant.components.sensor import SensorEntityDescription, SensorDeviceClass, SensorEntity, DOMAIN as SENSOR_DOMAIN
 from .coordinator import victronEnergyDeviceUpdateCoordinator
 
 from homeassistant.const import (
@@ -39,7 +39,7 @@ async def async_setup_entry(
     config_entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up Victron price sensor entries."""
+    """Set up Victron energy sensor entries."""
     _LOGGER.debug("attempting to setup sensor entities")
     victron_coordinator: victronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
     _LOGGER.debug(victron_coordinator.processed_data()["register_set"])
@@ -53,7 +53,7 @@ async def async_setup_entry(
                 # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
                 # _LOGGER.debug(str(registerInfo.unit))
                 if config_entry.options[CONF_ADVANCED_OPTIONS]:
-                    if not isinstance(registerInfo.entityType, ReadEntityType):
+                    if not isinstance(registerInfo.entityType, ReadEntityType) or isinstance(registerInfo.entityType, BoolReadEntityType):
                         continue
 
 
@@ -65,7 +65,7 @@ async def async_setup_entry(
                     state_class=registerInfo.determine_stateclass(),
                     unit=unit,
                     device_class=determine_victron_device_class(register_name, registerInfo.unit),
-                    entity_type=registerInfo.entityType if isinstance(registerInfo.entityType, TextReadEntityType) or isinstance(registerInfo.entityType, BoolReadEntityType) else None
+                    entity_type=registerInfo.entityType if isinstance(registerInfo.entityType, TextReadEntityType) else None
                 ))
 
     entities = []
@@ -118,7 +118,7 @@ class VictronEntityDescription(SensorEntityDescription):
     entity_type: ReadEntityType = None
 
 class VictronSensor(CoordinatorEntity, SensorEntity):
-    """Representation of a ENTSO-e sensor."""
+    """Representation of a Victron energy sensor."""
     # todo determine in other method
     # _attr_attribution = ATTRIBUTION
     # _attr_icon = ICON
@@ -155,11 +155,8 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
             #TODO see if entitydescription can be updated to include unit info and set it in init
             data = self.coordinator.processed_data()["data"][self.data_key]
 
-            if self.entity_type is not None:
-                if isinstance(self.entity_type, TextReadEntityType):
-                    self._attr_native_value = self.entity_type.decodeEnum(data).name.split("_DUPLICATE")[0]
-                elif isinstance(self.entity_type, BoolReadEntityType):
-                    self._attr_native_value = True if data == 1 else False
+            if self.entity_type is not None and isinstance(self.entity_type, TextReadEntityType):
+                self._attr_native_value = self.entity_type.decodeEnum(data).name.split("_DUPLICATE")[0]
             else:
                 self._attr_native_value = data
 #            self._attr_native_value = data

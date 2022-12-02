@@ -1,4 +1,4 @@
-"""Support for Big Ass Fans number."""
+"""Support for victron energy slider number entities."""
 from __future__ import annotations
 
 from collections.abc import Callable

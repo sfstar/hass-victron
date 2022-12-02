@@ -1,4 +1,4 @@
-"""Support for Abode Security System switches."""
+"""Support for victron energy switches."""
 from __future__ import annotations
 
 from typing import Any, cast
@@ -106,9 +106,7 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
 
     @property
     def is_on(self) -> bool:
-        #TODO see if entitydescription can be updated to include unit info and set it in init
         data = self.coordinator.processed_data()["data"][self.data_key]
-        # self._attr_native_value = data
         """Return true if switch is on."""
         return cast(bool, data)
 

@@ -1,4 +1,4 @@
-"""Support for Abode Security System switches."""
+"""Support for Victron energy switches."""
 from __future__ import annotations
 
 from typing import Any, cast
