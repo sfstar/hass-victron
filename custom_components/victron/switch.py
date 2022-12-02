@@ -45,7 +45,6 @@ async def async_setup_entry(
                         descriptions.append(VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace('_', ' '),
-                            value_fn=lambda data: data["data"][register_name],
                             slave=slave,
                             address=registerInfo.register,
                         ))
@@ -75,7 +74,6 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
     def __init__(self, hass: HomeAssistant, coordinator: victronEnergyDeviceUpdateCoordinator, description: VictronEntityDescription) -> None:
         self.coordinator = coordinator
         self.description: VictronEntityDescription = description
-        #this needs to be changed to allow multiple of the same type
         self._attr_name = f"{description.name}"
         self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
@@ -102,7 +100,7 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
 
     @property
     def is_on(self) -> bool:
-        data = self.coordinator.processed_data()["data"][self.data_key]
+        data =  self.description.value_fn( self.coordinator.processed_data(), self.description.slave, self.description.key)
         """Return true if switch is on."""
         return cast(bool, data)
 
@@ -111,7 +109,6 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
         """Return the device info."""
         return entity.DeviceInfo(
             identifiers={
-                # Serial numbers are unique identifiers within a specific domain
                 (DOMAIN, self.unique_id.split('_')[0])
             },
             name=self.unique_id.split('_')[1],

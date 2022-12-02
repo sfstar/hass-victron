@@ -58,7 +58,6 @@ async def async_setup_entry(
                         descriptions.append(VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace('_', ' '),
-                            value_fn=lambda data, slave, key: data["data"][str(slave) + "." + str(key)],
                             slave=slave,
                             native_unit_of_measurement=registerInfo.unit,
                             # native_min_value=registerInfo.writeType.lowerLimit,
@@ -139,29 +138,28 @@ class VictronNumberMixin:
 @dataclass
 class VictronEntityDescription(NumberEntityDescription, VictronWriteBaseEntityDescription, VictronNumberMixin):
     """Describes victron number entity."""
-    #TODO write unit references into this class and convert to base for all entity types
 
 
 class VictronNumber(NumberEntity):
     """Victron number."""
 
-    entity_description: VictronEntityDescription
+    description: VictronEntityDescription
 
     def __init__(self, coordinator: victronEnergyDeviceUpdateCoordinator, description: VictronEntityDescription) -> None:
         """Initialize the entity."""
         self.coordinator = coordinator
-        self.entity_description = description
+        self.description = description
         self._attr_name = f"{description.name}"
 
-        self.data_key = str(self.entity_description.slave) + "." + str(self.entity_description.key)
+        self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
-        self._attr_native_value = self.entity_description.value_fn(self.coordinator.processed_data(), self.entity_description.slave, self.entity_description.key)
+        self._attr_native_value = self.description.value_fn(self.coordinator.processed_data(), self.description.slave, self.description.key)
 
-        self._attr_unique_id = f"{self.entity_description.slave}_{self.entity_description.key}"
-        if self.entity_description.slave not in (100, 225):
-            self.entity_id = f"{NUMBER_DOMAIN}.{DOMAIN}_{self.entity_description.key}_{self.entity_description.slave}"
+        self._attr_unique_id = f"{self.description.slave}_{self.description.key}"
+        if self.description.slave not in (100, 225):
+            self.entity_id = f"{NUMBER_DOMAIN}.{DOMAIN}_{self.description.key}_{self.description.slave}"
         else:
-            self.entity_id = f"{NUMBER_DOMAIN}.{DOMAIN}_{self.entity_description.key}"
+            self.entity_id = f"{NUMBER_DOMAIN}.{DOMAIN}_{self.description.key}"
 
         self._attr_mode = NumberMode.SLIDER
   
@@ -172,14 +170,14 @@ class VictronNumber(NumberEntity):
         #TODO convert float to int again with scale respected
         if value < 0:
             value = UINT16_MAX + value
-        self.coordinator.write_register(unit=self.entity_description.slave, address=self.entity_description.address, value=self.coordinator.encode_scaling(int(value), self.entity_description.native_unit_of_measurement, self.entity_description.scale))
+        self.coordinator.write_register(unit=self.description.slave, address=self.description.address, value=self.coordinator.encode_scaling(int(value), self.description.native_unit_of_measurement, self.description.scale))
         await self.coordinator.async_update_local_entry(self.data_key, int(value))
 
 
     @property
     def native_value(self) -> int:
         """Return the state of the entity."""
-        value = self.entity_description.value_fn(data=self.coordinator.processed_data(), slave=self.entity_description.slave, key=self.entity_description.key)
+        value = self.description.value_fn(data=self.coordinator.processed_data(), slave=self.description.slave, key=self.description.key)
         if value > round(UINT16_MAX/2): #Half of the UINT16 is reserved for positive and half for negative values 
             value = value - UINT16_MAX
         return value
@@ -199,18 +197,17 @@ class VictronNumber(NumberEntity):
 
     @property
     def native_min_value(self) -> float:
-        return self.entity_description.native_min_value
+        return self.description.native_min_value
 
     @property
     def native_max_value(self) -> float:
-        return self.entity_description.native_max_value
+        return self.description.native_max_value
 
     @property
     def device_info(self) -> entity.DeviceInfo:
         """Return the device info."""
         return entity.DeviceInfo(
             identifiers={
-                # Serial numbers are unique identifiers within a specific domain
                 (DOMAIN, self.unique_id.split('_')[0])
             },
             name=self.unique_id.split('_')[1],

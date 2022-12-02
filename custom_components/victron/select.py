@@ -48,7 +48,6 @@ async def async_setup_entry(
                         descriptions.append(VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace('_', ' '),
-                            value_fn=lambda data: data["data"][register_name],
                             slave=unit,
                             options=registerInfo.entityType.options,
                             address=registerInfo.register,
@@ -83,7 +82,6 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
         self.description: VictronEntityDescription = description
         #this needs to be changed to allow multiple of the same type
         self._attr_name = f"{description.name}"
-        self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
         self._attr_unique_id = f"{self.description.slave}_{self.description.key}"
         if self.description.slave not in (100, 225):
@@ -99,13 +97,7 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
         """Get the latest data and updates the states."""
         _LOGGER.debug("select_async_update")
         try:
-            #TODO see if entitydescription can be updated to include unit info and set it in init
-            data = self.coordinator.processed_data()["data"][self.data_key]
-            _LOGGER.debug("select data")
-            _LOGGER.debug(data)
-            self._attr_native_value = data
-#TODO FURTHER DEBUG AND USE THIS FUNCTION IN DESCRIPTION INSTEAD
-#            self._attr_native_value =  self.entity_description.value_fn(self.coordinator.processed_data())
+            self._attr_native_value =  self.description.value_fn(self.coordinator.processed_data(), self.description.slave, self.description.key)
         except (TypeError, IndexError):
             _LOGGER.debug("failed to retrieve value")
             # No data available
@@ -126,7 +118,7 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
 
     @property
     def current_option(self) -> str:
-        return  self.description.options(self.coordinator.processed_data()["data"][self.data_key]).name
+        return  self.description.options(self.description.value_fn(self.coordinator.processed_data(), self.description.slave, self.description.key)).name
 
     @property
     def options(self) -> list:
@@ -141,7 +133,6 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
         """Return the device info."""
         return entity.DeviceInfo(
             identifiers={
-                # Serial numbers are unique identifiers within a specific domain
                 (DOMAIN, self.unique_id.split('_')[0])
             },
             name=self.unique_id.split('_')[1],

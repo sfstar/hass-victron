@@ -99,8 +99,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             elif isinstance(value.dataType, STRING):
                 decoded_data[full_key] = decoder.decode_string(value.dataType.readLength).split(b'\x00')[0]
             else:
-                #TODO raise error for not supported datatype
-                raise Exception("unknown datatype not supported")
+                raise DecodeDataTypeUnsupported(f'Not supported dataType: {value.dataType}')
         return decoded_data
 
     def decode_scaling(self, number, scale, unit):
@@ -157,7 +156,6 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
     def api_write(self, unit, address, value):
         #recycle connection
         return self.api.write_register(unit=unit, address=address, value=value)
-#        return self.api.write
 
     def api_update(self, unit, registerInfo):
         #recycle connection
@@ -165,23 +163,8 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             unit=unit, address=self.api.get_first_register_id(registerInfo), count=self.api.calculate_register_count(registerInfo)
         )
 
-        # Update all properties
-        #TODO query the registers for a given device and return the parsed data
-        # try:
-        #     data: DeviceResponseEntry = {
-        #         "device": await self.api.device(),
-        #         "data": await self.api.data(),
-        #         "state": await self.api.state(),
-        #     }
-        # except:
-        #     lol = ""
-
-
-
-        # except RequestError as ex:
-        #     raise UpdateFailed("Device did not respond as expected") from ex
-
-        return data
+class DecodeDataTypeUnsupported(Exception):
+    pass
 
 class DataEntry():
 

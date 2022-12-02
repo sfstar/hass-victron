@@ -7,7 +7,7 @@ from homeassistant.helpers.entity import EntityDescription
 @dataclass
 class VictronBaseEntityDescription(EntityDescription):
     slave: int = None 
-    value_fn: Callable[[dict], StateType] = None
+    value_fn: Callable[[dict], StateType] = lambda data, slave, key: data["data"][str(slave) + "." + str(key)]
 
 @dataclass 
 class VictronWriteBaseEntityDescription(VictronBaseEntityDescription):

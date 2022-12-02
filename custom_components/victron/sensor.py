@@ -63,7 +63,6 @@ async def async_setup_entry(
                     key=register_name,
                     name=register_name.replace('_', ' '),
                     native_unit_of_measurement=registerInfo.unit,
-                    value_fn=lambda data: data["data"][slave + "." + register_name],
                     state_class=registerInfo.determine_stateclass(),
                     slave=slave,
                     device_class=determine_victron_device_class(register_name, registerInfo.unit),
@@ -127,7 +126,6 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         self._attr_name = f"{description.name}"
         self._attr_native_unit_of_measurement = description.native_unit_of_measurement
         self._attr_state_class = description.state_class
-        self.data_key = str(self.description.slave) + "." + str(self.description.key)
         self.entity_type = description.entity_type
 
         self._attr_unique_id = f"{description.slave}_{self.description.key}"
@@ -144,18 +142,13 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         super().__init__(coordinator)
 
     async def async_update(self) -> None:
-        """Get the latest data and updates the states."""
+        """Get the latest data and updates the states."""      
         try:
-            #TODO see if entitydescription can be updated to include unit info and set it in init
-            data = self.coordinator.processed_data()["data"][self.data_key]
-
+            data = self.description.value_fn(self.coordinator.processed_data(), self.description.slave, self.description.key)
             if self.entity_type is not None and isinstance(self.entity_type, TextReadEntityType):
                 self._attr_native_value = self.entity_type.decodeEnum(data).name.split("_DUPLICATE")[0]
             else:
                 self._attr_native_value = data
-#            self._attr_native_value = data
-#TODO FURTHER DEBUG AND USE THIS FUNCTION IN DESCRIPTION INSTEAD
-#            self._attr_native_value =  self.entity_description.value_fn(self.coordinator.processed_data())
         except (TypeError, IndexError):
             _LOGGER.debug("failed to retrieve value")
             # No data available
@@ -179,7 +172,6 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         """Return the device info."""
         return entity.DeviceInfo(
             identifiers={
-                # Serial numbers are unique identifiers within a specific domain
                 (DOMAIN, self.unique_id.split('_')[0])
             },
             name=self.unique_id.split('_')[1],

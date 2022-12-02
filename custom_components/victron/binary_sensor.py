@@ -53,7 +53,6 @@ async def async_setup_entry(
                 descriptions.append(VictronEntityDescription(
                     key=register_name,
                     name=register_name.replace('_', ' '),
-                    value_fn=lambda data: data["data"][slave + "." + register_name],
                     slave=slave,
                 ))
 
@@ -80,12 +79,11 @@ class VictronBinarySensor(CoordinatorEntity, BinarySensorEntity):
     """A binary sensor implementation for Victron energy device."""
 
     def __init__(self, coordinator: victronEnergyDeviceUpdateCoordinator, description: VictronEntityDescription) -> None:
-        """Initialize the sensor."""
+        """Initialize the binary sensor."""
         self.description: VictronEntityDescription = description
         #this needs to be changed to allow multiple of the same type
         self._attr_device_class = description.device_class
         self._attr_name = f"{description.name}"
-        self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
         self._attr_unique_id = f"{description.slave}_{self.description.key}"
         if description.slave not in (100, 225):
@@ -101,8 +99,7 @@ class VictronBinarySensor(CoordinatorEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         """Return True if the binary sensor is on."""
-        data = self.coordinator.processed_data()["data"][self.data_key]
-        """Return true if switch is on."""
+        data = self.description.value_fn(self.coordinator.processed_data(), self.description.slave, self.description.key)
         return cast(bool, data)
 
     @property
@@ -110,7 +107,6 @@ class VictronBinarySensor(CoordinatorEntity, BinarySensorEntity):
         """Return the device info."""
         return entity.DeviceInfo(
             identifiers={
-                # Serial numbers are unique identifiers within a specific domain
                 (DOMAIN, self.unique_id.split('_')[0])
             },
             name=self.unique_id.split('_')[1],
