@@ -365,7 +365,7 @@ class battery_error(Enum):
     BATTERY_MEASURE_ERROR = 7
     INTERNAL_CALCULATION_ERROR = 8
     BATTERIES_IN_SERIES_NOT_OK = 9
-    # NUMBER_OF_BATTERIES_INCORRECT = 10 #TODO determine what todo with this duplicate entry
+    NUMBER_OF_BATTERIES_INCORRECT_DUPLICATE_1 = 10
     HARDWARE_ERROR = 11
     WATCHDOG_ERROR = 12
     OVER_VOLTAGE = 13
@@ -611,13 +611,13 @@ gps_registers = {
     "gps_numberofsatellites": RegisterInfo(2807, UINT16),
     "gps_altitude": RegisterInfo(2808, INT32, UnitOfSpeed.METERS_PER_SECOND, 10)
 }
-#0=Unused, BL disabled;1=Restarting;2=Self-consumption;3=Self-consumption;4=Self-consumption;5=Discharge disabled;6=Force charge;7=Sustain;8=Low Soc Recharge;9=Keep batteries charged;10=BL Disabled;11=BL Disabled (Low SoC);12=BL Disabled (Low SOC recharge)
+
 class ess_batterylife_state(Enum):
-    #BL_DISABLED = 0
+    BL_DISABLED_DUPLICATE_1 = 0
     RESTARTING = 1
     SELF_CONSUMPTION = 2
-    #SELF_CONSUMPTION = 3 #TODO check if there are really three codes used for the same state info?
-    #SELF_CONSUMPTION = 4
+    SELF_CONSUMPTION_DUPLICATE_1 = 3
+    SELF_CONSUMPTION_DUPLICATE_2 = 4
     DISCHARGE_DISABLED = 5
     FORCE_CHARGE = 6
     SUSTAIN = 7
@@ -636,7 +636,7 @@ settings_ess_registers = {
     "settings_ess_batterylife_state": RegisterInfo(register=2900, dataType=UINT16, entityType=SelectWriteType(ess_batterylife_state)),
     "settings_ess_batterylife_minimumsoc": RegisterInfo(2901, UINT16, PERCENTAGE, 10, SliderWriteType(0, 100)), #TODO make user configureable
     "settings_ess_mode": RegisterInfo(register=2902, dataType=UINT16, entityType=SelectWriteType(ess_mode)),
-    "settings_ess_batterylife_soclimit": RegisterInfo(2903, UINT16, PERCENTAGE, 10), #TODO not writeable
+    "settings_ess_batterylife_soclimit": RegisterInfo(2903, UINT16, PERCENTAGE, 10),
 }
 
 class tank_fluidtype(Enum):
@@ -770,7 +770,7 @@ class genset_errorcode(Enum):
     EXHAUST_TEMPERATURE_TOO_LOW = 10
     STARTER_CURRENT_TOO_LOW = 13
     GLOW_CURRENT_TOO_LOW = 14
-    #GLOW_CURRENT_TOO_LOW = 15 #TODO ensure duplicate error names are supported
+    GLOW_CURRENT_TOO_LOW_DUPLICATE_1 = 15
     FUEL_HOLDING_MAGNET_CURRENT_TOO_LOW = 16
     STOP_SOLENOID_HOLD_COIL_CURRENT_TOO_LOW = 17
     STOP_SOLENOID_PULL_COIL_CURRENT_TOO_LOW = 18
@@ -803,7 +803,7 @@ class genset_errorcode(Enum):
     EXHAUST_TEMPERATURE_TOO_HIGH = 74 #NOTE modbustcp spec says it should be too low but that is already specified in the low grouping therefore assuming this state is used for HIGH temp
     STARTER_CURRENT_TOO_HIGH = 77 #NOTE same as 74 applies here
     GLOW_CURRENT_TOO_HIGH = 78
-    #GLOW_CURRENT_TOO_HIGH = 79 #TODO make duplicate value compatible
+    GLOW_CURRENT_TOO_HIGH_DUPLICATE_1 = 79
     FUEL_HOLDING_MAGNET_CURRENT_TOO_HIGH = 80
     STOP_SOLENOID_HOLD_COIL_CURRENT_TOO_HIGH = 81
     STOP_SOLENOID_PULL_COIL_CURRENT_TOO_HIGH = 82
@@ -852,7 +852,7 @@ class genset_errorcode(Enum):
     L3_OVERLOAD = 162
     DC_OVERLOAD = 163
     DC_OVERVOLTAGE = 164
-    # EMERGENCY_STOP = 165 #TODO allow for duplicate references to same error name
+    EMERGENCY_STOP_DUPLICATE_1 = 165
     NO_CONNECTION = 166
 
 genset_registers = {
@@ -1008,7 +1008,7 @@ evcharger_registers = {
     "evcharger_serial": RegisterInfo(3804, STRING(6)),
     "evcharger_model": RegisterInfo(3810, STRING(4)),
     "evcharger_maxcurrent": RegisterInfo(register=3814, dataType=UINT16, unit=ELECTRIC_CURRENT_AMPERE, entityType=SliderWriteType(0, 100, "AC", False)), #TODO make user configureable
-    "evcharger_mode": RegisterInfo(register=3815, dataType=UINT16, entityType=SelectWriteType(evcharger_mode)),#TODO introduce mode enums
+    "evcharger_mode": RegisterInfo(register=3815, dataType=UINT16, entityType=SelectWriteType(evcharger_mode)),
     "evcharger_energy_forward": RegisterInfo(3816, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "evcharger_L1_power": RegisterInfo(3818, UINT16, UnitOfPower.WATT),
     "evcharger_L2_power": RegisterInfo(3819, UINT16, UnitOfPower.WATT),
@@ -1076,24 +1076,24 @@ class alternator_errorcode(Enum):
     HIGH_VOLTAGE_OFFSET = 44
     VALT_EXCEEDS_CPB = 45
     BATTERY_DISCONNECT_REQUEST = 51
-    #BATTERY_DISCONNECT_REQUEST = 52 #TODO make multiple of the same enum names possible
+    BATTERY_DISCONNECT_REQUEST_DUPLICATE_1 = 52
     BATTERY_INSTANCE_OUT_OF_RANGE = 53
     TOO_MANY_BMSES = 54
     AEBUS_FAULT = 55
     TOO_MANY_VICTRON_DEVICES = 56
     BATTERY_REQUESTED_DISCONNECTION = 58
-    # BATTERY_REQUESTED_DISCONNECTION = 59 #TODO make multiple of the same enum names possible
-    # BATTERY_REQUESTED_DISCONNECTION = 60 #TODO make multiple of the same enum names possible
-    # BATTERY_REQUESTED_DISCONNECTION = 61 #TODO make multiple of the same enum names possible
+    BATTERY_REQUESTED_DISCONNECTION_DUPLICATE_1 = 59
+    BATTERY_REQUESTED_DISCONNECTION_DUPLICATE_2 = 60
+    BATTERY_REQUESTED_DISCONNECTION_DUPLICATE_3 = 61
     BMS_LOST = 91
     FORCED_IDLE = 92
     DCDC_CONVERTER_FAIL = 201
     DCDC_ERROR = 202
-    # DCDC_ERROR = 203 #TODO make multiple of the same enum names possible
-    # DCDC_ERROR = 204 #TODO make multiple of the same enum names possible
-    # DCDC_ERROR = 205 #TODO make multiple of the same enum names possible
-    # DCDC_ERROR = 206 #TODO make multiple of the same enum names possible
-    # DCDC_ERROR = 207 #TODO make multiple of the same enum names possible
+    DCDC_ERROR_DUPLICATE_1 = 203
+    DCDC_ERROR_DUPLICATE_2 = 204
+    DCDC_ERROR_DUPLICATE_3 = 205
+    DCDC_ERROR_DUPLICATE_4 = 206
+    DCDC_ERROR_DUPLICATE_5 = 207
 
 alternator_registers = {
     "alternator_battery_voltage": RegisterInfo(4100, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),

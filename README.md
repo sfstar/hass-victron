@@ -25,6 +25,7 @@ The current state of this integration provides the following limitations regardi
 - Expose this integration to hacs
 - Start using releases and release notes
 - Improve connection loss resilience
+- Revisit datatypes used for storing register info
 
 # Installing the integration
 You can install this integration by following the steps for your preferred installation method

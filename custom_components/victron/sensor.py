@@ -157,7 +157,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
 
             if self.entity_type is not None:
                 if isinstance(self.entity_type, TextReadEntityType):
-                    self._attr_native_value = self.entity_type.decodeEnum(data).name
+                    self._attr_native_value = self.entity_type.decodeEnum(data).name.split("_DUPLICATE")[0]
                 elif isinstance(self.entity_type, BoolReadEntityType):
                     self._attr_native_value = True if data == 1 else False
             else:
