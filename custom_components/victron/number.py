@@ -64,7 +64,7 @@ async def async_setup_entry(
                             # native_min_value=registerInfo.writeType.lowerLimit,
                             # native_max_value=registerInfo.writeType.upperLimit,
                             native_min_value=determine_min_value(registerInfo.unit, victron_coordinator, registerInfo.entityType.powerType, registerInfo.entityType.negative),
-                            native_max_value=determine_max_value(registerInfo.unit, victron_coordinator, registerInfo.entityType.powerType, registerInfo.entityType.negative),
+                            native_max_value=determine_max_value(registerInfo.unit, victron_coordinator, registerInfo.entityType.powerType),
                             entity_category=EntityCategory.CONFIG,
                             address=registerInfo.register,
                             scale = registerInfo.scale
@@ -93,8 +93,9 @@ def determine_min_value(unit, coordinator: victronEnergyDeviceUpdateCoordinator,
         return min_value
     elif unit == UnitOfPower.WATT:
         if negative:
-            min_value = -(coordinator.ac_voltage * coordinator.ac_current)
-            rounded_min = round(min_value/100)*100
+            min_value = (coordinator.ac_voltage * coordinator.ac_current) if powerType == "AC" else (coordinator.dc_voltage * coordinator.dc_current)
+            rounded_min = -round(min_value/100)*100
+            _LOGGER.debug(rounded_min)
             return rounded_min
         else:
             return 0
@@ -111,7 +112,7 @@ def determine_min_value(unit, coordinator: victronEnergyDeviceUpdateCoordinator,
 
 #TODO determine if AC or DC min/max is applicable
 #TODO perhaps remove min / max base data from coordinator
-def determine_max_value(unit, coordinator:victronEnergyDeviceUpdateCoordinator, powerType, negative: bool) -> int:
+def determine_max_value(unit, coordinator:victronEnergyDeviceUpdateCoordinator, powerType) -> int:
     if unit == PERCENTAGE:
         return 100
     elif unit == ELECTRIC_POTENTIAL_VOLT:
@@ -119,7 +120,7 @@ def determine_max_value(unit, coordinator:victronEnergyDeviceUpdateCoordinator, 
         max_value = series_type * 3.65 #statically based on lifepo4 cells
         return max_value
     elif unit == UnitOfPower.WATT:
-        max_value = (coordinator.ac_voltage * coordinator.ac_current)
+        max_value = (coordinator.ac_voltage * coordinator.ac_current) if powerType == "AC" else (coordinator.dc_voltage * coordinator.dc_current)
         rounded_max = round(max_value/100)*100
         return rounded_max
     elif unit == ELECTRIC_CURRENT_AMPERE:

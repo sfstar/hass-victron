@@ -12,16 +12,14 @@ Testers are welcome to try out the integration and submit issues / feature reque
 ## Limitations
 The current state of this integration provides the following limitations regarding it's use:
 - Applying config changes requires a reload/restart of the integration
-- Number slider options aren't yet fully based on user specified limits
 - Configuring the integration will be relatively slow if a discovery scan is required.
-- This system wasn't tested with a three phase system. Although basic functionality should work minor bugs could have gone unnoticed
+- This integration wasn't tested with a three phase system. Although basic functionality should work minor bugs could have gone unnoticed
 - Configuring write support during setup doesn't introduce write entities. only after a rescan is done (needs to be fixed)
 
 
 ## Currently planned improvements
 - Fully Switch to async
 - Investigate if scan without causing errors is possible
-- Determine limit applicability by specifying AC or DC in register info writetype
 - Expose this integration to hacs
 - Start using releases and release notes
 - Improve connection loss resilience
