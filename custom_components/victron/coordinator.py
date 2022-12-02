@@ -97,7 +97,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             elif value.dataType == UINT32:
                 decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_uint(), value.scale, value.unit)
             elif value.dataType == INT32:
-                decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_uint(), value.scale, value.unit)
+                decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_int(), value.scale, value.unit)
             elif isinstance(value.dataType, STRING):
                 decoded_data[full_key] = decoder.decode_string(value.dataType.readLength).split(b'\x00')[0] #TODO Accomodate for individual character length
             else:

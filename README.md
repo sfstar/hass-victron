@@ -15,6 +15,7 @@ The current state of this integration provides the following limitations regardi
 - Number slider options aren't yet fully based on user specified limits
 - Configuring the integration will be relatively slow if a discovery scan is required.
 - This system wasn't tested with a three phase system. Although basic functionality should work minor bugs could have gone unnoticed
+- Configuring write support during setup doesn't introduce write entities. only after a rescan is done (needs to be fixed)
 
 
 ## Currently planned improvements
