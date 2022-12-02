@@ -25,7 +25,16 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .coordinator import victronEnergyDeviceUpdateCoordinator
 from .base import VictronWriteBaseEntityDescription
-from .const import DOMAIN, register_info_dict, SliderWriteType, CONF_ADVANCED_OPTIONS, UINT16_MAX
+from .const import ( 
+    DOMAIN, 
+    register_info_dict, 
+    SliderWriteType, 
+    CONF_ADVANCED_OPTIONS, 
+    UINT16_MAX, 
+    CONF_DC_SYSTEM_VOLTAGE, 
+    CONF_DC_CURRENT_LIMIT, 
+    CONF_AC_SYSTEM_VOLTAGE, 
+    CONF_AC_CURRENT_LIMIT)
 
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers import entity
@@ -62,8 +71,8 @@ async def async_setup_entry(
                             native_unit_of_measurement=registerInfo.unit,
                             # native_min_value=registerInfo.writeType.lowerLimit,
                             # native_max_value=registerInfo.writeType.upperLimit,
-                            native_min_value=determine_min_value(registerInfo.unit, victron_coordinator, registerInfo.entityType.powerType, registerInfo.entityType.negative),
-                            native_max_value=determine_max_value(registerInfo.unit, victron_coordinator, registerInfo.entityType.powerType),
+                            native_min_value=determine_min_value(registerInfo.unit, config_entry.options, registerInfo.entityType.powerType, registerInfo.entityType.negative),
+                            native_max_value=determine_max_value(registerInfo.unit, config_entry.options, registerInfo.entityType.powerType),
                             entity_category=EntityCategory.CONFIG,
                             address=registerInfo.register,
                             scale = registerInfo.scale
@@ -83,16 +92,16 @@ async def async_setup_entry(
     _LOGGER.debug("adding numbering")
 
 
-def determine_min_value(unit, coordinator: victronEnergyDeviceUpdateCoordinator, powerType, negative: bool) -> int:
+def determine_min_value(unit, config_entry: config_entries.ConfigEntry, powerType, negative: bool) -> int:
     if unit == PERCENTAGE:
         return 0
     elif unit == ELECTRIC_POTENTIAL_VOLT:
-        series_type = coordinator.dc_voltage / 3 #statically based on lifepo4 cells
+        series_type = config_entry[CONF_DC_SYSTEM_VOLTAGE] / 3 #statically based on lifepo4 cells
         min_value = series_type * 2.5 #statically based on lifepo4 cells
         return min_value
     elif unit == UnitOfPower.WATT:
         if negative:
-            min_value = (coordinator.ac_voltage * coordinator.ac_current) if powerType == "AC" else (coordinator.dc_voltage * coordinator.dc_current)
+            min_value = (config_entry[CONF_AC_SYSTEM_VOLTAGE] * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (config_entry[CONF_DC_SYSTEM_VOLTAGE].dc_voltage * config_entry[CONF_DC_CURRENT_LIMIT])
             rounded_min = -round(min_value/100)*100
             _LOGGER.debug(rounded_min)
             return rounded_min
@@ -101,31 +110,30 @@ def determine_min_value(unit, coordinator: victronEnergyDeviceUpdateCoordinator,
     elif unit == ELECTRIC_CURRENT_AMPERE:
         if negative:
             if powerType == "AC":
-                return -coordinator.ac_current
+                return -config_entry[CONF_AC_CURRENT_LIMIT]
             elif powerType == "DC":
-                return -coordinator.dc_current
+                return -config_entry[CONF_DC_CURRENT_LIMIT]
         else:
             return 0
     else:
         return 0
 
-#TODO remove min / max base data from coordinator
-def determine_max_value(unit, coordinator:victronEnergyDeviceUpdateCoordinator, powerType) -> int:
+def determine_max_value(unit, config_entry:config_entries.ConfigEntry, powerType) -> int:
     if unit == PERCENTAGE:
         return 100
     elif unit == ELECTRIC_POTENTIAL_VOLT:
-        series_type = coordinator.dc_voltage / 3 #statically based on lifepo4 cells
+        series_type = config_entry[CONF_DC_SYSTEM_VOLTAGE] / 3 #statically based on lifepo4 cells
         max_value = series_type * 3.65 #statically based on lifepo4 cells
         return max_value
     elif unit == UnitOfPower.WATT:
-        max_value = (coordinator.ac_voltage * coordinator.ac_current) if powerType == "AC" else (coordinator.dc_voltage * coordinator.dc_current)
+        max_value = (config_entry[CONF_AC_SYSTEM_VOLTAGE] * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (config_entry[CONF_DC_SYSTEM_VOLTAGE] * config_entry[CONF_DC_CURRENT_LIMIT])
         rounded_max = round(max_value/100)*100
         return rounded_max
     elif unit == ELECTRIC_CURRENT_AMPERE:
         if powerType == "AC":
-            return coordinator.ac_current
+            return config_entry[CONF_AC_CURRENT_LIMIT]
         elif powerType == "DC":
-            return coordinator.dc_current
+            return config_entry[CONF_DC_CURRENT_LIMIT]
     else:
         return 0
 

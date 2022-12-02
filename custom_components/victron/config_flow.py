@@ -241,7 +241,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
             _LOGGER.debug("returning step init because advanced options were selected")
             errors = {}
             #move to dedicated function (the write show form) to allow for re-use
-            return self.init_write_form()
+            return self.init_write_form(errors)
         else:
             return self.async_create_entry(title="", data = combined_config)
 
@@ -267,7 +267,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
             _LOGGER.debug("returning step init because advanced options were selected")
             errors = {}
             #move to dedicated function (the write show form) to allow for re-use
-            return self.init_read_form()
+            return self.init_read_form(errors)
 
         return self.async_create_entry(title="", data = combined_config)
 
@@ -310,15 +310,13 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
         if config[CONF_ADVANCED_OPTIONS]:
             _LOGGER.debug("advanced options is set")
 
-            return self.init_write_form()
+            return self.init_write_form(errors)
         else:
             if user_input is None:
-                return self.init_read_form()
+                return self.init_read_form(errors)
 
 
-    def init_read_form(self):
-        errors = {}
-        #TODO allow passing of already generated error states
+    def init_read_form(self, errors: dict):
         return self.async_show_form(
             step_id="init_read",
             errors=errors,
@@ -333,9 +331,8 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
             ),
         )
 
-    def init_write_form(self):
+    def init_write_form(self, errors: dict):
         config = dict(self.config_entry.options)
-        #TODO allow passing of already generated error states
         system_ac_voltage_default = self.config_entry.options.get(CONF_AC_SYSTEM_VOLTAGE, AC_VOLTAGES["US"])
         system_dc_voltage_default = self.config_entry.options.get(CONF_DC_SYSTEM_VOLTAGE, DC_VOLTAGES["lifepo4_12v"])
         errors = {}

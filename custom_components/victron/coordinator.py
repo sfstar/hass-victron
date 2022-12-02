@@ -31,10 +31,6 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         port: str,
         decodeInfo: OrderedDict,
         interval: int,
-        ac_voltage: int,
-        ac_current: int,
-        dc_voltage: int,
-        dc_current: int
 
 
 
@@ -46,10 +42,6 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         self.api.connect()
         self.decodeInfo = decodeInfo
         self.interval = interval
-        self.ac_voltage = ac_voltage
-        self.ac_current = ac_current
-        self.dc_voltage = dc_voltage
-        self.dc_current = dc_current
 
     # async def force_update_data(self) -> None:
     #     data = await self._async_update_data()
