@@ -55,7 +55,8 @@ async def async_setup_entry(
                     name=register_name.replace('_', ' '),
                     value_fn=lambda data: data["data"][unit + "." + register_name],
                     unit=unit,
-                    device_class=ButtonDeviceClass.RESTART
+                    device_class=ButtonDeviceClass.RESTART,
+                    register_ledger_key=name
                 ))
 
     entities = []
@@ -78,6 +79,7 @@ class VictronEntityDescription(ButtonEntityDescription):
     #TODO write unit references into this class and convert to base for all entity types
     unit: int = None
     value_fn: Callable[[dict], StateType] = None
+    register_ledger_key: str = None
 
 
 class VictronBinarySensor(CoordinatorEntity, ButtonEntity):
