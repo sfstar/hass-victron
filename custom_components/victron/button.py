@@ -16,9 +16,9 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers import event, entity
+from homeassistant.helpers import entity
 
-from homeassistant.components.button import ButtonEntityDescription, ButtonEntity, DOMAIN as BUTTON_DOMAIN
+from homeassistant.components.button import ButtonEntityDescription, ButtonDeviceClass, ButtonEntity, DOMAIN as BUTTON_DOMAIN
 
 from .coordinator import victronEnergyDeviceUpdateCoordinator
 
@@ -55,7 +55,7 @@ async def async_setup_entry(
                     name=register_name.replace('_', ' '),
                     value_fn=lambda data: data["data"][unit + "." + register_name],
                     unit=unit,
-                    # device_class=None, #determine_victron_device_class(register_name, registerInfo.unit),
+                    device_class=ButtonDeviceClass.RESTART
                 ))
 
     entities = []
@@ -72,13 +72,13 @@ async def async_setup_entry(
         entities, True
     )
 
-
 @dataclass
 class VictronEntityDescription(ButtonEntityDescription):
     """Describes victron sensor entity."""
     #TODO write unit references into this class and convert to base for all entity types
     unit: int = None
     value_fn: Callable[[dict], StateType] = None
+
 
 class VictronBinarySensor(CoordinatorEntity, ButtonEntity):
     """A button implementation for Victron energy device."""
@@ -121,5 +121,5 @@ class VictronBinarySensor(CoordinatorEntity, ButtonEntity):
             },
             name=self.unique_id.split('_')[1],
             model=self.unique_id.split('_')[0],
-            manufacturer="victron", # to be dynamically set for gavazzi and redflow
+            manufacturer="victron", 
         )

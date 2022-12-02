@@ -76,7 +76,7 @@ async def async_setup_entry(
 @dataclass
 class VictronEntityDescription(BinarySensorEntityDescription):
     """Describes victron sensor entity."""
-    #TODO write unit references into this class and convert to base for all entity types
+    #TODO convert to base for all entity types
     unit: int = None
     value_fn: Callable[[dict], StateType] = None
 
@@ -126,5 +126,5 @@ class VictronBinarySensor(CoordinatorEntity, BinarySensorEntity):
             },
             name=self.unique_id.split('_')[1],
             model=self.unique_id.split('_')[0],
-            manufacturer="victron", # to be dynamically set for gavazzi and redflow
+            manufacturer="victron",
         )

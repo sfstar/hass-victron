@@ -112,7 +112,7 @@ def determine_victron_device_class(name, unit):
 @dataclass
 class VictronEntityDescription(SensorEntityDescription):
     """Describes victron sensor entity."""
-    #TODO write unit references into this class and convert to base for all entity types
+    #TODO convert to base for all entity types
     unit: int = None
     value_fn: Callable[[dict], StateType] = None
     entity_type: ReadEntityType = None
@@ -128,7 +128,6 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
     def __init__(self, coordinator: victronEnergyDeviceUpdateCoordinator, description: VictronEntityDescription) -> None:
         """Initialize the sensor."""
         self.description: VictronEntityDescription = description
-        #this needs to be changed to allow multiple of the same type
         self._attr_device_class = description.device_class
         self._attr_name = f"{description.name}"
         self._attr_native_unit_of_measurement = description.native_unit_of_measurement

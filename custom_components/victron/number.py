@@ -24,7 +24,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .coordinator import victronEnergyDeviceUpdateCoordinator
-from .const import DOMAIN, register_info_dict, SliderWriteType, CONF_ADVANCED_OPTIONS
+from .const import DOMAIN, register_info_dict, SliderWriteType, CONF_ADVANCED_OPTIONS, UINT16_MAX
 
 from homeassistant.helpers.typing import StateType
 from homeassistant.helpers import entity
@@ -155,7 +155,6 @@ class VictronNumber(NumberEntity):
         """Initialize the entity."""
         self.coordinator = coordinator
         self.entity_description = description
-        #this needs to be changed to allow multiple of the same type
         self._attr_name = f"{description.name}"
 
         self.data_key = str(self.entity_description.slave) + "." + str(self.entity_description.key)
@@ -176,7 +175,7 @@ class VictronNumber(NumberEntity):
         """Update the current value."""
         #TODO convert float to int again with scale respected
         if value < 0:
-            value = 65535 + value
+            value = UINT16_MAX + value
         self.coordinator.write_register(unit=self.entity_description.slave, address=self.entity_description.address, value=self.coordinator.encode_scaling(int(value), self.entity_description.native_unit_of_measurement, self.entity_description.scale))
         await self.coordinator.async_update_local_entry(self.data_key, int(value))
 
@@ -185,10 +184,8 @@ class VictronNumber(NumberEntity):
     def native_value(self) -> int:
         """Return the state of the entity."""
         value = self.entity_description.value_fn(data=self.coordinator.processed_data(), unit=self.entity_description.slave, key=self.entity_description.key)
-        _LOGGER.debug(value)
-        if value > 32767:
-            #TODO remove magic numbers
-            value = value - 65535
+        if value > round(UINT16_MAX/2): #Half of the UINT16 is reserved for positive and half for negative values 
+            value = value - UINT16_MAX
         return value
 
     @property
@@ -196,6 +193,7 @@ class VictronNumber(NumberEntity):
         max = self.native_max_value
         min = self.native_min_value
         gap = len(list(range(int(min), int(max), 1)))
+            #TODO optimize gap step selection
         if gap >= 3000:
             return 100
         elif gap < 3000 and gap > 100:
@@ -221,5 +219,5 @@ class VictronNumber(NumberEntity):
             },
             name=self.unique_id.split('_')[1],
             model=self.unique_id.split('_')[0],
-            manufacturer="victron", # to be dynamically set for gavazzi and redflow
+            manufacturer="victron",
         )

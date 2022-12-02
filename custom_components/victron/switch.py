@@ -67,7 +67,7 @@ async def async_setup_entry(
 @dataclass
 class VictronEntityDescription(SwitchEntityDescription):
     """Describes victron sensor entity."""
-    #TODO write unit references into this class and convert to base for all entity types
+    #TODO convert to base for all entity types
     unit: int = None
     value_fn: Callable[[dict], StateType] = None
     register_ledger_key: str = None
@@ -100,9 +100,8 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn off the device."""
-        #TODO fix bouncing toggle due to data not directly being updated after this action
         self.coordinator.write_register(unit=self.description.unit, address=register_info_dict[self.description.register_ledger_key][self.description.key].register, value=0)
-        await self.coordinator.async_update_local_entry(self.data_key, 0) #TODO update data locally without requiring full refresh
+        await self.coordinator.async_update_local_entry(self.data_key, 0)
 
     @property
     def is_on(self) -> bool:
@@ -120,5 +119,5 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
             },
             name=self.unique_id.split('_')[1],
             model=self.unique_id.split('_')[0],
-            manufacturer="victron", # to be dynamically set for gavazzi and redflow
+            manufacturer="victron",
         )

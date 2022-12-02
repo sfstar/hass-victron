@@ -1,8 +1,6 @@
 """Support for Victron energy switches."""
 from __future__ import annotations
 
-from typing import Any, cast
-
 from enum import Enum
 
 from dataclasses import dataclass
@@ -51,7 +49,6 @@ async def async_setup_entry(
                             name=register_name.replace('_', ' '),
                             value_fn=lambda data: data["data"][register_name],
                             slave=unit,
-                            register_ledger_key=name,
                             options=registerInfo.entityType.options,
                             address=registerInfo.register,
                         ))
@@ -75,12 +72,11 @@ async def async_setup_entry(
 class VictronEntityDescription(SelectEntityDescription):
     """Describes victron sensor entity."""
     options: Enum = None
-    #TODO write unit references into this class and convert to base for all entity types
+    #TODO convert to base for all entity types
     #TODO cleanup unused
     slave: int = None
     address: int = None
     value_fn: Callable[[dict], StateType] = None#TODO cleanup
-    register_ledger_key: str = None #TODO cleanup
 
 class VictronSelect(CoordinatorEntity, SelectEntity):
     """Representation of an Victron switch."""
@@ -154,5 +150,5 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
             },
             name=self.unique_id.split('_')[1],
             model=self.unique_id.split('_')[0],
-            manufacturer="victron", # TODO to be dynamically set for gavazzi and redflow
+            manufacturer="victron",
         )

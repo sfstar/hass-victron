@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from .hub import VictronHub # TODO
+from .hub import VictronHub
 
 from collections import OrderedDict
 
@@ -17,15 +17,13 @@ from datetime import timedelta
 
 from .const import DOMAIN, UINT16, UINT32, INT16, INT32, STRING, RegisterInfo, register_info_dict
 
-import math
-
 _LOGGER = logging.getLogger(__name__)
 
 class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
     """Gather data for the energy device."""
 
     api: VictronHub
-#todo compile dict of unit id and device type
+
     def __init__(
         self,
         hass: HomeAssistant,
@@ -99,7 +97,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             elif value.dataType == INT32:
                 decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_int(), value.scale, value.unit)
             elif isinstance(value.dataType, STRING):
-                decoded_data[full_key] = decoder.decode_string(value.dataType.readLength).split(b'\x00')[0] #TODO Accomodate for individual character length
+                decoded_data[full_key] = decoder.decode_string(value.dataType.readLength).split(b'\x00')[0]
             else:
                 #TODO raise error for not supported datatype
                 raise Exception("unknown datatype not supported")

@@ -1,5 +1,4 @@
 """Constants for the victron integration."""
-from collections import OrderedDict
 from enum import Enum
 from homeassistant.const import (
     PERCENTAGE,
@@ -53,6 +52,8 @@ UINT16 = "uint16"
 INT16  = "int16"
 UINT32 = "uint32"
 INT32  = "int32"
+
+UINT16_MAX = 65535
 
 class EntityType():
     def __init__(self, entityTypeName) -> None:
