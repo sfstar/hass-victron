@@ -96,12 +96,12 @@ def determine_min_value(unit, config_entry: config_entries.ConfigEntry, powerTyp
     if unit == PERCENTAGE:
         return 0
     elif unit == ELECTRIC_POTENTIAL_VOLT:
-        series_type = config_entry[CONF_DC_SYSTEM_VOLTAGE] / 3 #statically based on lifepo4 cells
+        series_type = int(config_entry[CONF_DC_SYSTEM_VOLTAGE]) / 3 #statically based on lifepo4 cells
         min_value = series_type * 2.5 #statically based on lifepo4 cells
         return min_value
     elif unit == UnitOfPower.WATT:
         if negative:
-            min_value = (config_entry[CONF_AC_SYSTEM_VOLTAGE] * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (config_entry[CONF_DC_SYSTEM_VOLTAGE].dc_voltage * config_entry[CONF_DC_CURRENT_LIMIT])
+            min_value = (int(config_entry[CONF_AC_SYSTEM_VOLTAGE]) * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (int(config_entry[CONF_DC_SYSTEM_VOLTAGE].dc_voltage) * config_entry[CONF_DC_CURRENT_LIMIT])
             rounded_min = -round(min_value/100)*100
             _LOGGER.debug(rounded_min)
             return rounded_min
@@ -122,11 +122,11 @@ def determine_max_value(unit, config_entry:config_entries.ConfigEntry, powerType
     if unit == PERCENTAGE:
         return 100
     elif unit == ELECTRIC_POTENTIAL_VOLT:
-        series_type = config_entry[CONF_DC_SYSTEM_VOLTAGE] / 3 #statically based on lifepo4 cells
+        series_type = int(config_entry[CONF_DC_SYSTEM_VOLTAGE]) / 3 #statically based on lifepo4 cells
         max_value = series_type * 3.65 #statically based on lifepo4 cells
         return max_value
     elif unit == UnitOfPower.WATT:
-        max_value = (config_entry[CONF_AC_SYSTEM_VOLTAGE] * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (config_entry[CONF_DC_SYSTEM_VOLTAGE] * config_entry[CONF_DC_CURRENT_LIMIT])
+        max_value = (int(config_entry[CONF_AC_SYSTEM_VOLTAGE]) * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (int(config_entry[CONF_DC_SYSTEM_VOLTAGE]) * config_entry[CONF_DC_CURRENT_LIMIT])
         rounded_max = round(max_value/100)*100
         return rounded_max
     elif unit == ELECTRIC_CURRENT_AMPERE:

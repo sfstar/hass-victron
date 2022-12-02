@@ -39,17 +39,17 @@ async def async_setup_entry(
             for register_name, registerInfo in register_info_dict[name].items():
                 # _LOGGER.debug("unit == " + str(slave) + " registerLedger == " + str(registerLedger) + " registerInfo ")
                 # _LOGGER.debug(str(registerInfo.slave))
-                if config_entry.options[CONF_ADVANCED_OPTIONS]:
-                    if not isinstance(registerInfo.entityType, ButtonWriteType):
+                if not config_entry.options[CONF_ADVANCED_OPTIONS]:
                         continue
 
-                descriptions.append(VictronEntityDescription(
-                    key=register_name,
-                    name=register_name.replace('_', ' '),
-                    slave=slave,
-                    device_class=ButtonDeviceClass.RESTART,
-                    address=registerInfo.register,
-                ))
+                if isinstance(registerInfo.entityType, ButtonWriteType):
+                    descriptions.append(VictronEntityDescription(
+                        key=register_name,
+                        name=register_name.replace('_', ' '),
+                        slave=slave,
+                        device_class=ButtonDeviceClass.RESTART,
+                        address=registerInfo.register,
+                    ))
 
     entities = []
     entity = {}
