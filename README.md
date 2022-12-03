@@ -18,9 +18,8 @@ The current state of this integration provides the following limitations regardi
 
 ## Currently planned improvements
 - Fully Switch to async
-- Investigate if scan without causing errors is possible
-- Start using releases and release notes
-- Improve connection loss resilience
+- Investigate if scan without causing (ignorable) errors at the gx device is possible
+- Improve connection loss resilience (mark / unmark availability of entities)
 - Revisit datatypes used for storing register info
 
 # Installing the integration
