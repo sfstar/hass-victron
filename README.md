@@ -49,8 +49,9 @@ If you install this integration the built-in modbus integration will stop to wor
 4. Add the integration through your settings.
 
 ### Default
-Currently not explicitly supported (although you could add the repo as an custom repository in hacs)
-TODO 
+This option is pending:
+https://github.com/hacs/default/pull/1601
+After that PR is merged the repository will be available to hacs users without having to add the integration as a custom repo
 
 # GX device errors
 The integration scans for available units and register ranges upon installation and when selected in the options menu.
