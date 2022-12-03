@@ -46,7 +46,8 @@ If you install this integration the built-in modbus integration will stop to wor
 1. Add https://github.com/sfstar/hass-victron to your HACS custom repositories.
 2. Install through HACS. 
 3. Restart Home Assistant. 
-4. Add the integration through your settings.
+4. Add the integration through this link:
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sfstar&repository=hass-victron&category=integration)
 
 ### Default
 This option is pending:
