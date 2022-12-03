@@ -1,17 +1,17 @@
-[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+[![hacs_badge](https://img.shields.io/badge/HACS-Default-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
 
 # Victron GX modbusTCP integration
 This integration scans for all available registers of a provided GX device.
 It then uses the defined register ledgers to create entities for each and every register that is provided by the GX device.
 
 # Project release state
-Please note that the integration is currently in an beta state.
-This means that although the integration should work it might encounter unforeseen bugs and breaking changes to configuration options.
-Testers are welcome to try out the integration and submit issues / feature requests.
+Please note that the integration is currently in an acceptance state.
+This means that there are no breaking changes planned.
+If a breaking change were to be introduced expect the release notes to reflect this.
+If you are missing a feature or experience any issues please report them in the issue tracker.
 
 ## Limitations
 The current state of this integration provides the following limitations regarding it's use:
-- Applying config changes requires a reload/restart of the integration
 - Configuring the integration will be relatively slow if a discovery scan is required.
 - This integration wasn't tested with a three phase system. Although basic functionality should work minor bugs could have gone unnoticed
 
@@ -19,7 +19,6 @@ The current state of this integration provides the following limitations regardi
 ## Currently planned improvements
 - Fully Switch to async
 - Investigate if scan without causing errors is possible
-- Expose this integration to hacs
 - Start using releases and release notes
 - Improve connection loss resilience
 - Revisit datatypes used for storing register info
@@ -100,20 +99,20 @@ Although this make the integration safer, one should always double check if the 
 Currently the options are tailored to the US / EU base settings and lifepo4 battery voltages.
 If you use another grid specification or battery type you can submit an issue to have them included.
 
-## AC Current
+### AC Current
 The maximum current in Amps that your system is designed to handle.
 This doesn't make a difference between the AC OUT and the AC IN side of your setup.
 Please keep a small margin below your rated grid connection current (for example if you have 1x40A then set the integration to max 39 AMPS).
 
 This advice does assume that your system is fully setup to handle these currents.
 
-## DC current
+### DC current
 The maximum current in Amps that your battery and battery cabling/busbars are rated to handle.
 
-## DC Voltage
+### DC Voltage
 The voltage profile to use in order to calculate the voltage boundaries (i.e. 4s, 8s and 16s lifepo4 configurations).
 
-## AC Voltage
+### AC Voltage
 The AC voltage for a single phase in your region (currently supported is US: 120v and EU: 230v)
 This setting is used in combination with AC current to automatically calcultate the max wattage for applicable wattage settings.
 

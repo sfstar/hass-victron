@@ -3,7 +3,8 @@
   "name": "victron",
   "config_flow": true,
   "integration_type": "hub",
-  "documentation": "https://www.home-assistant.io/integrations/victron",
+  "documentation": "https://github.com/sfstar/hass-victron",
+  "issue_tracker": "https://github.com/sfstar/hass-victron/issues",
   "requirements": [
     "pymodbus==3.0.2"
   ],
