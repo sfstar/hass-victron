@@ -64,6 +64,8 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                 #TODO safety check if result is actual data if not unavailable
                 if data.isError():
                     #raise error
+                    #TODO change this to work with partial updates
+                    parsed_data = self.data["data"]
                     _LOGGER.error("no valid data returned for entities")
                 else:
                     parsed_data = OrderedDict(list(parsed_data.items()) + list(self.parse_register_data(data, register_info_dict[name], unit).items()))
