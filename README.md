@@ -15,6 +15,24 @@ The current state of this integration provides the following limitations regardi
 - Configuring the integration will be relatively slow if a discovery scan is required.
 - This integration wasn't tested with a three phase system. Although basic functionality should work minor bugs could have gone unnoticed
 
+## Important Note
+This integration was written an tested with the latest victron firmware running.
+GX version: v2.92
+Multiplus version: 492
+
+Victron continuously improves upon the modbus implementation by adding new registers.
+Therefore older firmware versions might not expose all registers this integration expects to be present.
+This might (depending on your firmware and connected devices) cause odd behaviour where some but not all devices connected to your GX device will be correctly detected by this integration.
+
+The best solution for this issue is to upgrade to the latest firmware.
+You can also open an issue to get your firmware version supported.
+This issue should contain the following information:
+- Connected devices
+- Firmware versions of the connected devices
+- Missing device type (grid, vebus, bms can etc)
+- Missing unit id (among other 30, 100, 227, 228)
+
+Please note that it might take some time for older firmware versions to get full support (after a ticket is opened).
 
 ## Currently planned improvements
 - Fully Switch to async
