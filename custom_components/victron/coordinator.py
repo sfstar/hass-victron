@@ -55,8 +55,11 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         self.logger.debug("Fetching victron data")
         self.logger.debug(self.decodeInfo)
         
-        register_list_names = []
         parsed_data = OrderedDict()
+        unavailable_entities = OrderedDict()
+
+        if self.data is None:
+            self.data = { "data": OrderedDict(), "availability": OrderedDict() }
 
         for unit, registerInfo in self.decodeInfo.items():
             for name in registerInfo:
@@ -65,14 +68,22 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                 if data.isError():
                     #raise error
                     #TODO change this to work with partial updates
-                    parsed_data = self.data["data"]
-                    _LOGGER.error("no valid data returned for entities")
+                    for key,value in register_info_dict[name].items():
+                        full_key = str(unit) + "." + key
+                        self.data["data"][full_key] = None
+                        unavailable_entities[full_key] = False
+                        
+                    _LOGGER.warning(f"no valid data returned for entities of slave: {unit} if device was physically removed please force a rescan to resolve this issue")
                 else:
                     parsed_data = OrderedDict(list(parsed_data.items()) + list(self.parse_register_data(data, register_info_dict[name], unit).items()))
+                    for key,value in register_info_dict[name].items():
+                        full_key = str(unit) + "." + key
+                        unavailable_entities[full_key] = True
 
         return {
             "register_set": self.decodeInfo,
-            "data": parsed_data
+            "data": parsed_data,
+            "availability": unavailable_entities
         }
 
     def parse_register_data(self, buffer: ReadHoldingRegistersResponse, registerInfo: OrderedDict(str, RegisterInfo), unit: int) -> dict:

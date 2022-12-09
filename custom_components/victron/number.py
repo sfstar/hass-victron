@@ -212,6 +212,11 @@ class VictronNumber(NumberEntity):
         return self.description.native_max_value
 
     @property
+    def available(self) -> bool:
+        full_key = str(self.description.slave) + "." + self.description.key
+        return self.coordinator.processed_data()["availability"][full_key]
+
+    @property
     def device_info(self) -> entity.DeviceInfo:
         """Return the device info."""
         return entity.DeviceInfo(

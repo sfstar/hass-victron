@@ -127,6 +127,11 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
         self.coordinator.write_register(unit=self.description.slave, address=self.description.address, value=self.coordinator.encode_scaling(int(self.description.options[option].value), "", 0))
+    #TODO extract these type of property definitions to base class
+    @property
+    def available(self) -> bool:
+        full_key = str(self.description.slave) + "." + self.description.key
+        return self.coordinator.processed_data()["availability"][full_key]
 
     @property
     def device_info(self) -> entity.DeviceInfo:

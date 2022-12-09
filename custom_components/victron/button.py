@@ -95,6 +95,11 @@ class VictronBinarySensor(CoordinatorEntity, ButtonEntity):
         self.coordinator.write_register(unit=self.description.slave, address=self.description.address, value=1)
 
     @property
+    def available(self) -> bool:
+        full_key = str(self.description.slave) + "." + self.description.key
+        return self.coordinator.processed_data()["availability"][full_key]
+
+    @property
     def device_info(self) -> entity.DeviceInfo:
         """Return the device info."""
         return entity.DeviceInfo(
