@@ -108,13 +108,10 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         return decoded_data
 
     def decode_scaling(self, number, scale, unit):
-        if scale == 0:
-            return number * 10
+        if unit == "" and scale == 1:
+            return round(number)
         else:
-            if unit == "" and scale == 1:
-                return round(number)
-            else:
-                return number / scale
+            return number / scale
 
     def encode_scaling(self, value, unit, scale):
         if scale == 0:
