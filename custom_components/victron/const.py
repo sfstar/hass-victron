@@ -197,9 +197,9 @@ vebus_registers = {
     "vebus_activein_L1_frequency": RegisterInfo(9, INT16, FREQUENCY_HERTZ, 100),
     "vebus_activein_L2_frequency": RegisterInfo(10, INT16, FREQUENCY_HERTZ, 100),
     "vebus_activein_L3_frequency": RegisterInfo(11,INT16, FREQUENCY_HERTZ, 100),
-    "vebus_activein_L1_power": RegisterInfo(12, INT16, UnitOfPower.WATT, 0), # could be either POWER_WATT or POWER_VOLT_AMPERE W was chosen
-    "vebus_activein_L2_power": RegisterInfo(13, INT16, UnitOfPower.WATT, 0), # could be either POWER_WATT or POWER_VOLT_AMPERE W was chosen
-    "vebus_activein_L3_power": RegisterInfo(14, INT16, UnitOfPower.WATT, 0), # could be either POWER_WATT or POWER_VOLT_AMPERE W was chosen
+    "vebus_activein_L1_power": RegisterInfo(12, INT16, UnitOfPower.WATT, 0.1), # could be either POWER_WATT or POWER_VOLT_AMPERE W was chosen
+    "vebus_activein_L2_power": RegisterInfo(13, INT16, UnitOfPower.WATT, 0.1), # could be either POWER_WATT or POWER_VOLT_AMPERE W was chosen
+    "vebus_activein_L3_power": RegisterInfo(14, INT16, UnitOfPower.WATT, 0.1), # could be either POWER_WATT or POWER_VOLT_AMPERE W was chosen
     "vebus_out_L1_voltage": RegisterInfo(15, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
     "vebus_out_L2_voltage": RegisterInfo(16, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
     "vebus_out_L3_voltage": RegisterInfo(17, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
@@ -208,9 +208,9 @@ vebus_registers = {
     "vebus_out_L3_current": RegisterInfo(20, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "vebus_out_L1_frequency": RegisterInfo(21, INT16, FREQUENCY_HERTZ, 100),
     "vebus_activein_currentlimit": RegisterInfo(22, INT16, ELECTRIC_CURRENT_AMPERE, 10, SliderWriteType("AC", True)),
-    "vebus_out_L1_power": RegisterInfo(23, INT16, UnitOfPower.WATT, 0),
-    "vebus_out_L2_power": RegisterInfo(24, INT16, UnitOfPower.WATT, 0),
-    "vebus_out_L3_power": RegisterInfo(25, INT16, UnitOfPower.WATT, 0),
+    "vebus_out_L1_power": RegisterInfo(23, INT16, UnitOfPower.WATT, 0.1),
+    "vebus_out_L2_power": RegisterInfo(24, INT16, UnitOfPower.WATT, 0.1),
+    "vebus_out_L3_power": RegisterInfo(25, INT16, UnitOfPower.WATT, 0.1),
     "vebus_battery_voltage": RegisterInfo(26, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "vebus_battery_current": RegisterInfo(27, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "vebus_numberofphases": RegisterInfo(28, UINT16), #the number count has no unit of measurement
@@ -251,9 +251,9 @@ vebus_registers = {
     "vebus_alarm_phaserotation": RegisterInfo(register=63, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_alarm_gridlost": RegisterInfo(register=64, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_donotfeedinovervoltage": RegisterInfo(register=65, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
-    "vebus_L1_maxfeedinpower": RegisterInfo(66, UINT16, UnitOfPower.WATT, 0, SliderWriteType("AC", False)),
-    "vebus_L2_maxfeedinpower": RegisterInfo(67, UINT16, UnitOfPower.WATT, 0, SliderWriteType("AC", False)),
-    "vebus_L3_maxfeedinpower": RegisterInfo(68, UINT16, UnitOfPower.WATT, 0, SliderWriteType("AC", False)),
+    "vebus_L1_maxfeedinpower": RegisterInfo(66, UINT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", False)),
+    "vebus_L2_maxfeedinpower": RegisterInfo(67, UINT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", False)),
+    "vebus_L3_maxfeedinpower": RegisterInfo(68, UINT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", False)),
     "vebus_state_ignoreacin1": RegisterInfo(register=69, dataType=UINT16, entityType=BoolReadEntityType()), #This has no unit of measurement
     "vebus_state_ignoreacin2": RegisterInfo(register=70, dataType=UINT16, entityType=BoolReadEntityType()), #This has no unit of measurement
     "vebus_targetpowerismaxfeedin": RegisterInfo(register=71, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
@@ -302,7 +302,7 @@ battery_registers = {
     "battery_history_totalahdrawn": RegisterInfo(286, UINT16, ELECTRIC_CURRENT_AMPERE, -10),
     "battery_history_minimumvoltage": RegisterInfo(287, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "battery_history_maximumvoltage": RegisterInfo(288, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
-    "battery_history_timesincelastfullcharge": RegisterInfo(289, UINT16, TIME_SECONDS, 0),
+    "battery_history_timesincelastfullcharge": RegisterInfo(289, UINT16, TIME_SECONDS, 0.01),
     "battery_history_automaticsyncs": RegisterInfo(290, UINT16),
     "battery_history_lowvoltagealarms": RegisterInfo(291, UINT16),
     "battery_history_highvoltagealarms": RegisterInfo(292, UINT16),
@@ -316,7 +316,7 @@ battery_registers = {
     "battery_history_maximumfusedvoltage": RegisterInfo(300, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "battery_history_dischargedenergy": RegisterInfo(301, UINT16, UnitOfEnergy.KILO_WATT_HOUR, 10),
     "battery_history_chargedenergy": RegisterInfo(302, UINT16, UnitOfEnergy.KILO_WATT_HOUR, 10),
-    "battery_timetogo": RegisterInfo(303, UINT16, TIME_SECONDS, 0),
+    "battery_timetogo": RegisterInfo(303, UINT16, TIME_SECONDS, 0.01),
     "battery_soh": RegisterInfo(304, UINT16, PERCENTAGE, 10),
     "battery_info_maxchargevoltage": RegisterInfo(305, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
     "battery_info_batterylowvoltage": RegisterInfo(306, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
@@ -595,10 +595,10 @@ settings_registers = {
     "settings_ess_acpowersetpoint": RegisterInfo(register=2700, dataType=INT16, unit=UnitOfPower.WATT, entityType=SliderWriteType("AC", True)),
     "settings_ess_maxchargepercentage": RegisterInfo(register=2701, dataType=UINT16, unit=PERCENTAGE, entityType=SliderWriteType()),
     "settings_ess_maxdischargepercentage": RegisterInfo(register=2702, dataType=UINT16, unit=PERCENTAGE, entityType=SliderWriteType()),
-    "settings_ess_acpowersetpoint2": RegisterInfo(2703, INT16, UnitOfPower.WATT, 0, SliderWriteType("AC", True)), # NOTE: Duplicate register exposed by victron 
-    "settings_ess_maxdischargepower": RegisterInfo(2704, UINT16, UnitOfPower.WATT, 0, SliderWriteType("DC", False)),
+    "settings_ess_acpowersetpoint2": RegisterInfo(2703, INT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", True)), # NOTE: Duplicate register exposed by victron 
+    "settings_ess_maxdischargepower": RegisterInfo(2704, UINT16, UnitOfPower.WATT, 0.1, SliderWriteType("DC", False)),
     "settings_ess_maxchargecurrent": RegisterInfo(register=2705, dataType=INT16, unit=ELECTRIC_CURRENT_AMPERE, entityType=SliderWriteType("DC", True)),
-    "settings_ess_maxfeedinpower": RegisterInfo(2706, INT16, UnitOfPower.WATT, 0, SliderWriteType("AC", True)), 
+    "settings_ess_maxfeedinpower": RegisterInfo(2706, INT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", True)), 
     "settings_ess_overvoltagefeedin": RegisterInfo(register=2707, dataType=INT16, entityType=SwitchWriteType()),
     "settings_ess_preventfeedback": RegisterInfo(register=2708, dataType=INT16, entityType=SwitchWriteType()),
     "settings_ess_feedinpowerlimit": RegisterInfo(register=2709, dataType=INT16, entityType=BoolReadEntityType()),
@@ -675,7 +675,7 @@ tank_registers = {
 inverter_output_registers = {
     "inverter_output_L1_current": RegisterInfo(3100, INT16, ELECTRIC_CURRENT_AMPERE, 10),
     "inverter_output_L1_voltage": RegisterInfo(3101, UINT16, ELECTRIC_POTENTIAL_VOLT, 10),
-    "inverter_output_L1_power": RegisterInfo(3102, INT16, UnitOfPower.WATT, 0),
+    "inverter_output_L1_power": RegisterInfo(3102, INT16, UnitOfPower.WATT, 0.1),
 }
 
 inverter_battery_registers = {
@@ -877,7 +877,7 @@ genset_registers = {
     "genset_autostart": RegisterInfo(register=3215, dataType=UINT16, entityType=BoolReadEntityType()),
     "genset_engine_load": RegisterInfo(3216, UINT16, PERCENTAGE),
     "genset_engine_speed": RegisterInfo(3217, UINT16, REVOLUTIONS_PER_MINUTE),
-    "genset_engine_operatinghours": RegisterInfo(3218, UINT16, TIME_SECONDS, 0),
+    "genset_engine_operatinghours": RegisterInfo(3218, UINT16, TIME_SECONDS, 0.01),
     "genset_engine_coolanttemperature": RegisterInfo(3219, INT16, UnitOfTemperature.CELSIUS, 10),
     "genset_engine_windingtemperature": RegisterInfo(3220, INT16, UnitOfTemperature.CELSIUS, 10),
     "genset_engine_exhausttemperature": RegisterInfo(3221, INT16, UnitOfTemperature.CELSIUS, 10),
@@ -1017,7 +1017,7 @@ evcharger_registers = {
     "evcharger_L2_power": RegisterInfo(3819, UINT16, UnitOfPower.WATT),
     "evcharger_L3_power": RegisterInfo(3820, UINT16, UnitOfPower.WATT),
     "evcharger_total_power": RegisterInfo(3821, UINT16, UnitOfPower.WATT),
-    "evcharger_chargingtime": RegisterInfo(3822, UINT16, TIME_SECONDS, 0),
+    "evcharger_chargingtime": RegisterInfo(3822, UINT16, TIME_SECONDS, 0.01),
     "evcharger_current": RegisterInfo(3823, UINT16, ELECTRIC_CURRENT_AMPERE),
     "evcharger_status": RegisterInfo(register=3824, dataType=UINT16, entityType=TextReadEntityType(evcharger_status)),
     "evcharger_setcurrent": RegisterInfo(register=3825, dataType=UINT16, unit=ELECTRIC_CURRENT_AMPERE, entityType=SliderWriteType("AC", False)),
@@ -1309,7 +1309,7 @@ system_battery_registers = {
     "system_battery_soc": RegisterInfo(843, UINT16, PERCENTAGE),
     "system_battery_state": RegisterInfo(register=844, dataType=UINT16, entityType=TextReadEntityType(system_battery_state)),
     "system_battery_amphours": RegisterInfo(845, UINT16, ELECTRIC_CURRENT_AMPERE, -10), #  NOTE should be amp hours
-    "system_battery_time_to_go": RegisterInfo(846, UINT16, TIME_SECONDS, 0)
+    "system_battery_time_to_go": RegisterInfo(846, UINT16, TIME_SECONDS, 0.01)
 }
 
 system_dc_registers = {
