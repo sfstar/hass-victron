@@ -161,11 +161,17 @@ class VictronNumber(NumberEntity):
 
         self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
+        #VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
+        if description.slave == 100 and not description.key.startswith(("settings", "system")) :
+            actual_id = 0
+        else:
+            actual_id = description.slave
+
         self._attr_native_value = self.description.value_fn(self.coordinator.processed_data(), self.description.slave, self.description.key)
 
-        self._attr_unique_id = f"{self.description.slave}_{self.description.key}"
-        if self.description.slave not in (100, 225):
-            self.entity_id = f"{NUMBER_DOMAIN}.{DOMAIN}_{self.description.key}_{self.description.slave}"
+        self._attr_unique_id = f"{actual_id}_{self.description.key}"
+        if actual_id not in (100, 225):
+            self.entity_id = f"{NUMBER_DOMAIN}.{DOMAIN}_{self.description.key}_{actual_id}"
         else:
             self.entity_id = f"{NUMBER_DOMAIN}.{DOMAIN}_{self.description.key}"
 

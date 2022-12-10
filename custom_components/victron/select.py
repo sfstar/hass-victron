@@ -83,9 +83,15 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
         #this needs to be changed to allow multiple of the same type
         self._attr_name = f"{description.name}"
 
-        self._attr_unique_id = f"{self.description.slave}_{self.description.key}"
-        if self.description.slave not in (100, 225):
-            self.entity_id = f"{SELECT_DOMAIN}.{DOMAIN}_{self.description.key}_{self.description.slave}"
+        #VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
+        if description.slave == 100 and not description.key.startswith(("settings", "system")) :
+            actual_id = 0
+        else:
+            actual_id = description.slave
+
+        self._attr_unique_id = f"{actual_id}_{self.description.key}"
+        if actual_id not in (100, 225):
+            self.entity_id = f"{SELECT_DOMAIN}.{DOMAIN}_{self.description.key}_{actual_id}"
         else:
             self.entity_id = f"{SELECT_DOMAIN}.{DOMAIN}_{self.description.key}"
 
