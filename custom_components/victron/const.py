@@ -1334,7 +1334,11 @@ valid_unit_ids = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                    11, 12, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 
                    31, 32, 33, 34, 40, 41, 42, 43, 44, 45, 46, 100, 223, 
                    224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 
-                   235, 236, 237, 238, 239, 242, 243, 245, 246, 247]
+                   235, 236, 237, 238, 239, 242, 243, 245, 246, 247,
+                   280 ]
+                   #280 is not a valid unit id according to the latest available modbus specification sheet. 
+                   # It is added as an curtousy since it won't break the integration for v2.92 setups. 
+                   #However if the victron v3 spec is released and this unit id is no longer defined it shall be removed
 
 register_info_dict = { 
     "gavazi_grid_registers": gavazi_grid_registers,
