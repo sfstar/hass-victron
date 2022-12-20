@@ -66,17 +66,11 @@ If you install this integration the built-in modbus integration will stop to wor
 
 ## HACS
 
-### Custom repository
-1. Add https://github.com/sfstar/hass-victron to your HACS custom repositories.
-2. Install through HACS. 
-3. Restart Home Assistant. 
-4. Add the integration through this link:
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sfstar&repository=hass-victron&category=integration)
-
 ### Default
-This option is pending:
-https://github.com/hacs/default/pull/1601
-After that PR is merged the repository will be available to hacs users without having to add the integration as a custom repo
+1.Add the integration through this link:
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sfstar&repository=hass-victron&category=integration)
+2. restart home assistant
+3. setup integration via the integration page.
 
 # GX device errors
 The integration scans for available units and register ranges upon installation and when selected in the options menu.
