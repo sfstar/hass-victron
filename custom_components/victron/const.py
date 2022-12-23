@@ -323,10 +323,10 @@ battery_registers = {
     "battery_info_maxchargecurrent": RegisterInfo(307, UINT16, ELECTRIC_CURRENT_AMPERE, 10),
     "battery_info_maxdischargecurrent": RegisterInfo(308, UINT16, ELECTRIC_CURRENT_AMPERE, 10),
     "battery_capacity": RegisterInfo(309, UINT16, ELECTRIC_CURRENT_AMPERE, 10),
-    "battery_diagnostics_lasterror_1_time": RegisterInfo(310, INT32, "timestamp" ,1), #TODO check if decimal scale value is used here # extract timestamp
-    "battery_diagnostics_lasterror_2_time": RegisterInfo(312, INT32, "timestamp" ,1), #TODO check if decimal scale value is used here # extract timestamp
-    "battery_diagnostics_lasterror_3_time": RegisterInfo(314, INT32, "timestamp" ,1), #TODO check if decimal scale value is used here # extract timestamp
-    "battery_diagnostics_lasterror_4_time": RegisterInfo(316, INT32, "timestamp" ,1), #TODO check if decimal scale value is used here # extract timestamp
+    "battery_diagnostics_lasterror_1_time": RegisterInfo(310, INT32, "timestamp"),
+    "battery_diagnostics_lasterror_2_time": RegisterInfo(312, INT32, "timestamp"),
+    "battery_diagnostics_lasterror_3_time": RegisterInfo(314, INT32, "timestamp"),
+    "battery_diagnostics_lasterror_4_time": RegisterInfo(316, INT32, "timestamp"),
     "battery_system_mincelltemperature": RegisterInfo(318, INT16, UnitOfTemperature.CELSIUS, 10),
     "battery_system_maxcelltemperature": RegisterInfo(319, INT16, UnitOfTemperature.CELSIUS, 10),
     "battery_alarm_higchargecurrent": RegisterInfo(register=320, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
@@ -963,9 +963,9 @@ class generator_error(Enum):
 generator_registers = {
     "generator_manualstart": RegisterInfo(register=3500, dataType=UINT16, entityType=SwitchWriteType()),
     "generator_runningbyconditioncode": RegisterInfo(register=3501, dataType=UINT16, entityType=TextReadEntityType(generator_runningbyconditioncode)),
-    "generator_runtime": RegisterInfo(3502, UINT16, TIME_SECONDS, 0), #documentation says 1 scale. assuming this is incorrect and 0 should be used like all other seconds registers
+    "generator_runtime": RegisterInfo(3502, UINT16, TIME_SECONDS),
     "generator_quiethours": RegisterInfo(register=3503, dataType=UINT16, entityType=BoolReadEntityType()),
-    "generator_runtime_2": RegisterInfo(3504, UINT32, TIME_SECONDS, 0),
+    "generator_runtime_2": RegisterInfo(3504, UINT32, TIME_SECONDS),
     "generator_state": RegisterInfo(register=3506, dataType=UINT16, entityType=TextReadEntityType(generator_state)),
     "generator_error": RegisterInfo(register=3507, dataType=UINT16, entityType=TextReadEntityType(generator_error)),
     "generator_alarm_nogeneratoratacin": RegisterInfo(register=3508, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
