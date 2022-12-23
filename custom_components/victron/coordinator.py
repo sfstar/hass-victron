@@ -94,16 +94,12 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         for key,value in registerInfo.items():
             full_key = str(unit) + "." + key
             if value.dataType == UINT16:
-                self.temp_decode_by_zero_logging(full_key, value.dataType)
                 decoded_data[full_key] = self.decode_scaling(decoder.decode_16bit_uint(), value.scale, value.unit)
             elif value.dataType == INT16:
-                self.temp_decode_by_zero_logging(full_key, value.dataType)
                 decoded_data[full_key] = self.decode_scaling(decoder.decode_16bit_int(), value.scale, value.unit)
             elif value.dataType == UINT32:
-                self.temp_decode_by_zero_logging(full_key, value.dataType)
                 decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_uint(), value.scale, value.unit)
             elif value.dataType == INT32:
-                self.temp_decode_by_zero_logging(full_key, value.dataType)
                 decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_int(), value.scale, value.unit)
             elif isinstance(value.dataType, STRING):
                 decoded_data[full_key] = decoder.decode_string(value.dataType.readLength).split(b'\x00')[0]
@@ -111,11 +107,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                 raise DecodeDataTypeUnsupported(f'Not supported dataType: {value.dataType}')
         return decoded_data
 
-    def temp_decode_by_zero_logging(self, key, dataType):
-        _LOGGER.debug(f"decoding {dataType} for {key}")
-
     def decode_scaling(self, number, scale, unit):
-        _LOGGER.debug(f"decoded value {number} with scale of {scale} and for unit {unit}")
         if unit == "" and scale == 1:
             return round(number)
         else:
