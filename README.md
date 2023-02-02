@@ -55,6 +55,14 @@ This integration uses pymodbus 3.0.2 or higher.
 As of november 2022 the built-in home assistant modbus integration runs on a version < 3.0.0
 If you install this integration the built-in modbus integration will stop to work due to breaking changes between 2.x.x and 3.0.0
 
+## Important announcement:
+Starting from homeassistant core version 2023.2.x the built-in modbus integration now uses pymodbus version 3.1.1.
+Version 0.0.7 (and up) of this integration will also use the 3.1.1 pymodbus version.
+
+Although core version >= 2023.2 and previous versions of this integration should be compatible it is recommended that all users update both core and this integration in the same patch round.
+Since having multiple library version requirements might cause the built-in 3.1.1 library to be overwritten by 3.0.2 reference of versions 0.0.6 and earlier.
+This could cause issues if you are using specific configuration options of the built-in modbus integration that weren't working with pymodbus 3.0.2 and were fixed in 3.1.1
+
 ## Manual
 1. Clone the repository to your machine.
 2. Copy the contents of custom_components/ to your machine running home assistant.

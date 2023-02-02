@@ -1,6 +1,6 @@
 {
     "name": "Victron GX modbus TCP",
     "render_readme": true,
-    "homeassistant": "2022.11",
+    "homeassistant": "2023.2.0",
     "hacs": "1.28.4"
   }
