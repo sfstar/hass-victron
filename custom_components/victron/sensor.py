@@ -104,9 +104,9 @@ def determine_victron_device_class(name, unit):
         return SensorDeviceClass.SPEED
     elif unit in [member.value for member in UnitOfPressure]:
         return SensorDeviceClass.PRESSURE
-    elif unit in ELECTRIC_POTENTIAL_VOLT:
+    elif unit == ELECTRIC_POTENTIAL_VOLT:
         return SensorDeviceClass.VOLTAGE
-    elif unit in ELECTRIC_CURRENT_AMPERE:
+    elif unit == ELECTRIC_CURRENT_AMPERE:
         return SensorDeviceClass.CURRENT
     return None
 
