@@ -75,7 +75,8 @@ async def async_setup_entry(
                             native_max_value=determine_max_value(registerInfo.unit, config_entry.options, registerInfo.entityType.powerType),
                             entity_category=EntityCategory.CONFIG,
                             address=registerInfo.register,
-                            scale = registerInfo.scale
+                            scale = registerInfo.scale,
+                            step = registerInfo.step
                         ))
 
     entities = []
@@ -143,10 +144,12 @@ class VictronNumberMixin:
     """A class that describes number entities."""
     scale: int
 
-@dataclass
-class VictronEntityDescription(NumberEntityDescription, VictronWriteBaseEntityDescription, VictronNumberMixin):
-    """Describes victron number entity."""
+class VictronNumberStep:
+    step: float = 0
 
+@dataclass
+class VictronEntityDescription(NumberEntityDescription, VictronWriteBaseEntityDescription, VictronNumberMixin, VictronNumberStep):
+    """Describes victron number entity."""
 
 class VictronNumber(NumberEntity):
     """Victron number."""
@@ -184,12 +187,12 @@ class VictronNumber(NumberEntity):
         #TODO convert float to int again with scale respected
         if value < 0:
             value = UINT16_MAX + value
-        self.coordinator.write_register(unit=self.description.slave, address=self.description.address, value=self.coordinator.encode_scaling(int(value), self.description.native_unit_of_measurement, self.description.scale))
+        self.coordinator.write_register(unit=self.description.slave, address=self.description.address, value=self.coordinator.encode_scaling(value, self.description.native_unit_of_measurement, self.description.scale))
         await self.coordinator.async_update_local_entry(self.data_key, int(value))
 
 
     @property
-    def native_value(self) -> int:
+    def native_value(self) -> float:
         """Return the state of the entity."""
         value = self.description.value_fn(data=self.coordinator.processed_data(), slave=self.description.slave, key=self.description.key)
         if value > round(UINT16_MAX/2): #Half of the UINT16 is reserved for positive and half for negative values 
@@ -198,6 +201,8 @@ class VictronNumber(NumberEntity):
 
     @property
     def native_step(self) -> float | None:
+        if self.description.step > 0:
+            return self.description.step
         max = self.native_max_value
         min = self.native_min_value
         gap = len(list(range(int(min), int(max), 1)))

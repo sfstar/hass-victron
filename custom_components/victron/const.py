@@ -93,11 +93,12 @@ class SelectWriteType(EntityType):
 
 
 class RegisterInfo():
-    def __init__(self, register, dataType, unit="", scale=1, entityType: EntityType = ReadEntityType()) -> None:
+    def __init__(self, register, dataType, unit="", scale=1, entityType: EntityType = ReadEntityType(), step=0) -> None:
         self.register = register
         self.dataType = dataType
         self.unit = unit
         self.scale = scale
+        self.step = step
         #Only used for writeable entities
         self.entityType = entityType
         
@@ -596,13 +597,13 @@ settings_registers = {
     "settings_ess_maxchargepercentage": RegisterInfo(register=2701, dataType=UINT16, unit=PERCENTAGE, entityType=SliderWriteType()),
     "settings_ess_maxdischargepercentage": RegisterInfo(register=2702, dataType=UINT16, unit=PERCENTAGE, entityType=SliderWriteType()),
     "settings_ess_acpowersetpoint2": RegisterInfo(2703, INT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", True)), # NOTE: Duplicate register exposed by victron 
-    "settings_ess_maxdischargepower": RegisterInfo(2704, UINT16, UnitOfPower.WATT, 0.1, SliderWriteType("DC", False)),
+    "settings_ess_maxdischargepower": RegisterInfo(2704, UINT16, UnitOfPower.WATT, 0.1, SliderWriteType("DC", False), 50),
     "settings_ess_maxchargecurrent": RegisterInfo(register=2705, dataType=INT16, unit=ELECTRIC_CURRENT_AMPERE, entityType=SliderWriteType("DC", True)),
     "settings_ess_maxfeedinpower": RegisterInfo(2706, INT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", True)), 
     "settings_ess_overvoltagefeedin": RegisterInfo(register=2707, dataType=INT16, entityType=SwitchWriteType()),
     "settings_ess_preventfeedback": RegisterInfo(register=2708, dataType=INT16, entityType=SwitchWriteType()),
     "settings_ess_feedinpowerlimit": RegisterInfo(register=2709, dataType=INT16, entityType=BoolReadEntityType()),
-    "settings_systemsetup_maxchargevoltage": RegisterInfo(2710, UINT16, ELECTRIC_POTENTIAL_VOLT, 10, SliderWriteType("DC", False))
+    "settings_systemsetup_maxchargevoltage": RegisterInfo(2710, UINT16, ELECTRIC_POTENTIAL_VOLT, 10, SliderWriteType("DC", False), 0.1)
 }
 
 gps_registers = {
@@ -637,7 +638,7 @@ class ess_mode(Enum):
 
 settings_ess_registers = {
     "settings_ess_batterylife_state": RegisterInfo(register=2900, dataType=UINT16, entityType=SelectWriteType(ess_batterylife_state)),
-    "settings_ess_batterylife_minimumsoc": RegisterInfo(2901, UINT16, PERCENTAGE, 10, SliderWriteType()),
+    "settings_ess_batterylife_minimumsoc": RegisterInfo(2901, UINT16, PERCENTAGE, 10, SliderWriteType(), 5),
     "settings_ess_mode": RegisterInfo(register=2902, dataType=UINT16, entityType=SelectWriteType(ess_mode)),
     "settings_ess_batterylife_soclimit": RegisterInfo(2903, UINT16, PERCENTAGE, 10),
 }
