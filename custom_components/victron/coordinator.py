@@ -118,9 +118,9 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             return value
         else:
             if unit == "" and scale == 1:
-                return round(value)
+                return int(round(value))
             else:
-                return value * scale
+                return int(value * scale)
 
     def get_data(self):
         return self.data
