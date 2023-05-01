@@ -102,7 +102,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             elif value.dataType == INT32:
                 decoded_data[full_key] = self.decode_scaling(decoder.decode_32bit_int(), value.scale, value.unit)
             elif isinstance(value.dataType, STRING):
-                decoded_data[full_key] = decoder.decode_string(value.dataType.readLength).split(b'\x00')[0]
+                decoded_data[full_key] = decoder.decode_string(value.dataType.readLength).split(b'\x00')[0].decode()
             else:
                 raise DecodeDataTypeUnsupported(f'Not supported dataType: {value.dataType}')
         return decoded_data
