@@ -97,7 +97,7 @@ def determine_victron_device_class(name, unit):
     elif unit in [member.value for member in UnitOfTemperature]:
         return  SensorDeviceClass.TEMPERATURE
     elif unit in [member.value for member in UnitOfVolume]:
-        return SensorDeviceClass.VOLUME # Perhaps change this to water if only water is measured in volume units
+        return SensorDeviceClass.VOLUME_STORAGE # Perhaps change this to water if only water is measured in volume units
     elif unit in [member.value for member in UnitOfSpeed]:
         if "meteo" in name:
             return SensorDeviceClass.WIND_SPEED
