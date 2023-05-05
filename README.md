@@ -147,3 +147,6 @@ This setting is used in combination with AC current to automatically calcultate 
 # Resources 
 The following links can be helpfull resources:
 - [setting up modbusTCP on the gx device](https://www.victronenergy.com/live/ccgx:modbustcp_faq)
+- [Great UI card for the gx device data](https://github.com/flyrmyr/system-flow-card)
+![image](https://user-images.githubusercontent.com/6717280/236457703-5c9219bd-ad88-487e-80b9-28d51859175e.png)
+
