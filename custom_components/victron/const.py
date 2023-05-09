@@ -37,10 +37,12 @@ CONF_AC_CURRENT_LIMIT = "ac_current"
 CONF_DC_CURRENT_LIMIT = "dc_current"
 CONF_DC_SYSTEM_VOLTAGE = "dc_voltage"
 CONF_AC_SYSTEM_VOLTAGE = "ac_voltage"
+CONF_NUMBER_OF_PHASES  = "number_of_phases"
+CONF_USE_SLIDERS = "use_sliders"
 
-AC_VOLTAGES = { "US": 120, "EU": 230 } # For now only most common voltages supported
+AC_VOLTAGES = { "US (120)": 120, "EU (230)": 230 } # For now only most common voltages supported
 DC_VOLTAGES = { "lifepo4_12v": 12, "lifepo4_24v": 24, "lifepo4_48v": 48 } #only 3 volt nominal 4s, 8s and 16s lifepo4 configurations currently supported
-
+PHASE_CONFIGURATIONS = { "single phase": 1, "split phase": 2, "three phase": 3 }
 
 class STRING():
     def __init__(self, length=1, read_length=None):

@@ -21,9 +21,11 @@
             "advanced": {
                 "data": {
                     "ac_voltage": "The AC voltage of your grid in V",
-                    "ac_current": "The AC current limit of your grid in A",
+                    "ac_current": "The AC (per phase) current limit of your grid in A",
                     "dc_voltage": "The DC voltage of your battery in V",
-                    "dc_current": "The DC current limit of your battery in A"
+                    "dc_current": "The DC current limit of your battery in A",
+                    "number_of_phases": "The phase configuration of your system",
+                    "use_sliders": "Use stepped sliders for writeable number entities"                    
                 }
             }
         }
@@ -35,9 +37,11 @@
                     "rescan": "Rescan available devices. This will rescan all available devices",
                     "interval": "Update interval in (s)",
                     "ac_voltage": "The AC voltage of your grid in V",
-                    "ac_current": "The AC current limit of your grid in A",
+                    "ac_current": "The AC (per phase) current limit of your grid in A",
                     "dc_voltage": "The DC voltage of your battery in V",
                     "dc_current": "The DC current limit of your battery in A",
+                    "number_of_phases": "The phase configuration of your system",
+                    "use_sliders": "Use stepped sliders for writeable number entities",
                     "advanced": "switch to read only mode if unchecked (when submitted)"
                 }
             },
@@ -53,7 +57,9 @@
                     "ac_voltage": "The AC voltage of your grid in V",
                     "ac_current": "The AC current limit of your grid in A",
                     "dc_voltage": "The DC voltage of your battery in V",
-                    "dc_current": "The DC current limit of your battery in A"
+                    "dc_current": "The DC current limit of your battery in A",
+                    "number_of_phases": "The phase configuration of your system",
+                    "use_sliders": "Use stepped sliders for writeable number entities"
                 }                
             }
         }

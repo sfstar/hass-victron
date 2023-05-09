@@ -5,7 +5,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN, CONF_HOST, CONF_PORT, SCAN_REGISTERS, CONF_INTERVAL, CONF_AC_SYSTEM_VOLTAGE, CONF_AC_CURRENT_LIMIT, CONF_DC_SYSTEM_VOLTAGE, CONF_DC_CURRENT_LIMIT
+from .const import DOMAIN, CONF_HOST, CONF_PORT, SCAN_REGISTERS, CONF_INTERVAL
 from .coordinator import victronEnergyDeviceUpdateCoordinator as Coordinator
 
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.SWITCH, Platform.NUMBER, Platform.SELECT, Platform.BINARY_SENSOR, Platform.BUTTON]

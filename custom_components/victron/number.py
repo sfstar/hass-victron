@@ -33,6 +33,8 @@ from .const import (
     UINT16_MAX, 
     CONF_DC_SYSTEM_VOLTAGE, 
     CONF_DC_CURRENT_LIMIT, 
+    CONF_NUMBER_OF_PHASES,
+    CONF_USE_SLIDERS,
     CONF_AC_SYSTEM_VOLTAGE, 
     CONF_AC_CURRENT_LIMIT)
 
@@ -71,6 +73,7 @@ async def async_setup_entry(
                             native_unit_of_measurement=registerInfo.unit,
                             # native_min_value=registerInfo.writeType.lowerLimit,
                             # native_max_value=registerInfo.writeType.upperLimit,
+                            mode=NumberMode.SLIDER if config_entry.options[CONF_USE_SLIDERS] else NumberMode.BOX,
                             native_min_value=determine_min_value(registerInfo.unit, config_entry.options, registerInfo.entityType.powerType, registerInfo.entityType.negative),
                             native_max_value=determine_max_value(registerInfo.unit, config_entry.options, registerInfo.entityType.powerType),
                             entity_category=EntityCategory.CONFIG,
@@ -102,7 +105,7 @@ def determine_min_value(unit, config_entry: config_entries.ConfigEntry, powerTyp
         return min_value
     elif unit == UnitOfPower.WATT:
         if negative:
-            min_value = (int(config_entry[CONF_AC_SYSTEM_VOLTAGE]) * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (int(config_entry[CONF_DC_SYSTEM_VOLTAGE].dc_voltage) * config_entry[CONF_DC_CURRENT_LIMIT])
+            min_value = (int(config_entry[CONF_AC_SYSTEM_VOLTAGE]) * int(config_entry[CONF_NUMBER_OF_PHASES]) * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (int(config_entry[CONF_DC_SYSTEM_VOLTAGE].dc_voltage) * config_entry[CONF_DC_CURRENT_LIMIT])
             rounded_min = -round(min_value/100)*100
             _LOGGER.debug(rounded_min)
             return rounded_min
@@ -127,7 +130,7 @@ def determine_max_value(unit, config_entry:config_entries.ConfigEntry, powerType
         max_value = series_type * 3.65 #statically based on lifepo4 cells
         return max_value
     elif unit == UnitOfPower.WATT:
-        max_value = (int(config_entry[CONF_AC_SYSTEM_VOLTAGE]) * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (int(config_entry[CONF_DC_SYSTEM_VOLTAGE]) * config_entry[CONF_DC_CURRENT_LIMIT])
+        max_value = (int(config_entry[CONF_AC_SYSTEM_VOLTAGE]) * int(config_entry[CONF_NUMBER_OF_PHASES]) * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (int(config_entry[CONF_DC_SYSTEM_VOLTAGE]) * config_entry[CONF_DC_CURRENT_LIMIT])
         rounded_max = round(max_value/100)*100
         return rounded_max
     elif unit == ELECTRIC_CURRENT_AMPERE:
@@ -143,6 +146,7 @@ def determine_max_value(unit, config_entry:config_entries.ConfigEntry, powerType
 class VictronNumberMixin:
     """A class that describes number entities."""
     scale: int
+    mode: bool
 
 class VictronNumberStep:
     step: float = 0
@@ -178,7 +182,7 @@ class VictronNumber(NumberEntity):
         else:
             self.entity_id = f"{NUMBER_DOMAIN}.{DOMAIN}_{self.description.key}"
 
-        self._attr_mode = NumberMode.SLIDER
+        self._attr_mode = self.description.mode
   
 
 
@@ -201,6 +205,8 @@ class VictronNumber(NumberEntity):
 
     @property
     def native_step(self) -> float | None:
+        if not self.description.mode == NumberMode.SLIDER: # allow users to skip stepping in case of box mode
+            return None
         if self.description.step > 0:
             return self.description.step
         max = self.native_max_value

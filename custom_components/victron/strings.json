@@ -11,6 +11,8 @@
       },
       "advanced": {
         "data": {
+          "use_sliders": "[%key:common::config_flow::data::use_sliders%]",
+          "number_of_phases": "[%key:common::config_flow::data::number_of_phases%]",
           "ac_voltage": "[%key:common::config_flow::data::ac_voltage%]",
           "dc_voltage": "[%key:common::config_flow::data::dc_voltage%]",
           "dc_current": "[%key:common::config_flow::data::ac_current%]",

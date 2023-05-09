@@ -24,7 +24,7 @@ from homeassistant.core import callback
 
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlow
 
-from .const import DOMAIN, CONF_HOST, CONF_PORT, CONF_INTERVAL, RegisterInfo, SCAN_REGISTERS, CONF_ADVANCED_OPTIONS, CONF_DC_SYSTEM_VOLTAGE, CONF_AC_SYSTEM_VOLTAGE, CONF_DC_CURRENT_LIMIT, CONF_AC_CURRENT_LIMIT, DC_VOLTAGES, AC_VOLTAGES
+from .const import DOMAIN, CONF_HOST, CONF_PORT, CONF_INTERVAL, RegisterInfo, SCAN_REGISTERS, CONF_ADVANCED_OPTIONS, CONF_DC_SYSTEM_VOLTAGE, CONF_AC_SYSTEM_VOLTAGE, CONF_DC_CURRENT_LIMIT, CONF_AC_CURRENT_LIMIT, CONF_NUMBER_OF_PHASES, CONF_USE_SLIDERS, DC_VOLTAGES, AC_VOLTAGES, PHASE_CONFIGURATIONS
 from .hub import VictronHub
 
 _LOGGER = logging.getLogger(__name__)
@@ -152,6 +152,8 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 options[CONF_PORT] = self.port
                 options[CONF_INTERVAL] = self.interval
                 options[CONF_ADVANCED_OPTIONS] = bool(self.advanced_options)
+                options[CONF_NUMBER_OF_PHASES] = int(user_input[CONF_NUMBER_OF_PHASES])
+                options[CONF_USE_SLIDERS] = bool(user_input[CONF_USE_SLIDERS])
                 options[CONF_AC_SYSTEM_VOLTAGE] = int(user_input[CONF_AC_SYSTEM_VOLTAGE])
                 options[CONF_DC_SYSTEM_VOLTAGE] = int(user_input[CONF_DC_SYSTEM_VOLTAGE])
 
@@ -172,11 +174,19 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors=errors,
             data_schema=vol.Schema(
                 {
-                    vol.Required(CONF_AC_SYSTEM_VOLTAGE, default=str(AC_VOLTAGES["US"])): SelectSelector(
+                    vol.Required(CONF_AC_SYSTEM_VOLTAGE, default=str(AC_VOLTAGES["US (120)"])): SelectSelector(
                         SelectSelectorConfig(
                             options=[
                                 SelectOptionDict(value=str(value), label=key)
                                 for key, value in AC_VOLTAGES.items()
+                            ]
+                        ),
+                    ),
+                    vol.Required(CONF_NUMBER_OF_PHASES, default=str(PHASE_CONFIGURATIONS["single phase"])): SelectSelector(
+                        SelectSelectorConfig(
+                            options=[
+                                SelectOptionDict(value=str(value), label=key)
+                                for key, value in PHASE_CONFIGURATIONS.items()
                             ]
                         ),
                     ),
@@ -189,7 +199,8 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                             ]
                         ),
                     ),
-                    vol.Required(CONF_DC_CURRENT_LIMIT, default= 0): vol.All(vol.Coerce(int, "must be a number"))
+                    vol.Required(CONF_DC_CURRENT_LIMIT, default= 0): vol.All(vol.Coerce(int, "must be a number")),
+                    vol.Optional(CONF_USE_SLIDERS, default=True): bool
                 }))
 
 
@@ -333,8 +344,9 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
 
     def init_write_form(self, errors: dict):
         config = dict(self.config_entry.options)
-        system_ac_voltage_default = self.config_entry.options.get(CONF_AC_SYSTEM_VOLTAGE, AC_VOLTAGES["US"])
+        system_ac_voltage_default = self.config_entry.options.get(CONF_AC_SYSTEM_VOLTAGE, AC_VOLTAGES["US (120)"])
         system_dc_voltage_default = self.config_entry.options.get(CONF_DC_SYSTEM_VOLTAGE, DC_VOLTAGES["lifepo4_12v"])
+        system_number_of_phases_default = self.config_entry.options.get(CONF_NUMBER_OF_PHASES, PHASE_CONFIGURATIONS["single phase"])
         errors = {}
         return self.async_show_form(
                 step_id="init_write",
@@ -352,7 +364,15 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
                                 ]
                             ),
                         ),
-                        vol.Required(CONF_AC_CURRENT_LIMIT, default=config.get(CONF_AC_CURRENT_LIMIT, 0)): vol.All(vol.Coerce(int, "must be a number")),
+                        vol.Required(CONF_NUMBER_OF_PHASES, default=str(system_number_of_phases_default)): SelectSelector(
+                            SelectSelectorConfig(
+                                options=[
+                                    SelectOptionDict(value=str(value), label=key)
+                                    for key, value in PHASE_CONFIGURATIONS.items()
+                                ]
+                            ),
+                        ),
+                        vol.Required(CONF_AC_CURRENT_LIMIT, default=config.get(CONF_AC_CURRENT_LIMIT, 1)): vol.All(vol.Coerce(int, "must be the max current of a single phase as a number")),
                         vol.Required(CONF_DC_SYSTEM_VOLTAGE, default=str(system_dc_voltage_default)): SelectSelector(
                             SelectSelectorConfig(
                                 options=[
@@ -361,7 +381,8 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
                                 ]
                             ),
                         ),
-                        vol.Required(CONF_DC_CURRENT_LIMIT, default=config.get(CONF_DC_CURRENT_LIMIT,1)): vol.All(vol.Coerce(int, "must be a number")),
+                        vol.Required(CONF_DC_CURRENT_LIMIT, default=config.get(CONF_DC_CURRENT_LIMIT,1)): vol.All(vol.Coerce(int, "must be the total DC current for the system as a number")),
+                        vol.Optional(CONF_USE_SLIDERS, default=config.get(CONF_USE_SLIDERS, config.get(CONF_USE_SLIDERS, True))): bool,
                         vol.Optional(CONF_RESCAN, default=False): bool,
                         vol.Optional(CONF_ADVANCED_OPTIONS, default=True): bool
                     },
