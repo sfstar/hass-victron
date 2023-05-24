@@ -988,9 +988,13 @@ evcharger_productid_registers = {
 }
 
 class evcharger_mode(Enum):
-    AC_INPUT_1 = 0
-    AC_OUTPUT = 1
-    AC_INPUT_2 = 2
+    MANUAL = 0
+    AUTO = 1
+    SCHEDULED = 2
+    
+class evcharger_position(Enum):
+    AC_OUTPUT = 0
+    AC_INPUT = 1
 
 class evcharger_status(Enum):
     DISCONNECTED = 0
@@ -1008,6 +1012,14 @@ class evcharger_status(Enum):
     UNDER_VOLTAGE_DETECTED = 12
     OVERVOLTAGE_DETECTED = 13
     OVERHEATING_DETECTED = 14
+    RESERVED_1 = 15
+    RESERVED_2 = 16
+    RESERVED_3 = 17
+    RESERVED_4 = 19
+    CHARGING_LIMIT = 20
+    START_CHARGING = 21
+    SWITCH_TO_3_PHASE = 22
+    SWITCH_TO_1_PHASE = 23
 
 evcharger_registers = {
     "evcharger_firmwareversion": RegisterInfo(3802, UINT32),
@@ -1025,7 +1037,7 @@ evcharger_registers = {
     "evcharger_status": RegisterInfo(register=3824, dataType=UINT16, entityType=TextReadEntityType(evcharger_status)),
     "evcharger_setcurrent": RegisterInfo(register=3825, dataType=UINT16, unit=ELECTRIC_CURRENT_AMPERE, entityType=SliderWriteType("AC", False)),
     "evcharger_startstop": RegisterInfo(register=3826, dataType=UINT16, entityType=SwitchWriteType()),
-    "evcharger_position": RegisterInfo(register=3827, dataType=UINT16, entityType=TextReadEntityType(generic_position)),
+    "evcharger_position": RegisterInfo(register=3827, dataType=UINT16, entityType=TextReadEntityType(evcharger_position)),
 }
 
 acload_registers = {
