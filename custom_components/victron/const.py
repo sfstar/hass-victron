@@ -281,7 +281,7 @@ battery_registers = {
     "battery_temperature": RegisterInfo(262, INT16, UnitOfTemperature.CELSIUS, 10),
     "battery_midvoltage": RegisterInfo(263, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "battery_midvoltagedeviation": RegisterInfo(264, UINT16, PERCENTAGE, 100),
-    "battery_consumedamphours": RegisterInfo(265, UINT16, ELECTRIC_CURRENT_AMPERE, -10),
+    "battery_consumedamphours": RegisterInfo(265, UINT16, , -10), # HA doesn't support charge class w/ Ah units yet
     "battery_soc": RegisterInfo(266, UINT16, PERCENTAGE, 10),
     "battery_alarm": RegisterInfo(register=267, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
     "battery_alarm_lowvoltage": RegisterInfo(register=268, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
@@ -297,12 +297,12 @@ battery_registers = {
     "battery_alarm_fuseblown": RegisterInfo(register=278, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
     "battery_alarm_highinternaltemperature": RegisterInfo(register=279, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
     "battery_relay": RegisterInfo(register=280, dataType=UINT16, entityType=SwitchWriteType()),
-    "battery_history_deepestdischarge": RegisterInfo(281, UINT16, ELECTRIC_CURRENT_AMPERE, -10),
-    "battery_history_lastdischarge": RegisterInfo(282, UINT16, ELECTRIC_CURRENT_AMPERE, -10),
-    "battery_history_averagedischarge": RegisterInfo(283, UINT16, ELECTRIC_CURRENT_AMPERE, -10),
+    "battery_history_deepestdischarge": RegisterInfo(281, UINT16, , -10), # HA doesn't support charge class w/ Ah units yet
+    "battery_history_lastdischarge": RegisterInfo(282, UINT16, , -10), # HA doesn't support charge class w/ Ah units yet
+    "battery_history_averagedischarge": RegisterInfo(283, UINT16, , -10), # HA doesn't support charge class w/ Ah units yet
     "battery_history_chargecycles": RegisterInfo(284, UINT16),
     "battery_history_fulldischarges": RegisterInfo(285, UINT16),
-    "battery_history_totalahdrawn": RegisterInfo(286, UINT16, ELECTRIC_CURRENT_AMPERE, -10),
+    "battery_history_totalahdrawn": RegisterInfo(286, UINT16, , -10), # HA doesn't support charge class w/ Ah units yet
     "battery_history_minimumvoltage": RegisterInfo(287, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "battery_history_maximumvoltage": RegisterInfo(288, UINT16, ELECTRIC_POTENTIAL_VOLT, 100),
     "battery_history_timesincelastfullcharge": RegisterInfo(289, UINT16, TIME_SECONDS, 0.01),
