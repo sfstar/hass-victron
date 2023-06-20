@@ -151,11 +151,12 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
     def _handle_coordinator_update(self) -> None:
         """Get the latest data and updates the states."""      
         try:
-            data = self.description.value_fn(self.coordinator.processed_data(), self.description.slave, self.description.key)
-            if self.entity_type is not None and isinstance(self.entity_type, TextReadEntityType):
-                self._attr_native_value = self.entity_type.decodeEnum(data).name.split("_DUPLICATE")[0]
-            else:
-                self._attr_native_value = data
+            if self.available:
+                data = self.description.value_fn(self.coordinator.processed_data(), self.description.slave, self.description.key)
+                if self.entity_type is not None and isinstance(self.entity_type, TextReadEntityType):
+                    self._attr_native_value = self.entity_type.decodeEnum(data).name.split("_DUPLICATE")[0]
+                else:
+                    self._attr_native_value = data
                 
             self.async_write_ha_state()
         except (TypeError, IndexError):
