@@ -18,6 +18,9 @@ class VictronHub:
         self._client = ModbusTcpClient(host=self.host, port=self.port)
         self._lock = threading.Lock()
 
+    def is_still_connected(self):
+        return self._client.is_socket_open()
+
     def connect(self):
         return self._client.connect()
 

@@ -7,7 +7,7 @@ import logging
 from datetime import timedelta
 from homeassistant.util import utcnow
 from homeassistant.helpers import event, entity
-from homeassistant.core import HomeAssistant, HassJob
+from homeassistant.core import HomeAssistant, HassJob, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.config_entries import ConfigEntry
@@ -147,30 +147,22 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
 
         super().__init__(coordinator)
 
-    async def async_update(self) -> None:
+    @callback
+    def _handle_coordinator_update(self) -> None:
         """Get the latest data and updates the states."""      
         try:
-            data = self.description.value_fn(self.coordinator.processed_data(), self.description.slave, self.description.key)
-            if self.entity_type is not None and isinstance(self.entity_type, TextReadEntityType):
-                self._attr_native_value = self.entity_type.decodeEnum(data).name.split("_DUPLICATE")[0]
-            else:
-                self._attr_native_value = data
+            if self.available:
+                data = self.description.value_fn(self.coordinator.processed_data(), self.description.slave, self.description.key)
+                if self.entity_type is not None and isinstance(self.entity_type, TextReadEntityType):
+                    self._attr_native_value = self.entity_type.decodeEnum(data).name.split("_DUPLICATE")[0]
+                else:
+                    self._attr_native_value = data
+                
+            self.async_write_ha_state()
         except (TypeError, IndexError):
             _LOGGER.debug("failed to retrieve value")
             # No data available
             self._attr_native_value = None
-
-        # Cancel the currently scheduled event if there is any
-        if self._unsub_update:
-            self._unsub_update()
-            self._unsub_update = None
-
-        # Schedule the next update at exactly the next whole hour sharp
-        self._unsub_update = event.async_track_point_in_utc_time(
-            self.hass,
-            self._update_job,
-            utcnow() + timedelta(seconds=self.coordinator.interval),
-        )
 
     @property
     def available(self) -> bool:

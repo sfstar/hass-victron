@@ -70,10 +70,10 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                     #TODO change this to work with partial updates
                     for key,value in register_info_dict[name].items():
                         full_key = str(unit) + "." + key
-                        self.data["data"][full_key] = None
+                        # self.data["data"][full_key] = None
                         unavailable_entities[full_key] = False
                         
-                    _LOGGER.warning(f"no valid data returned for entities of slave: {unit} if device was physically removed please force a rescan to resolve this issue")
+                    _LOGGER.warning(f"no valid data returned for entities of slave: {unit} (if the device continues to no longer update) check if the device was physically removed. Before opening an issue please force a rescan to attempt to resolve this issue")
                 else:
                     parsed_data = OrderedDict(list(parsed_data.items()) + list(self.parse_register_data(data, register_info_dict[name], unit).items()))
                     for key,value in register_info_dict[name].items():
