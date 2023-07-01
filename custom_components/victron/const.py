@@ -665,6 +665,7 @@ class generic_status(Enum):
     SHORT_CIRCUITED = 2
     REVERSE_POLARITY = 3
     UNKNOWN = 4
+    SENSOR_BATTERY_LOW = 5
 
 tank_registers = {
     "tank_productid": RegisterInfo(3000, UINT16),
