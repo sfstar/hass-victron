@@ -54,7 +54,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         """Get the latest data from victron"""
         self.logger.debug("Fetching victron data")
         self.logger.debug(self.decodeInfo)
-        
+
         parsed_data = OrderedDict()
         unavailable_entities = OrderedDict()
 
@@ -72,7 +72,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                         full_key = str(unit) + "." + key
                         # self.data["data"][full_key] = None
                         unavailable_entities[full_key] = False
-                        
+
                     _LOGGER.warning(f"no valid data returned for entities of slave: {unit} (if the device continues to no longer update) check if the device was physically removed. Before opening an issue please force a rescan to attempt to resolve this issue")
                 else:
                     parsed_data = OrderedDict(list(parsed_data.items()) + list(self.parse_register_data(data, register_info_dict[name], unit).items()))
@@ -88,7 +88,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
 
     def parse_register_data(self, buffer: ReadHoldingRegistersResponse, registerInfo: OrderedDict(str, RegisterInfo), unit: int) -> dict:
         decoder = BinaryPayloadDecoder.fromRegisters(
-        buffer.registers, byteorder=Endian.Big
+        buffer.registers, byteorder=Endian.BIG
         )
         decoded_data  = OrderedDict()
         for key,value in registerInfo.items():
