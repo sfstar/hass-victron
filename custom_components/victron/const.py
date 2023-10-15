@@ -554,7 +554,7 @@ pvinverter_registers = {
     "pvinverter_L1_energy_forward_total": RegisterInfo(1046, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "pvinverter_L2_energy_forward_total": RegisterInfo(1048, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "pvinverter_L3_energy_forward_total": RegisterInfo(1050, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
-    "pvinverter_power_total": RegisterInfo(1052, INT32, UnitOfPower.KILO_WATT),
+    "pvinverter_power_total": RegisterInfo(1052, INT32, UnitOfPower.WATT),
     "pvinverter_power_max_capacity": RegisterInfo(1054, UINT32, UnitOfPower.KILO_WATT),
     "pvinverter_powerlimit": RegisterInfo(register=1056, dataType=UINT32, unit=UnitOfPower.WATT, entityType=SliderWriteType("AC", False))
 }
