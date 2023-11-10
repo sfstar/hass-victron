@@ -33,7 +33,11 @@ class VictronHub:
         """Read holding registers."""
         with self._lock:
             kwargs = {"slave": int(unit)} if unit else {}
-            return self._client.read_holding_registers(address, count, **kwargs)
+            try:
+                readreg = self._client.read_holding_registers(address, count, **kwargs)
+            except TimeOutException as ex::
+                readreg = ex
+            return readreg
 
     def calculate_register_count(self, registerInfoDict: OrderedDict):
         first_key = next(iter(registerInfoDict))
