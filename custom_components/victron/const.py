@@ -444,6 +444,7 @@ class solarcharger_state(Enum):
     STORAGE = 6
     EQUALIZE = 7
     OTHER_HUB_1 = 11
+    STARTING = 245
     EXTERNAL_CONTROL = 252
 
 class solarcharger_equalization_pending(Enum):
