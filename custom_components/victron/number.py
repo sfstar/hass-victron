@@ -13,7 +13,7 @@ from homeassistant.const import (
     UnitOfElectricPotential,
     UnitOfPower,
     UnitOfElectricCurrent,
-    UnitOfTime,
+    UnitOfTime
 )
 
 import math
