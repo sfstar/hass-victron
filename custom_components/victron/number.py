@@ -17,7 +17,7 @@ from homeassistant.const import (
 
 import math
 
-from homeassistant.const import TIME_SECONDS
+from homeassistant.const import UnitOfTime,
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
