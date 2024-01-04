@@ -21,10 +21,10 @@ from homeassistant.const import (
     PERCENTAGE, 
     UnitOfEnergy, 
     UnitOfPower,
-    ELECTRIC_POTENTIAL_VOLT,
-    ELECTRIC_CURRENT_AMPERE,
-    FREQUENCY_HERTZ,
-    TIME_SECONDS,
+    UnitOfElectricPotential,
+    UnitOfElectricCurrent,
+    UnitOfFrequency,
+    UnitOfTime,
     UnitOfTemperature,
     UnitOfVolume,
     UnitOfSpeed,
@@ -90,9 +90,9 @@ def determine_victron_device_class(name, unit):
     elif unit in [member.value for member in UnitOfEnergy]:
         _LOGGER.debug("unit of energy")
         return SensorDeviceClass.ENERGY
-    elif unit == FREQUENCY_HERTZ:
+    elif unit == UnitOfFrequency.HERTZ:
         return SensorDeviceClass.FREQUENCY
-    elif unit == TIME_SECONDS:
+    elif unit == UnitOfTime.SECONDS:
         return SensorDeviceClass.DURATION
     elif unit in [member.value for member in UnitOfTemperature]:
         return  SensorDeviceClass.TEMPERATURE
@@ -104,9 +104,9 @@ def determine_victron_device_class(name, unit):
         return SensorDeviceClass.SPEED
     elif unit in [member.value for member in UnitOfPressure]:
         return SensorDeviceClass.PRESSURE
-    elif unit == ELECTRIC_POTENTIAL_VOLT:
+    elif unit == UnitOfElectricPotential.VOLT:
         return SensorDeviceClass.VOLTAGE
-    elif unit == ELECTRIC_CURRENT_AMPERE:
+    elif unit == UnitOfElectricCurrent.AMPERE:
         return SensorDeviceClass.CURRENT
     return None
 
