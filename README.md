@@ -17,7 +17,7 @@ The current state of this integration provides the following limitations regardi
 
 ## Important Note
 This integration was written an tested with the latest victron firmware running.
-GX version: v2.92
+GX version: v3.10 (support validated from v2.92)
 Multiplus version: 492
 
 Victron continuously improves upon the modbus implementation by adding new registers.
@@ -33,13 +33,6 @@ This issue should contain the following information:
 - Missing unit id (among other 30, 100, 227, 228)
 
 Please note that it might take some time for older firmware versions to get full support (after a ticket is opened).
-
-
-## Important Note 2
-Victron is currently working on a new major release of the GX device (v3.x.x).
-Currently this is still a pre release and since the documentation regarding the modbus register changes hasn't been made available this integration will only support v2.x GX device versions.
-
-When the spec for V3 is released support for it will be added to the integration as well
 
 ## Currently planned improvements
 - Fully Switch to async
