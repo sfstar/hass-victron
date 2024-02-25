@@ -61,10 +61,6 @@ async def async_setup_entry(
         for slave, registerLedger in register_set.items():
             for name in registerLedger:
                 for register_name, registerInfo in register_info_dict[name].items():
-                    # _LOGGER.debug("unit == " + str(slave) + " registerLedger == " + str(registerLedger) + " registerInfo ")
-                    # _LOGGER.debug(str(registerInfo.slave))
-                    # _LOGGER.debug("register_name")
-                    # _LOGGER.debug(register_name)
                     if isinstance(registerInfo.entityType, SliderWriteType):
                         descriptions.append(VictronEntityDescription(
                             key=register_name,
@@ -72,8 +68,8 @@ async def async_setup_entry(
                             slave=slave,
                             native_unit_of_measurement=registerInfo.unit,
                             mode=NumberMode.SLIDER if config_entry.options[CONF_USE_SLIDERS] else NumberMode.BOX,
-                            native_min_value=determine_min_value(registerInfo.unit, config_entry.options, registerInfo.entityType.powerType, registerInfo.entityType.negative),
-                            native_max_value=determine_max_value(registerInfo.unit, config_entry.options, registerInfo.entityType.powerType),
+                            native_min_value=determine_min_value(registerInfo.unit, config_entry.options, registerInfo.entityType.powerType, registerInfo.entityType.negative, registerInfo.entityType.phaseApplicability),
+                            native_max_value=determine_max_value(registerInfo.unit, config_entry.options, registerInfo.entityType.powerType, registerInfo.entityType.phaseApplicability),
                             entity_category=EntityCategory.CONFIG,
                             address=registerInfo.register,
                             scale = registerInfo.scale,
@@ -91,10 +87,8 @@ async def async_setup_entry(
                 ))
     _LOGGER.debug("adding number")
     async_add_entities(entities)
-    _LOGGER.debug("adding numbering")
 
-
-def determine_min_value(unit, config_entry: config_entries.ConfigEntry, powerType, negative: bool) -> int:
+def determine_min_value(unit, config_entry: config_entries.ConfigEntry, powerType, negative: bool, phaseApplicability: int) -> int:
     if unit == PERCENTAGE:
         return 0
     elif unit == UnitOfElectricPotential.VOLT:
@@ -103,7 +97,8 @@ def determine_min_value(unit, config_entry: config_entries.ConfigEntry, powerTyp
         return min_value
     elif unit == UnitOfPower.WATT:
         if negative:
-            min_value = (int(config_entry[CONF_AC_SYSTEM_VOLTAGE]) * int(config_entry[CONF_NUMBER_OF_PHASES]) * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (int(config_entry[CONF_DC_SYSTEM_VOLTAGE].dc_voltage) * config_entry[CONF_DC_CURRENT_LIMIT])
+            number_of_phases = phaseApplicability if phaseApplicability > 0 else int(config_entry[CONF_NUMBER_OF_PHASES])
+            min_value = (int(config_entry[CONF_AC_SYSTEM_VOLTAGE]) * number_of_phases * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (int(config_entry[CONF_DC_SYSTEM_VOLTAGE].dc_voltage) * config_entry[CONF_DC_CURRENT_LIMIT])
             rounded_min = -round(min_value/100)*100
             _LOGGER.debug(rounded_min)
             return rounded_min
@@ -120,7 +115,7 @@ def determine_min_value(unit, config_entry: config_entries.ConfigEntry, powerTyp
     else:
         return 0
 
-def determine_max_value(unit, config_entry:config_entries.ConfigEntry, powerType) -> int:
+def determine_max_value(unit, config_entry:config_entries.ConfigEntry, powerType, phaseApplicability) -> int:
     if unit == PERCENTAGE:
         return 100
     elif unit == UnitOfElectricPotential.VOLT:
@@ -128,7 +123,8 @@ def determine_max_value(unit, config_entry:config_entries.ConfigEntry, powerType
         max_value = series_type * 3.65 #statically based on lifepo4 cells
         return max_value
     elif unit == UnitOfPower.WATT:
-        max_value = (int(config_entry[CONF_AC_SYSTEM_VOLTAGE]) * int(config_entry[CONF_NUMBER_OF_PHASES]) * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (int(config_entry[CONF_DC_SYSTEM_VOLTAGE]) * config_entry[CONF_DC_CURRENT_LIMIT])
+        number_of_phases = phaseApplicability if phaseApplicability > 0 else int(config_entry[CONF_NUMBER_OF_PHASES])
+        max_value = (int(config_entry[CONF_AC_SYSTEM_VOLTAGE]) * number_of_phases * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (int(config_entry[CONF_DC_SYSTEM_VOLTAGE]) * config_entry[CONF_DC_CURRENT_LIMIT])
         rounded_max = round(max_value/100)*100
         return rounded_max
     elif unit == UnitOfElectricCurrent.AMPERE:

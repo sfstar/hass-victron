@@ -83,10 +83,11 @@ class SwitchWriteType(EntityType):
         super().__init__(entityTypeName="switch")
 
 class SliderWriteType(EntityType):
-    def __init__(self, powerType="", negative: bool=False) -> None:
+    def __init__(self, powerType="", negative: bool=False, phaseApplicability: int = 0) -> None:
         super().__init__(entityTypeName="slider")
         self.powerType = powerType
         self.negative = negative
+        self.phaseApplicability = phaseApplicability
     
 class SelectWriteType(EntityType):
     def __init__(self, optionsEnum: Enum) -> None:
@@ -210,7 +211,7 @@ vebus_registers = {
     "vebus_out_L2_current": RegisterInfo(19, INT16, UnitOfElectricCurrent.AMPERE, 10),
     "vebus_out_L3_current": RegisterInfo(20, INT16, UnitOfElectricCurrent.AMPERE, 10),
     "vebus_out_L1_frequency": RegisterInfo(21, INT16, UnitOfFrequency.HERTZ, 100),
-    "vebus_activein_currentlimit": RegisterInfo(22, INT16, UnitOfElectricCurrent.AMPERE, 10, SliderWriteType("AC", True)),
+    "vebus_activein_currentlimit": RegisterInfo(22, INT16, UnitOfElectricCurrent.AMPERE, 10, SliderWriteType("AC", True, 1)),
     "vebus_out_L1_power": RegisterInfo(23, INT16, UnitOfPower.WATT, 0.1),
     "vebus_out_L2_power": RegisterInfo(24, INT16, UnitOfPower.WATT, 0.1),
     "vebus_out_L3_power": RegisterInfo(25, INT16, UnitOfPower.WATT, 0.1),
@@ -225,11 +226,11 @@ vebus_registers = {
     "vebus_alarm_hightemperature": RegisterInfo(register=34, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_alarm_lowbattery": RegisterInfo(register=35, dataType=UINT16,  entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_alarm_overload": RegisterInfo(register=36,dataType=UINT16,  entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
-    "vebus_L1_acpowersetpoint": RegisterInfo(register=37, dataType=INT16, unit=UnitOfPower.WATT, entityType=SliderWriteType("AC", True)),
+    "vebus_L1_acpowersetpoint": RegisterInfo(register=37, dataType=INT16, unit=UnitOfPower.WATT, entityType=SliderWriteType("AC", True, 1)),
     "vebus_disablecharge": RegisterInfo(register=38, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
     "vebus_disablefeedin": RegisterInfo(39, UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
-    "vebus_L2_acpowersetpoint": RegisterInfo(register=40, dataType=INT16, unit=UnitOfPower.WATT, entityType=SliderWriteType("AC", True)),
-    "vebus_L3_acpowersetpoint": RegisterInfo(register=41, dataType=INT16, unit=UnitOfPower.WATT, entityType=SliderWriteType("AC", True)),
+    "vebus_L2_acpowersetpoint": RegisterInfo(register=40, dataType=INT16, unit=UnitOfPower.WATT, entityType=SliderWriteType("AC", True, 1)),
+    "vebus_L3_acpowersetpoint": RegisterInfo(register=41, dataType=INT16, unit=UnitOfPower.WATT, entityType=SliderWriteType("AC", True, 1)),
     "vebus_alarm_temperaturesensor": RegisterInfo(register=42, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_alarm_voltagesensor": RegisterInfo(register=43, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_alarm_L1_higtemperature": RegisterInfo(register=44, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
@@ -254,9 +255,9 @@ vebus_registers = {
     "vebus_alarm_phaserotation": RegisterInfo(register=63, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_alarm_gridlost": RegisterInfo(register=64, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
     "vebus_donotfeedinovervoltage": RegisterInfo(register=65, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
-    "vebus_L1_maxfeedinpower": RegisterInfo(66, UINT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", False)),
-    "vebus_L2_maxfeedinpower": RegisterInfo(67, UINT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", False)),
-    "vebus_L3_maxfeedinpower": RegisterInfo(68, UINT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", False)),
+    "vebus_L1_maxfeedinpower": RegisterInfo(66, UINT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", False, 1)),
+    "vebus_L2_maxfeedinpower": RegisterInfo(67, UINT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", False, 1)),
+    "vebus_L3_maxfeedinpower": RegisterInfo(68, UINT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", False, 1)),
     "vebus_state_ignoreacin1": RegisterInfo(register=69, dataType=UINT16, entityType=BoolReadEntityType()), #This has no unit of measurement
     "vebus_state_ignoreacin2": RegisterInfo(register=70, dataType=UINT16, entityType=BoolReadEntityType()), #This has no unit of measurement
     "vebus_targetpowerismaxfeedin": RegisterInfo(register=71, dataType=UINT16, entityType=SwitchWriteType()), #This has no unit of measurement
@@ -1198,8 +1199,8 @@ multi_registers = {
     "multi_output_L1_frequency": RegisterInfo(4519, UINT16, UnitOfFrequency.HERTZ, 100),
     "multi_input_1_type": RegisterInfo(register=4520, dataType=UINT16, entityType=TextReadEntityType(multi_input_type)),
     "multi_input_2_type": RegisterInfo(register=4521, dataType=UINT16, entityType=TextReadEntityType(multi_input_type)),
-    "multi_input_1_currentlimit": RegisterInfo(4522, UINT16, UnitOfElectricCurrent.AMPERE, 10, SliderWriteType("AC", False)),
-    "multi_input_2_currentlimit": RegisterInfo(4523, UINT16, UnitOfElectricCurrent.AMPERE, 10, SliderWriteType("AC", False)),
+    "multi_input_1_currentlimit": RegisterInfo(4522, UINT16, UnitOfElectricCurrent.AMPERE, 10, SliderWriteType("AC", False, 1)),
+    "multi_input_2_currentlimit": RegisterInfo(4523, UINT16, UnitOfElectricCurrent.AMPERE, 10, SliderWriteType("AC", False, 1)),
     "multi_numberofphases": RegisterInfo(4524, UINT16),
     "multi_activein_activeinput": RegisterInfo(register=4525, dataType=UINT16, entityType=TextReadEntityType(generic_activeinput)),
     "multi_battery_voltage": RegisterInfo(4526, UINT16, UnitOfElectricPotential.VOLT, 100),
