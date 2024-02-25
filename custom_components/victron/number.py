@@ -10,14 +10,14 @@ from homeassistant.components.number import NumberEntity, NumberEntityDescriptio
 
 from homeassistant.const import (
     PERCENTAGE,
-    ELECTRIC_POTENTIAL_VOLT,
+    UnitOfElectricPotential,
     UnitOfPower,
-    ELECTRIC_CURRENT_AMPERE
+    UnitOfElectricCurrent,
+    UnitOfTime
 )
 
 import math
 
-from homeassistant.const import TIME_SECONDS
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -97,7 +97,7 @@ async def async_setup_entry(
 def determine_min_value(unit, config_entry: config_entries.ConfigEntry, powerType, negative: bool) -> int:
     if unit == PERCENTAGE:
         return 0
-    elif unit == ELECTRIC_POTENTIAL_VOLT:
+    elif unit == UnitOfElectricPotential.VOLT:
         series_type = int(config_entry[CONF_DC_SYSTEM_VOLTAGE]) / 3 #statically based on lifepo4 cells
         min_value = series_type * 2.5 #statically based on lifepo4 cells
         return min_value
@@ -109,7 +109,7 @@ def determine_min_value(unit, config_entry: config_entries.ConfigEntry, powerTyp
             return rounded_min
         else:
             return 0
-    elif unit == ELECTRIC_CURRENT_AMPERE:
+    elif unit == UnitOfElectricCurrent.AMPERE:
         if negative:
             if powerType == "AC":
                 return -config_entry[CONF_AC_CURRENT_LIMIT]
@@ -123,7 +123,7 @@ def determine_min_value(unit, config_entry: config_entries.ConfigEntry, powerTyp
 def determine_max_value(unit, config_entry:config_entries.ConfigEntry, powerType) -> int:
     if unit == PERCENTAGE:
         return 100
-    elif unit == ELECTRIC_POTENTIAL_VOLT:
+    elif unit == UnitOfElectricPotential.VOLT:
         series_type = int(config_entry[CONF_DC_SYSTEM_VOLTAGE]) / 3 #statically based on lifepo4 cells
         max_value = series_type * 3.65 #statically based on lifepo4 cells
         return max_value
@@ -131,7 +131,7 @@ def determine_max_value(unit, config_entry:config_entries.ConfigEntry, powerType
         max_value = (int(config_entry[CONF_AC_SYSTEM_VOLTAGE]) * int(config_entry[CONF_NUMBER_OF_PHASES]) * config_entry[CONF_AC_CURRENT_LIMIT]) if powerType == "AC" else (int(config_entry[CONF_DC_SYSTEM_VOLTAGE]) * config_entry[CONF_DC_CURRENT_LIMIT])
         rounded_max = round(max_value/100)*100
         return rounded_max
-    elif unit == ELECTRIC_CURRENT_AMPERE:
+    elif unit == UnitOfElectricCurrent.AMPERE:
         if powerType == "AC":
             return config_entry[CONF_AC_CURRENT_LIMIT]
         elif powerType == "DC":
