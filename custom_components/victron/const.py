@@ -7,6 +7,7 @@ from homeassistant.const import (
     UnitOfElectricPotential,
     UnitOfElectricCurrent,
     UnitOfFrequency,
+    UnitOfLength,
     UnitOfTime,
     REVOLUTIONS_PER_MINUTE,
     UnitOfIrradiance,
@@ -615,7 +616,7 @@ gps_registers = {
     "gps_speed": RegisterInfo(2805, UINT16, UnitOfSpeed.METERS_PER_SECOND, 100),
     "gps_fix": RegisterInfo(register=2806, dataType=UINT16, entityType=BoolReadEntityType()),
     "gps_numberofsatellites": RegisterInfo(2807, UINT16),
-    "gps_altitude": RegisterInfo(2808, INT32, UnitOfSpeed.METERS_PER_SECOND, 10)
+    "gps_altitude": RegisterInfo(2808, INT32, UnitOfLength.METERS, 10)
 }
 
 class ess_batterylife_state(Enum):
