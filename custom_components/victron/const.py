@@ -54,6 +54,7 @@ UINT16 = "uint16"
 INT16  = "int16"
 UINT32 = "uint32"
 INT32  = "int32"
+UINT64 = "uint64"
 
 UINT16_MAX = 65535
 
@@ -83,10 +84,11 @@ class SwitchWriteType(EntityType):
         super().__init__(entityTypeName="switch")
 
 class SliderWriteType(EntityType):
-    def __init__(self, powerType="", negative: bool=False) -> None:
+    def __init__(self, sliderUnit="", negative: bool=False, scale=1) -> None:
         super().__init__(entityTypeName="slider")
-        self.powerType = powerType
+        self.sliderUnit = sliderUnit
         self.negative = negative
+        self.scale = scale
     
 class SelectWriteType(EntityType):
     def __init__(self, optionsEnum: Enum) -> None:
@@ -142,7 +144,11 @@ gavazi_grid_registers = {
     "grid_L2_energy_reverse_total": RegisterInfo(2630, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "grid_L3_energy_reverse_total": RegisterInfo(2632, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "grid_energy_forward_total": RegisterInfo(2634, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
-    "grid_energy_reverse_total": RegisterInfo(2636, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100)
+    "grid_energy_reverse_total": RegisterInfo(2636, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
+    "grid_L1_power": RegisterInfo(2638, INT32, UnitOfPower.WATT),
+    "grid_L2_power": RegisterInfo(2640, INT32, UnitOfPower.WATT),
+    "grid_L3_power": RegisterInfo(2642, INT32, UnitOfPower.WATT),
+    
 }
  
 class vebus_mode(Enum):
@@ -190,6 +196,42 @@ class vebus_error(Enum):
     FIRMWARE_INCOMPATIBILTIY = 25
     INTERNAL_ERROR = 26
 
+class vebus_bmsprealarm(Enum):
+    OK = 0
+    WARNING = 1
+
+class vebus_chargestate(Enum):
+    INITIALIZING = 0
+    BULK = 1
+    ABSORPTION = 2
+    FLOAT = 3
+    STORAGE = 4
+    ABSORB_REPEAT = 5
+    ABSORB_FORCED = 6
+    EQUALISE = 7
+    BULK_STOPPED = 8
+    UNKNOWN = 9
+
+class vebus_remotegeneratorselected(Enum):
+    GENERATOR_SELECTED = 0
+    GENERATOR_NOT_SELECTED = 1
+
+class vebus_state(Enum):
+    OFF = 0
+    LOW_POWER = 1
+    FAULT = 2
+    BULK = 3
+    ABSORPTION = 4
+    FLOAT = 5
+    STORAGE = 6
+    EQUALIZE = 7
+    PASSTHRU = 8
+    INVERTING = 9
+    POWER_ASSIST = 10
+    POWER_SUPPLY = 11
+    SUSTAIN = 244
+    EXTERNAL_CONTROL = 252
+
 vebus_registers = { 
     "vebus_activein_L1_voltage": RegisterInfo(3, UINT16, UnitOfElectricPotential.VOLT, 10),
     "vebus_activein_L2_voltage": RegisterInfo(4, UINT16, UnitOfElectricPotential.VOLT, 10),
@@ -219,7 +261,7 @@ vebus_registers = {
     "vebus_numberofphases": RegisterInfo(28, UINT16), #the number count has no unit of measurement
     "vebus_activein_activeinput": RegisterInfo(register=29, dataType=UINT16, entityType=TextReadEntityType(generic_activeinput)),
     "vebus_soc": RegisterInfo(30, UINT16, PERCENTAGE, 10, SliderWriteType()),
-    "vebus_state": RegisterInfo(register=31, dataType=UINT16, entityType=TextReadEntityType(generic_charger_state)), #This has no unit of measurement
+    "vebus_state": RegisterInfo(register=31, dataType=UINT16, entityType=TextReadEntityType(vebus_state)), #This has no unit of measurement
     "vebus_error": RegisterInfo(register=32, dataType=UINT16, entityType=TextReadEntityType(vebus_error)), #This has no unit of measurement
     "vebus_mode": RegisterInfo(register=33, dataType=UINT16, entityType=SelectWriteType(vebus_mode)), #This has no unit of measurement
     "vebus_alarm_hightemperature": RegisterInfo(register=34, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)), #This has no unit of measurement
@@ -271,7 +313,56 @@ vebus_registers = {
     "vebus_invertertoacin1": RegisterInfo(86, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "vebus_invertertoacin2": RegisterInfo(88, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "vebus_invertertoacout": RegisterInfo(90, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
-    "vebus_outtoinverter": RegisterInfo(92, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100)
+    "vebus_outtoinverter": RegisterInfo(92, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
+    "vebus_bmsprealarm": RegisterInfo(register=94, dataType=UINT16, entityType=TextReadEntityType(vebus_bmsprealarm)),
+    "vebus_chargestate": RegisterInfo(register=95, dataType=UINT16, entityType=TextReadEntityType(vebus_chargestate)),
+    "vebus_L1_acpowersetpoint": RegisterInfo(register=96, dataType=INT32, unit=UnitOfPower.WATT, entityType=SliderWriteType("AC", True)),
+    "vebus_L2_acpowersetpoint": RegisterInfo(register=98, dataType=INT32, unit=UnitOfPower.WATT, entityType=SliderWriteType("AC", True)),
+    "vebus_L3_acpowersetpoint": RegisterInfo(register=100, dataType=INT32, unit=UnitOfPower.WATT, entityType=SliderWriteType("AC", True)),
+    "vebus_preferrenewableenergy": RegisterInfo(register=102, dataType=UINT16, entityType=SwitchWriteType()),
+    "vebus_control_remotegeneratorselected": RegisterInfo(register=103, dataType=UINT16, entityType=SwitchWriteType()),
+    "vebus_state_remotegeneratorselected": RegisterInfo(register=104, dataType=UINT16, entityType=TextReadEntityType(vebus_remotegeneratorselected)),
+    #NOTE register 105 is reserved so splitsing register lists is required.
+}
+
+vebus_additional_registers = {
+    #TODO figure out scalefactor 100 (how to apply this to writing the entity)
+    "vebus_device_0_setting_assistcurrentboostfactor": RegisterInfo(register=106, dataType=UINT16, entityType=SliderWriteType("BOOST", False, 100)),
+    "vebus_device_1_setting_assistcurrentboostfactor": RegisterInfo(register=107, dataType=UINT16, entityType=SliderWriteType("BOOST", False, 100)),
+    "vebus_device_2_setting_assistcurrentboostfactor": RegisterInfo(register=108, dataType=UINT16, entityType=SliderWriteType("BOOST", False, 100)),
+    "vebus_device_3_setting_assistcurrentboostfactor": RegisterInfo(register=109, dataType=UINT16, entityType=SliderWriteType("BOOST", False, 100)),
+    "vebus_device_4_setting_assistcurrentboostfactor": RegisterInfo(register=110, dataType=UINT16, entityType=SliderWriteType("BOOST", False, 100)),
+    "vebus_device_5_setting_assistcurrentboostfactor": RegisterInfo(register=111, dataType=UINT16, entityType=SliderWriteType("BOOST", False, 100)),
+    "vebus_device_6_setting_assistcurrentboostfactor": RegisterInfo(register=112, dataType=UINT16, entityType=SliderWriteType("BOOST", False, 100)),
+    "vebus_device_7_setting_assistcurrentboostfactor": RegisterInfo(register=113, dataType=UINT16, entityType=SliderWriteType("BOOST", False, 100)),
+    "vebus_device_8_setting_assistcurrentboostfactor": RegisterInfo(register=114, dataType=UINT16, entityType=SliderWriteType("BOOST", False, 100)),
+    "vebus_device_9_setting_assistcurrentboostfactor": RegisterInfo(register=115, dataType=UINT16, entityType=SliderWriteType("BOOST", False, 100)),
+    "vebus_device_10_setting_assistcurrentboostfactor": RegisterInfo(register=116, dataType=UINT16, entityType=SliderWriteType("BOOST", False, 100)),
+    "vebus_device_11_setting_assistcurrentboostfactor": RegisterInfo(register=117, dataType=UINT16, entityType=SliderWriteType("BOOST", False, 100)),
+    "vebus_device_0_setting_inverteroutputvoltage": RegisterInfo(register=118, dataType=UINT16, entityType=SliderWriteType("VOLT_OUT", False, 100)),
+    "vebus_device_1_setting_inverteroutputvoltage": RegisterInfo(register=119, dataType=UINT16, entityType=SliderWriteType("VOLT_OUT", False, 100)),
+    "vebus_device_2_setting_inverteroutputvoltage": RegisterInfo(register=120, dataType=UINT16, entityType=SliderWriteType("VOLT_OUT", False, 100)),
+    "vebus_device_3_setting_inverteroutputvoltage": RegisterInfo(register=121, dataType=UINT16, entityType=SliderWriteType("VOLT_OUT", False, 100)),
+    "vebus_device_4_setting_inverteroutputvoltage": RegisterInfo(register=122, dataType=UINT16, entityType=SliderWriteType("VOLT_OUT", False, 100)),
+    "vebus_device_5_setting_inverteroutputvoltage": RegisterInfo(register=123, dataType=UINT16, entityType=SliderWriteType("VOLT_OUT", False, 100)),
+    "vebus_device_6_setting_inverteroutputvoltage": RegisterInfo(register=124, dataType=UINT16, entityType=SliderWriteType("VOLT_OUT", False, 100)),
+    "vebus_device_7_setting_inverteroutputvoltage": RegisterInfo(register=125, dataType=UINT16, entityType=SliderWriteType("VOLT_OUT", False, 100)),
+    "vebus_device_8_setting_inverteroutputvoltage": RegisterInfo(register=126, dataType=UINT16, entityType=SliderWriteType("VOLT_OUT", False, 100)),
+    "vebus_device_9_setting_inverteroutputvoltage": RegisterInfo(register=127, dataType=UINT16, entityType=SliderWriteType("VOLT_OUT", False, 100)),
+    "vebus_device_10_setting_inverteroutputvoltage": RegisterInfo(register=128, dataType=UINT16, entityType=SliderWriteType("VOLT_OUT", False, 100)),
+    "vebus_device_11_setting_inverteroutputvoltage": RegisterInfo(register=129, dataType=UINT16, entityType=SliderWriteType("VOLT_OUT", False, 100)),
+    "vebus_device_0_setting_powerassistenabled": RegisterInfo(register=130, dataType=UINT16, entityType=SwitchWriteType()),
+    "vebus_device_1_setting_powerassistenabled": RegisterInfo(register=131, dataType=UINT16, entityType=SwitchWriteType()),
+    "vebus_device_2_setting_powerassistenabled": RegisterInfo(register=132, dataType=UINT16, entityType=SwitchWriteType()),
+    "vebus_device_3_setting_powerassistenabled": RegisterInfo(register=133, dataType=UINT16, entityType=SwitchWriteType()),
+    "vebus_device_4_setting_powerassistenabled": RegisterInfo(register=134, dataType=UINT16, entityType=SwitchWriteType()),
+    "vebus_device_5_setting_powerassistenabled": RegisterInfo(register=135, dataType=UINT16, entityType=SwitchWriteType()),
+    "vebus_device_6_setting_powerassistenabled": RegisterInfo(register=136, dataType=UINT16, entityType=SwitchWriteType()),
+    "vebus_device_7_setting_powerassistenabled": RegisterInfo(register=137, dataType=UINT16, entityType=SwitchWriteType()),
+    "vebus_device_8_setting_powerassistenabled": RegisterInfo(register=138, dataType=UINT16, entityType=SwitchWriteType()),
+    "vebus_device_9_setting_powerassistenabled": RegisterInfo(register=139, dataType=UINT16, entityType=SwitchWriteType()),
+    "vebus_device_10_setting_powerassistenabled": RegisterInfo(register=140, dataType=UINT16, entityType=SwitchWriteType()),
+    "vebus_device_11_setting_powerassistenabled": RegisterInfo(register=141, dataType=UINT16, entityType=SwitchWriteType()),
 }
 
 battery_registers = {
@@ -529,6 +620,12 @@ solarcharger_tracker_registers = {
     "solarcharger_tracker_1_pv_power": RegisterInfo(3725, UINT16, UnitOfPower.WATT),
     "solarcharger_tracker_2_pv_power": RegisterInfo(3726, UINT16, UnitOfPower.WATT),
     "solarcharger_tracker_3_pv_power": RegisterInfo(3727, UINT16, UnitOfPower.WATT),
+    "solarcharger_yield_user": RegisterInfo(3728, UINT32, UnitOfEnergy.KILO_WATT_HOUR),
+    "solarcharger_yield_power": RegisterInfo(3730, UINT16, UnitOfPower.WATT),
+    "solarcharger_tracker_0_mppoperationmode": RegisterInfo(register=3731, dataType=UINT16, entityType=TextReadEntityType(generic_mppoperationmode)),
+    "solarcharger_tracker_1_mppoperationmode": RegisterInfo(register=3732, dataType=UINT16, entityType=TextReadEntityType(generic_mppoperationmode)),
+    "solarcharger_tracker_2_mppoperationmode": RegisterInfo(register=3733, dataType=UINT16, entityType=TextReadEntityType(generic_mppoperationmode)),
+    "solarcharger_tracker_3_mppoperationmode": RegisterInfo(register=3734, dataType=UINT16, entityType=TextReadEntityType(generic_mppoperationmode))
 }
 
 class generic_position(Enum):
@@ -556,7 +653,10 @@ pvinverter_registers = {
     "pvinverter_L3_energy_forward_total": RegisterInfo(1050, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "pvinverter_power_total": RegisterInfo(1052, INT32, UnitOfPower.WATT),
     "pvinverter_power_max_capacity": RegisterInfo(1054, UINT32, UnitOfPower.WATT),
-    "pvinverter_powerlimit": RegisterInfo(register=1056, dataType=UINT32, unit=UnitOfPower.WATT, entityType=SliderWriteType("AC", False))
+    "pvinverter_powerlimit": RegisterInfo(register=1056, dataType=UINT32, unit=UnitOfPower.WATT, entityType=SliderWriteType("AC", False)),
+    "pvinverter_L1_power_2": RegisterInfo(1058, UINT32, UnitOfPower.WATT), #Larger range
+    "pvinverter_L2_power_2": RegisterInfo(1060, UINT32, UnitOfPower.WATT), #Larger range
+    "pvinverter_L3_power_2": RegisterInfo(1062, UINT32, UnitOfPower.WATT), #Larger range
 }
 
 motordrive_registers = {
@@ -599,7 +699,7 @@ settings_registers = {
     "settings_ess_maxchargepercentage": RegisterInfo(register=2701, dataType=UINT16, unit=PERCENTAGE, entityType=SliderWriteType()),
     "settings_ess_maxdischargepercentage": RegisterInfo(register=2702, dataType=UINT16, unit=PERCENTAGE, entityType=SliderWriteType()),
     "settings_ess_acpowersetpoint2": RegisterInfo(2703, INT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", True)), # NOTE: Duplicate register exposed by victron
-    "settings_ess_maxdischargepower": RegisterInfo(2704, UINT16, UnitOfPower.WATT, 0.1, SliderWriteType("DC", False), 50),
+    "settings_ess_maxdischargepower": RegisterInfo(2704, INT16, UnitOfPower.WATT, 0.1, SliderWriteType("DC", False), 50),
     "settings_ess_maxchargecurrent": RegisterInfo(register=2705, dataType=INT16, unit=UnitOfElectricCurrent.AMPERE, entityType=SliderWriteType("DC", True)),
     "settings_ess_maxfeedinpower": RegisterInfo(2706, INT16, UnitOfPower.WATT, 0.01, SliderWriteType("AC", True)),
     "settings_ess_overvoltagefeedin": RegisterInfo(register=2707, dataType=INT16, entityType=SwitchWriteType()),
@@ -746,7 +846,11 @@ inverter_tracker_statistics_registers = {
     "inverter_tracker_1_power": RegisterInfo(3165, UINT16, UnitOfPower.WATT),
     "inverter_tracker_2_power": RegisterInfo(3166, UINT16, UnitOfPower.WATT),
     "inverter_tracker_3_power": RegisterInfo(3167, UINT16, UnitOfPower.WATT),
-    "inverter_alarm_lowsoc": RegisterInfo(register=3168, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger))
+    "inverter_alarm_lowsoc": RegisterInfo(register=3168, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
+    "inverter_tracker_1_mppoperationmode": RegisterInfo(register=3169, dataType=UINT16, entityType=TextReadEntityType(generic_mppoperationmode)),
+    "inverter_tracker_2_mppoperationmode": RegisterInfo(register=3170, dataType=UINT16, entityType=TextReadEntityType(generic_mppoperationmode)),
+    "inverter_tracker_3_mppoperationmode": RegisterInfo(register=3171, dataType=UINT16, entityType=TextReadEntityType(generic_mppoperationmode)),
+    "inverter_tracker_4_mppoperationmode": RegisterInfo(register=3172, dataType=UINT16, entityType=TextReadEntityType(generic_mppoperationmode))
 }
 
 class genset_status(Enum):
@@ -885,7 +989,8 @@ genset_registers = {
     "genset_engine_windingtemperature": RegisterInfo(3220, INT16, UnitOfTemperature.CELSIUS, 10),
     "genset_engine_exhausttemperature": RegisterInfo(3221, INT16, UnitOfTemperature.CELSIUS, 10),
     "genset_startervoltage": RegisterInfo(3222, UINT16, UnitOfElectricPotential.VOLT, 100),
-    "genset_start": RegisterInfo(register=3223, dataType=UINT16, entityType=SwitchWriteType())
+    "genset_start": RegisterInfo(register=3223, dataType=UINT16, entityType=SwitchWriteType()),
+    "genset_engine_oilpressure": RegisterInfo(3224, INT16, UnitOfPressure.KPA)
 }
 
 class temperature_type(Enum):
@@ -972,7 +1077,9 @@ generator_registers = {
     "generator_state": RegisterInfo(register=3506, dataType=UINT16, entityType=TextReadEntityType(generator_state)),
     "generator_error": RegisterInfo(register=3507, dataType=UINT16, entityType=TextReadEntityType(generator_error)),
     "generator_alarm_nogeneratoratacin": RegisterInfo(register=3508, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
-    "generator_autostartenabled": RegisterInfo(register=3509, dataType=UINT16, entityType=SwitchWriteType())
+    "generator_autostartenabled": RegisterInfo(register=3509, dataType=UINT16, entityType=SwitchWriteType()),
+    "generator_servicecounter": RegisterInfo(3510, UINT32, UnitOfTime.SECONDS),
+    "generator_servicecounter_reset": RegisterInfo(register=3512, dataType=UINT16, entityType=ButtonWriteType())
 }
 
 #not processed yet
@@ -981,6 +1088,10 @@ meteo_registers = {
     "meteo_windspeed": RegisterInfo(3601, UINT16, UnitOfSpeed.METERS_PER_SECOND, 10),
     "meteo_celltemperature": RegisterInfo(3602, INT16, UnitOfTemperature.CELSIUS, 10),
     "meteo_externaltemperature": RegisterInfo(3603, INT16, UnitOfTemperature.CELSIUS, 10)
+}
+
+meteo_limited_registers = {
+    "meteo_externaltemperature_2": RegisterInfo(3604, INT16, UnitOfTemperature.CELSIUS, 10)    
 }
 
 evcharger_productid_registers = {
@@ -1066,6 +1177,7 @@ class alternator_state(Enum):
     FLOAT = 5
     STORAGE = 6
     EQUALIZE = 7
+    POWER_SUPPLY = 11
     EXTERNAL_CONTROL = 252
 
 class alternator_errorcode(Enum):
@@ -1117,7 +1229,11 @@ alternator_registers = {
     "alternator_errorcode": RegisterInfo(register=4113, dataType=UINT16, entityType=TextReadEntityType(alternator_errorcode)),
     "alternator_engine_speed": RegisterInfo(4114, UINT16, REVOLUTIONS_PER_MINUTE),
     "alternator_alternator_speed": RegisterInfo(4115, UINT16, REVOLUTIONS_PER_MINUTE),
-    "alternator_fielddrive": RegisterInfo(4116, UINT16, PERCENTAGE)
+    "alternator_fielddrive": RegisterInfo(4116, UINT16, PERCENTAGE),
+    "alternator_before_converter_input_voltage": RegisterInfo(4117, UINT16, UnitOfElectricPotential.VOLT, 100),
+    "alternator_before_converter_input_power": RegisterInfo(4118, UINT16, UnitOfPower.WATT),
+    "alternator_mode": RegisterInfo(4119, UINT16, TextReadEntityType(solarcharger_mode)),
+    "alternator_history_cumulative_user_charged_amp_hours": RegisterInfo(4120, UINT32, UnitOfElectricCurrent.AMPERE, 10)
 }
 
 dcsource_registers = {
@@ -1264,8 +1380,36 @@ multi_registers = {
     "multi_tracker_1_power": RegisterInfo(4599, UINT16, UnitOfPower.WATT),
     "multi_tracker_2_power": RegisterInfo(4600, UINT16, UnitOfPower.WATT),
     "multi_tracker_3_power": RegisterInfo(4601, UINT16, UnitOfPower.WATT),
-    "multi_alarm_lowsoc": RegisterInfo(register=4602, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger))
+    "multi_alarm_lowsoc": RegisterInfo(register=4602, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
+    "multi_user_yield": RegisterInfo(4603, UINT32, UnitOfEnergy.KILO_WATT_HOUR),
+    "multi_tracker_1_mppoperationmode": RegisterInfo(register=4605, dataType=UINT16, entityType=TextReadEntityType(generic_mppoperationmode)),
+    "multi_tracker_2_mppoperationmode": RegisterInfo(register=4606, dataType=UINT16, entityType=TextReadEntityType(generic_mppoperationmode)),
+    "multi_tracker_3_mppoperationmode": RegisterInfo(register=4607, dataType=UINT16, entityType=TextReadEntityType(generic_mppoperationmode)),
+    "multi_tracker_4_mppoperationmode": RegisterInfo(register=4608, dataType=UINT16, entityType=TextReadEntityType(generic_mppoperationmode))
+}
 
+class dcdc_state(Enum):
+    OFF = 0
+    FAULT = 2
+    BULK = 3
+    ABSORPTION = 4
+    FLOAT = 5
+    STORAGE = 6
+    EQUALIZE = 7
+    POWER_SUPPLY = 11
+
+dcdc_registers = {
+    "dcdc_product_id": RegisterInfo(4800, UINT16),
+    "dcdc_firmware_version": RegisterInfo(4801, UINT32),
+    "dcdc_error_code": RegisterInfo(register=4803, dataType=UINT16, entityType=TextReadEntityType(generic_charger_errorcode)), #TODO check if can be made more battery specific
+    "dcdc_0_voltage": RegisterInfo(4804, UINT16, UnitOfElectricPotential.VOLT, 100),
+    "dcdc_0_current": RegisterInfo(4805, INT16, UnitOfElectricCurrent.AMPERE, 10),
+    "dcdc_0_temperature": RegisterInfo(4806, INT16, UnitOfTemperature.CELSIUS, 10),
+    "dcdc_mode": RegisterInfo(register=4807, dataType=UINT16, entityType=SelectWriteType(solarcharger_mode)),
+    "dcdc_state": RegisterInfo(register=4808, dataType=UINT16, entityType=TextReadEntityType(dcdc_state)),
+    "dcdc_in_voltage": RegisterInfo(4809, UINT16, UnitOfElectricPotential.VOLT, 100),
+    "dcdc_in_power": RegisterInfo(4810, UINT16, UnitOfPower.WATT),
+    "dcdc_cumulative_user_charged_amp_hours": RegisterInfo(4811, UINT16, UnitOfElectricCurrent.AMPERE, 10)
 }
 
 class register_input_source(Enum):
@@ -1298,6 +1442,10 @@ system_registers = {
     "system_genset_L2": RegisterInfo(824, INT16, UnitOfPower.WATT),
     "system_genset_L3": RegisterInfo(825, INT16, UnitOfPower.WATT),
     "system_input_source": RegisterInfo(register=826, dataType=INT16, entityType=TextReadEntityType(register_input_source))
+}
+
+system_timer_registers = {
+    "system_internal_UTC_time": RegisterInfo(830, UINT64, UnitOfTime.SECONDS)  
 }
 
 class system_battery_state(Enum):
@@ -1343,6 +1491,7 @@ valid_unit_ids = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
 register_info_dict = { 
     "gavazi_grid_registers": gavazi_grid_registers,
     "vebus_registers": vebus_registers, 
+    "vebus_additional_registers": vebus_additional_registers,
     "battery_registers": battery_registers, 
     "battery_detail_registers": battery_detail_registers, 
     "solarcharger_registers": solarcharger_registers,
@@ -1377,6 +1526,7 @@ register_info_dict = {
     "dcload_registers": dcload_registers, 
     "dcsystem_registers": dcsystem_registers, 
     "multi_registers": multi_registers, 
+    "dcdc_registers": dcdc_registers,
     "system_registers": system_registers,
     "system_battery_registers": system_battery_registers, 
     "system_dc_registers": system_dc_registers, 
