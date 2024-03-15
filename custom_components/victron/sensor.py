@@ -83,8 +83,10 @@ async def async_setup_entry(
     async_add_entities(entities, True)
 
 def determine_victron_device_class(name, unit):
-    if unit == PERCENTAGE:
+    if unit == PERCENTAGE and "soc" in name:
         return SensorDeviceClass.BATTERY
+    elif unit == PERCENTAGE:
+        return None #Device classes aren't supported for voltage deviation and other % based entities that do not report SOC, moisture or humidity
     elif unit in [member.value for member in UnitOfPower]:
         return SensorDeviceClass.POWER
     elif unit in [member.value for member in UnitOfEnergy]:
