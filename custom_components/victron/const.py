@@ -894,13 +894,21 @@ class temperature_type(Enum):
     FRIDGE = 1
     GENERIC = 2
 
+class temperature_status(Enum):
+    OK = 0
+    DISCONNECTED = 1
+    SHORT_CIRCUITED = 2
+    REVERSE_POLARITY = 3
+    UNKNOWN = 4
+    LOW_BATTERY = 5
+
 temperature_registers = {
     "temperature_productid": RegisterInfo(3300, UINT16),
     "temperature_scale": RegisterInfo(3301, UINT16, "", 100),
     "temperature_offset": RegisterInfo(3302, INT16, "",100),
     "temperature_type": RegisterInfo(register=3303, dataType=UINT16, entityType=TextReadEntityType(temperature_type)),
     "temperature_temperature": RegisterInfo(3304, INT16, UnitOfTemperature.CELSIUS, 100),
-    "temperature_status": RegisterInfo(register=3305, dataType=UINT16, entityType=TextReadEntityType(generic_status)),
+    "temperature_status": RegisterInfo(register=3305, dataType=UINT16, entityType=TextReadEntityType(temperature_status)),
     "temperature_humidity": RegisterInfo(3306, UINT16, PERCENTAGE, 10),
     "temperature_batteryvoltage": RegisterInfo(3307, UINT16, UnitOfElectricPotential.VOLT, 100),
     "temperature_pressure": RegisterInfo(3308, UINT16, UnitOfPressure.HPA)
