@@ -156,7 +156,11 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
             if self.available:
                 data = self.description.value_fn(self.coordinator.processed_data(), self.description.slave, self.description.key)
                 if self.entity_type is not None and isinstance(self.entity_type, TextReadEntityType):
-                    self._attr_native_value = self.entity_type.decodeEnum(data).name.split("_DUPLICATE")[0]
+                    if data in set(self.entity_type.decodeEnum):
+                        self._attr_native_value = self.entity_type.decodeEnum(data).name.split("_DUPLICATE")[0]
+                    else:
+                        self._attr_native_value = "NONDECODABLE"
+                        _LOGGER.error("The reported value %s for entity %s isn't a decobale value. Please report this error to the integrations maintainer", data, self._attr_name, exc_info=1)
                 else:
                     self._attr_native_value = data
                 
