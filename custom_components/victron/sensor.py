@@ -156,7 +156,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
             if self.available:
                 data = self.description.value_fn(self.coordinator.processed_data(), self.description.slave, self.description.key)
                 if self.entity_type is not None and isinstance(self.entity_type, TextReadEntityType):
-                    if data in set(self.entity_type.decodeEnum):
+                    if data in set(item.value for item in self.entity_type.decodeEnum):
                         self._attr_native_value = self.entity_type.decodeEnum(data).name.split("_DUPLICATE")[0]
                     else:
                         self._attr_native_value = "NONDECODABLE"
