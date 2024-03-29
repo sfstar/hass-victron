@@ -660,12 +660,13 @@ class tank_fluidtype(Enum):
     HYDRAULIC_OIL = 10
     RAW_WATER = 11
 
-class generic_status(Enum):
+class tank_status(Enum):
     OK = 0
     DISCONNECTED = 1
     SHORT_CIRCUITED = 2
     REVERSE_POLARITY = 3
     UNKNOWN = 4
+    ERROR = 5
 
 tank_registers = {
     "tank_productid": RegisterInfo(3000, UINT16),
@@ -673,7 +674,7 @@ tank_registers = {
     "tank_fluidtype": RegisterInfo(register=3003, dataType=UINT16, entityType=TextReadEntityType(tank_fluidtype)),
     "tank_level": RegisterInfo(3004, UINT16, PERCENTAGE, 10),
     "tank_remaining": RegisterInfo(3005, UINT32, UnitOfVolume.CUBIC_METERS, 10000),
-    "tank_status": RegisterInfo(register=3007, dataType=UINT16, entityType=TextReadEntityType(generic_status))
+    "tank_status": RegisterInfo(register=3007, dataType=UINT16, entityType=TextReadEntityType(tank_status))
 }
 
 inverter_output_registers = {
