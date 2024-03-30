@@ -1134,7 +1134,7 @@ alternator_registers = {
 dcsource_registers = {
     "dcsource_battery_voltage": RegisterInfo(4200, UINT16, UnitOfElectricPotential.VOLT, 100),
     "dcsource_battery_current": RegisterInfo(4201, INT16, UnitOfElectricCurrent.AMPERE, 10),
-    "dcsource_starter_voltage": RegisterInfo(4202, UINT16, UnitOfElectricPotential.VOLT, 100),
+    "dcsource_starter_voltage": RegisterInfo(4202, UINT16, UnitOfElectricPotential.VOLT, 10),
     "dcsource_temperature": RegisterInfo(4203, INT16, UnitOfTemperature.CELSIUS, 10),
     "dcsource_history_energyout": RegisterInfo(4204, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "dcsource_alarm_lowvoltage": RegisterInfo(register=4206, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
