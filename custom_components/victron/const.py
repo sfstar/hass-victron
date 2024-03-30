@@ -635,8 +635,9 @@ class ess_batterylife_state(Enum):
     BL_DISABLED_LOC_SOC_RECHARGE = 12
 
 class ess_mode(Enum):
-    ESS_PHASE_COMPENSATION = 1
-    ESS_NO_PHASE_COMPENSATION = 2
+    SELF_CONSUMPTION_WITH_BATTERY_LIFE = 0
+    SELF_CONSUMPTION = 1
+    KEEP_CHARGED = 2
     EXTERNAL_CONTROL = 3
 
 settings_ess_registers = {
