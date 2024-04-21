@@ -19,7 +19,6 @@ from homeassistant.helpers.selector import (
     SelectOptionDict,
 )
 
-
 from homeassistant.core import callback
 
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlow
@@ -66,7 +65,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     except:
         _LOGGER.error("failed to connect to the victron device") 
     return {
-            "title": "victron",
+            "title": DOMAIN,
             "data": discovered_devices 
         }
 
@@ -78,6 +77,7 @@ async def scan_connected_devices(hub: VictronHub) -> list:
 class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for victron."""
 
+    _LOGGER = logging.getLogger(__name__)
     VERSION = 1
 
     @staticmethod
@@ -133,7 +133,6 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             #data property can't be changed in options flow if user wants to refresh
             options = user_input
             return self.async_create_entry(title=info["title"], data = { SCAN_REGISTERS: info["data"] }, options=options)
-#            return self.async_create_entry(title=info["title"], data = { "registers": info["data"] }, options=user_input)
 
         return self.async_show_form(
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
@@ -203,6 +202,43 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Optional(CONF_USE_SLIDERS, default=True): bool
                 }))
 
+    async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
+        """Add reconfigure step to allow to reconfigure a config entry."""
+        config_entry = self.hass.config_entries.async_get_entry(
+            self.context["entry_id"]
+        )
+        errors = {}
+        
+        if user_input is not None:
+            try:             
+                hub = VictronHub(user_input[CONF_HOST], user_input[CONF_PORT])
+                await hub.connect()
+                _LOGGER.info("connection was succesfull")
+            except:
+                errors["base"] = "cannot_connect"
+            
+            else:
+                new_options = config_entry.options | {
+                    CONF_HOST: user_input[CONF_HOST],
+                    CONF_PORT: user_input[CONF_PORT],
+                }
+                return self.async_update_reload_and_abort(
+                    config_entry,
+                    title=DOMAIN,
+                    options=new_options,
+                    reason="reconfigure_successful",
+                )
+
+        return self.async_show_form(
+            step_id="reconfigure",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_HOST, default=config_entry.options[CONF_HOST]): str,
+                    vol.Required(CONF_PORT, default=config_entry.options[CONF_PORT]): int
+                }
+            ),
+            errors=errors
+        )
 
 class parsedEntry():
 

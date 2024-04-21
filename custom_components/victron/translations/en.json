@@ -13,7 +13,7 @@
             "user": {
                 "data": {
                     "host": "Host",
-                    "port": "port",
+                    "port": "Port",
                     "interval": "update interval in (s)",
                     "advanced": "Enables write support and allows setting write limits"
                 }
@@ -26,6 +26,12 @@
                     "dc_current": "The DC current limit of your battery in A",
                     "number_of_phases": "The phase configuration of your system",
                     "use_sliders": "Use stepped sliders for writeable number entities"                    
+                }
+            },
+            "reconfigure": {
+                "data": {
+                    "host": "Host",
+                    "port": "Port"                
                 }
             }
         }
