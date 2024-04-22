@@ -110,7 +110,7 @@ class VictronBinarySensor(CoordinatorEntity, ButtonEntity):
         """Return the device info."""
         return entity.DeviceInfo(
             identifiers={
-                (DOMAIN, self.unique_id.split('_')[0] + self.unique_id.split('_')[1])
+                (DOMAIN, self.unique_id.split('_')[0])
             },
             name=self.unique_id.split('_')[1],
             model=self.unique_id.split('_')[0],
