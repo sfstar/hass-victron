@@ -445,6 +445,7 @@ class solarcharger_state(Enum):
     STORAGE = 6
     EQUALIZE = 7
     OTHER_HUB_1 = 11
+    WAKE_UP = 245
     EXTERNAL_CONTROL = 252
 
 class solarcharger_equalization_pending(Enum):
@@ -1134,7 +1135,7 @@ alternator_registers = {
 dcsource_registers = {
     "dcsource_battery_voltage": RegisterInfo(4200, UINT16, UnitOfElectricPotential.VOLT, 100),
     "dcsource_battery_current": RegisterInfo(4201, INT16, UnitOfElectricCurrent.AMPERE, 10),
-    "dcsource_starter_voltage": RegisterInfo(4202, UINT16, UnitOfElectricPotential.VOLT, 100),
+    "dcsource_starter_voltage": RegisterInfo(4202, UINT16, UnitOfElectricPotential.VOLT, 10),
     "dcsource_temperature": RegisterInfo(4203, INT16, UnitOfTemperature.CELSIUS, 10),
     "dcsource_history_energyout": RegisterInfo(4204, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
     "dcsource_alarm_lowvoltage": RegisterInfo(register=4206, dataType=UINT16, entityType=TextReadEntityType(generic_alarm_ledger)),
@@ -1346,11 +1347,12 @@ system_bus_registers = {
 
 valid_unit_ids = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
                    11, 12, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 
-                   31, 32, 33, 34, 35, 36, 40, 41, 42, 43, 44, 45, 46, 
-                   100, 101, 204, 205, 206, 207, 208, 209, 210, 211, 212, 
-                   213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 
-                   224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 
-                   235, 236, 237, 238, 239, 242, 243, 245, 246, 247
+                   31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 
+                   44, 45, 46, 100, 101, 204, 205, 206, 207, 208, 209, 
+                   210, 211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 
+                   221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 
+                   232, 233, 234, 235, 236, 237, 238, 239, 242, 243, 245, 
+                   246, 247
                    ]
 
 register_info_dict = { 

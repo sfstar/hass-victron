@@ -23,6 +23,10 @@ class VictronHub:
 
     def connect(self):
         return self._client.connect()
+    
+    def disconnect(self):
+        if self._client.is_socket_open():
+            return self._client.close()
 
     def write_register(self, unit, address, value):
         with self._lock:
@@ -57,12 +61,18 @@ class VictronHub:
         for unit in valid_unit_ids:
             working_registers = []
             for key, register_definition in register_info_dict.items():
+            #VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
+                if unit == 100 and not key.startswith(("settings", "system")) :
+                    actual_id = 0
+                else:
+                    actual_id = unit
+
                 try:
                     address = self.get_first_register_id(register_definition)
                     count = self.calculate_register_count(register_definition)
-                    result = self.read_holding_registers(unit, address, count)
+                    result = self.read_holding_registers(actual_id, address, count)
                     if result.isError():
-                        _LOGGER.debug("result is error for unit: " + str(unit) + " address: " + str(address) + " count: " + str(count))
+                        _LOGGER.debug("result is error for unit: " + str(actual_id) + " address: " + str(address) + " count: " + str(count))
                     else:
                         working_registers.append(key)
                 except Exception  as e:  # pylint: disable=broad-except
@@ -70,7 +80,7 @@ class VictronHub:
 
 
             if len(working_registers) > 0:
-                valid_devices[unit] = working_registers
+                valid_devices[actual_id] = working_registers
             else:
                 _LOGGER.debug("no registers found for unit: " + str(unit))
 
