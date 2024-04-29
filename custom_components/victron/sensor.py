@@ -52,8 +52,8 @@ async def async_setup_entry(
     for slave, registerLedger in register_set.items():
         for name in registerLedger:
             for register_name, registerInfo in register_info_dict[name].items():
-                # _LOGGER.debug("unit == " + str(slave) + " registerLedger == " + str(registerLedger) + " registerInfo ")
-                # _LOGGER.debug(str(registerInfo.slave))
+                _LOGGER.debug("unit == " + str(slave) + " registerLedger == " + str(registerLedger) + " registerInfo ")
+                _LOGGER.debug(str(registerInfo.slave))
                 if config_entry.options[CONF_ADVANCED_OPTIONS]:
                     if not isinstance(registerInfo.entityType, ReadEntityType) or isinstance(registerInfo.entityType, BoolReadEntityType):
                         continue
@@ -180,7 +180,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         """Return the device info."""
         return entity.DeviceInfo(
             identifiers={
-                (DOMAIN, self.unique_id.split('_')[0])
+                (DOMAIN, self.unique_id.split('_')[0] + self.unique_id.split('_')[1])
             },
             name=self.unique_id.split('_')[1],
             model=self.unique_id.split('_')[0],
