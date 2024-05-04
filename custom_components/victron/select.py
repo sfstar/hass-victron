@@ -84,7 +84,7 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
         self._attr_name = f"{description.name}"
 
         #VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
-        if description.slave == 100 and not description.key.startswith("settings", "system") :
+        if description.slave == 100 and not description.key.startswith(("settings", "system")) :
             actual_id = 0
         else:
             actual_id = description.slave
