@@ -57,17 +57,24 @@ async def async_setup_entry(
                     if not isinstance(registerInfo.entityType, ReadEntityType) or isinstance(registerInfo.entityType, BoolReadEntityType):
                         continue
 
+                #VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
+                if slave == 100 and not register_name.startswith(("settings", "system")) :
+                    actual_id = 0
+                else:
+                    actual_id = slave
+
 
                 descriptions.append(VictronEntityDescription(
                     key=register_name,
                     name=register_name.replace('_', ' '),
                     native_unit_of_measurement=registerInfo.unit,
                     state_class=registerInfo.determine_stateclass(),
-                    slave=slave,
+                    slave=actual_id,
                     device_class=determine_victron_device_class(register_name, registerInfo.unit),
                     entity_type=registerInfo.entityType if isinstance(registerInfo.entityType, TextReadEntityType) else None
                 ))
-
+                _LOGGER.debug("composed description == " + str(descriptions))
+                
     entities = []
     entity = {}
     for description in descriptions:
@@ -129,15 +136,9 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         self._attr_state_class = description.state_class
         self.entity_type = description.entity_type
 
-        #VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
-        if description.slave == 100 and not description.key.startswith(("settings", "system")) :
-            actual_id = 0
-        else:
-            actual_id = description.slave
-
-        self._attr_unique_id = f"{actual_id}_{self.description.key}"
-        if actual_id not in (100, 225):
-            self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}_{actual_id}"
+        self._attr_unique_id = f"{description.slave}_{self.description.key}"
+        if description.slave not in (100, 225):
+            self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}_{description.slave}"
         else:
             self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}"
 

@@ -37,17 +37,22 @@ async def async_setup_entry(
         for slave, registerLedger in register_set.items():
             for name in registerLedger:
                 for register_name, registerInfo in register_info_dict[name].items():
-                    # _LOGGER.debug("unit == " + str(unit) + " registerLedger == " + str(registerLedger) + " registerInfo ")
-                    # _LOGGER.debug(str(registerInfo.unit))
-                    # _LOGGER.debug("register_name")
-                    # _LOGGER.debug(register_name)
+                    _LOGGER.debug("unit == " + str(slave) + " registerLedger == " + str(registerLedger) + " registerInfo ")
+
+                    #VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
+                    if slave == 100 and not register_name.startswith(("settings", "system")) :
+                        actual_id = 0
+                    else:
+                        actual_id = slave
+
                     if isinstance(registerInfo.entityType, SwitchWriteType):
                         descriptions.append(VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace('_', ' '),
-                            slave=slave,
+                            slave=actual_id,
                             address=registerInfo.register,
                         ))
+                        _LOGGER.debug("composed description == " + str(descriptions))
 
     entities = []
     entity = {}
@@ -77,15 +82,9 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
         self._attr_name = f"{description.name}"
         self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
-        #VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
-        if description.slave == 100 and not description.key.startswith(("settings", "system")) :
-            actual_id = 0
-        else:
-            actual_id = description.slave
-
-        self._attr_unique_id = f"{actual_id}_{self.description.key}"
-        if actual_id not in (100, 225):
-            self.entity_id = f"{SWITCH_DOMAIN}.{DOMAIN}_{self.description.key}_{actual_id}"
+        self._attr_unique_id = f"{description.slave}_{self.description.key}"
+        if description.slave not in (100, 225):
+            self.entity_id = f"{SWITCH_DOMAIN}.{DOMAIN}_{self.description.key}_{description.slave}"
         else:
             self.entity_id = f"{SWITCH_DOMAIN}.{DOMAIN}_{self.description.key}"
 
