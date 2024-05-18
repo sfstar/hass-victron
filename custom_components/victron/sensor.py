@@ -58,22 +58,23 @@ async def async_setup_entry(
                         continue
 
                 #VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
-                if slave == 100 and not register_name.startswith(("settings", "system")) :
-                    actual_id = 0
-                else:
-                    actual_id = slave
-
-
-                descriptions.append(VictronEntityDescription(
+                # if slave == 100 and not register_name.startswith(("settings", "system")) :
+                #     actual_id = 0
+                # else:
+                #     actual_id = slave
+                    
+                description = VictronEntityDescription(
                     key=register_name,
                     name=register_name.replace('_', ' '),
                     native_unit_of_measurement=registerInfo.unit,
                     state_class=registerInfo.determine_stateclass(),
-                    slave=actual_id,
+                    slave=slave,
                     device_class=determine_victron_device_class(register_name, registerInfo.unit),
                     entity_type=registerInfo.entityType if isinstance(registerInfo.entityType, TextReadEntityType) else None
-                ))
-                _LOGGER.debug("composed description == " + str(descriptions))
+                )
+                _LOGGER.debug("composed description == " + str(description))
+
+                descriptions.append(description)
                 
     entities = []
     entity = {}
@@ -137,7 +138,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         self.entity_type = description.entity_type
 
         self._attr_unique_id = f"{description.slave}_{self.description.key}"
-        if description.slave not in (100, 225):
+        if description.slave not in (0, 100, 225):
             self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}_{description.slave}"
         else:
             self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}"

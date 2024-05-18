@@ -44,19 +44,21 @@ async def async_setup_entry(
                     if isinstance(registerInfo.entityType, SelectWriteType):
                         _LOGGER.debug("unit == " + str(slave) + " registerLedger == " + str(registerLedger) + " registerInfo ")
 
-                        if slave == 100 and not register_name.startswith(("settings", "system")) :
-                            actual_id = 0
-                        else:
-                            actual_id = slave
-
-                        descriptions.append(VictronEntityDescription(
+                        # if slave == 100 and not register_name.startswith(("settings", "system")) :
+                        #     actual_id = 0
+                        # else:
+                        #     actual_id = slave
+                            
+                        description = VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace('_', ' '),
-                            slave=actual_id,
+                            slave=slave,
                             options=registerInfo.entityType.options,
                             address=registerInfo.register,
-                        ))
-                        _LOGGER.debug("composed description == " + str(descriptions))
+                        )
+
+                        descriptions.append(description)
+                        _LOGGER.debug("composed description == " + str(description))
 
     entities = []
     entity = {}

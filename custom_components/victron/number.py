@@ -63,16 +63,16 @@ async def async_setup_entry(
                 for register_name, registerInfo in register_info_dict[name].items():
                     _LOGGER.debug("unit == " + str(slave) + " registerLedger == " + str(registerLedger) + " registerInfo ")
 
-                    if slave == 100 and not register_name.startswith(("settings", "system")) :
-                        actual_id = 0
-                    else:
-                        actual_id = slave
+                    # if slave == 100 and not register_name.startswith(("settings", "system")) :
+                    #     actual_id = 0
+                    # else:
+                    #     actual_id = slave
 
                     if isinstance(registerInfo.entityType, SliderWriteType):
-                        descriptions.append(VictronEntityDescription(
+                        description = VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace('_', ' '),
-                            slave=actual_id,
+                            slave=slave,
                             native_unit_of_measurement=registerInfo.unit,
                             mode=NumberMode.SLIDER if config_entry.options[CONF_USE_SLIDERS] else NumberMode.BOX,
                             native_min_value=determine_min_value(registerInfo.unit, config_entry.options, registerInfo.entityType.powerType, registerInfo.entityType.negative),
@@ -81,8 +81,9 @@ async def async_setup_entry(
                             address=registerInfo.register,
                             scale = registerInfo.scale,
                             native_step = registerInfo.step
-                        ))
+                        )
                         _LOGGER.debug("composed description == " + str(descriptions))
+                        descriptions.append(description)
 
     entities = []
     entity = {}

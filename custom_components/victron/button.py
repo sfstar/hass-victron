@@ -39,20 +39,21 @@ async def async_setup_entry(
                 if not config_entry.options[CONF_ADVANCED_OPTIONS]:
                         continue
 
-                if slave == 100 and not register_name.startswith(("settings", "system")) :
-                    actual_id = 0
-                else:
-                    actual_id = slave
+                # if slave == 100 and not register_name.startswith(("settings", "system")) :
+                #     actual_id = 0
+                # else:
+                #     actual_id = slave
 
                 if isinstance(registerInfo.entityType, ButtonWriteType):
-                    descriptions.append(VictronEntityDescription(
+                    description = VictronEntityDescription(
                         key=register_name,
                         name=register_name.replace('_', ' '),
-                        slave=actual_id,
+                        slave=slave,
                         device_class=ButtonDeviceClass.RESTART,
                         address=registerInfo.register,
-                    ))
-                    _LOGGER.debug("composed description == " + str(descriptions))
+                    )
+                    _LOGGER.debug("composed description == " + str(description))
+                    descriptions.append(description)
 
     entities = []
     entity = {}
