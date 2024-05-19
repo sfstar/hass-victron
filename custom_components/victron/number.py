@@ -63,11 +63,6 @@ async def async_setup_entry(
                 for register_name, registerInfo in register_info_dict[name].items():
                     _LOGGER.debug("unit == " + str(slave) + " registerLedger == " + str(registerLedger) + " registerInfo ")
 
-                    # if slave == 100 and not register_name.startswith(("settings", "system")) :
-                    #     actual_id = 0
-                    # else:
-                    #     actual_id = slave
-
                     if isinstance(registerInfo.entityType, SliderWriteType):
                         description = VictronEntityDescription(
                             key=register_name,
