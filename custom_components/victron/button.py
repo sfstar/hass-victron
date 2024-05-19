@@ -39,11 +39,6 @@ async def async_setup_entry(
                 if not config_entry.options[CONF_ADVANCED_OPTIONS]:
                         continue
 
-                # if slave == 100 and not register_name.startswith(("settings", "system")) :
-                #     actual_id = 0
-                # else:
-                #     actual_id = slave
-
                 if isinstance(registerInfo.entityType, ButtonWriteType):
                     description = VictronEntityDescription(
                         key=register_name,

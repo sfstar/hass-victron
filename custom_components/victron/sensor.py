@@ -56,12 +56,6 @@ async def async_setup_entry(
                 if config_entry.options[CONF_ADVANCED_OPTIONS]:
                     if not isinstance(registerInfo.entityType, ReadEntityType) or isinstance(registerInfo.entityType, BoolReadEntityType):
                         continue
-
-                #VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
-                # if slave == 100 and not register_name.startswith(("settings", "system")) :
-                #     actual_id = 0
-                # else:
-                #     actual_id = slave
                     
                 description = VictronEntityDescription(
                     key=register_name,

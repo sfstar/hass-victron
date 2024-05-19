@@ -45,12 +45,6 @@ async def async_setup_entry(
             for register_name, registerInfo in register_info_dict[name].items():
                 _LOGGER.debug("unit == " + str(slave) + " registerLedger == " + str(registerLedger) + " registerInfo ")
 
-                #VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
-                # if slave == 100 and not register_name.startswith(("settings", "system")) :
-                #     actual_id = 0
-                # else:
-                #     actual_id = slave
-
                 if isinstance(registerInfo.entityType, BoolReadEntityType):
                     description = VictronEntityDescription(
                         key=register_name,

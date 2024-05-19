@@ -64,9 +64,6 @@ class VictronHub:
             #VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
                 if unit == 100 and not key.startswith(("settings", "system")) :
                     continue
-                #     actual_id = 0
-                # else:
-                #     actual_id = unit
 
                 try:
                     address = self.get_first_register_id(register_definition)
