@@ -129,7 +129,8 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         data = self.data
         data["data"][key] = value
         self.async_set_updated_data(data)
-
+        """Force update data after change."""
+        await self.async_request_refresh()
 
     def processed_data(self):
         return self.data
