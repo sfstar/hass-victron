@@ -999,10 +999,12 @@ evcharger_productid_registers = {
     "evcharger_productid": RegisterInfo(3800, UINT16)
 }
 
+# *** correction by OK1BPN
 class evcharger_mode(Enum):
-    AC_INPUT_1 = 0
-    AC_OUTPUT = 1
-    AC_INPUT_2 = 2
+    MANUAL = 0
+    AUTO = 1
+    SCHEDULED = 2
+# *** end of correction
 
 class evcharger_status(Enum):
     DISCONNECTED = 0
