@@ -12,7 +12,7 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/sfstar/hass-victron/issues",
   "requirements": [
-    "pymodbus>=3.5.1"
+    "pymodbus>=3.7.4"
   ],
   "ssdp": [],
   "version": "0.0.11",
