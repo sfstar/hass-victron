@@ -11,7 +11,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from pymodbus.constants import Endian
 from pymodbus.payload import BinaryPayloadDecoder
-from pymodbus.pdu.register_message import ReadHoldingRegistersResponse
+from pymodbus.pdu import ReadHoldingRegistersResponse
 
 from datetime import timedelta
 
