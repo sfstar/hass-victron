@@ -11,15 +11,27 @@ from homeassistant.core import HomeAssistant, HassJob, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.components.sensor import SensorEntityDescription, SensorDeviceClass, SensorEntity, DOMAIN as SENSOR_DOMAIN
+from homeassistant.components.sensor import (
+    SensorEntityDescription,
+    SensorDeviceClass,
+    SensorEntity,
+    DOMAIN as SENSOR_DOMAIN,
+)
 
 from .coordinator import victronEnergyDeviceUpdateCoordinator
 from .base import VictronBaseEntityDescription
-from .const import DOMAIN, register_info_dict, CONF_ADVANCED_OPTIONS, ReadEntityType, TextReadEntityType, BoolReadEntityType
+from .const import (
+    DOMAIN,
+    register_info_dict,
+    CONF_ADVANCED_OPTIONS,
+    ReadEntityType,
+    TextReadEntityType,
+    BoolReadEntityType,
+)
 
 from homeassistant.const import (
-    PERCENTAGE, 
-    UnitOfEnergy, 
+    PERCENTAGE,
+    UnitOfEnergy,
     UnitOfPower,
     UnitOfElectricPotential,
     UnitOfElectricCurrent,
@@ -28,13 +40,14 @@ from homeassistant.const import (
     UnitOfTemperature,
     UnitOfVolume,
     UnitOfSpeed,
-    UnitOfPressure
+    UnitOfPressure,
 )
 
 from collections.abc import Callable
 from homeassistant.helpers.typing import StateType
 
 _LOGGER = logging.getLogger(__name__)
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -43,51 +56,62 @@ async def async_setup_entry(
 ) -> None:
     """Set up Victron energy sensor entries."""
     _LOGGER.debug("attempting to setup sensor entities")
-    victron_coordinator: victronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][config_entry.entry_id]
+    victron_coordinator: victronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][
+        config_entry.entry_id
+    ]
     _LOGGER.debug(victron_coordinator.processed_data()["register_set"])
     _LOGGER.debug(victron_coordinator.processed_data()["data"])
     descriptions = []
-    #TODO cleanup
+    # TODO cleanup
     register_set = victron_coordinator.processed_data()["register_set"]
     for slave, registerLedger in register_set.items():
         for name in registerLedger:
             for register_name, registerInfo in register_info_dict[name].items():
-                _LOGGER.debug("unit == " + str(slave) + " registerLedger == " + str(registerLedger) + " registerInfo ")
+                _LOGGER.debug(
+                    "unit == "
+                    + str(slave)
+                    + " registerLedger == "
+                    + str(registerLedger)
+                    + " registerInfo "
+                )
                 if config_entry.options[CONF_ADVANCED_OPTIONS]:
-                    if not isinstance(registerInfo.entityType, ReadEntityType) or isinstance(registerInfo.entityType, BoolReadEntityType):
+                    if not isinstance(
+                        registerInfo.entityType, ReadEntityType
+                    ) or isinstance(registerInfo.entityType, BoolReadEntityType):
                         continue
-                    
+
                 description = VictronEntityDescription(
                     key=register_name,
-                    name=register_name.replace('_', ' '),
+                    name=register_name.replace("_", " "),
                     native_unit_of_measurement=registerInfo.unit,
                     state_class=registerInfo.determine_stateclass(),
                     slave=slave,
-                    device_class=determine_victron_device_class(register_name, registerInfo.unit),
-                    entity_type=registerInfo.entityType if isinstance(registerInfo.entityType, TextReadEntityType) else None
+                    device_class=determine_victron_device_class(
+                        register_name, registerInfo.unit
+                    ),
+                    entity_type=registerInfo.entityType
+                    if isinstance(registerInfo.entityType, TextReadEntityType)
+                    else None,
                 )
                 _LOGGER.debug("composed description == " + str(description))
 
                 descriptions.append(description)
-                
+
     entities = []
     entity = {}
     for description in descriptions:
         entity = description
-        entities.append(
-            VictronSensor(
-                victron_coordinator,
-                entity
-                ))
+        entities.append(VictronSensor(victron_coordinator, entity))
 
     # Add an entity for each sensor type
     async_add_entities(entities, True)
+
 
 def determine_victron_device_class(name, unit):
     if unit == PERCENTAGE and "soc" in name:
         return SensorDeviceClass.BATTERY
     elif unit == PERCENTAGE:
-        return None #Device classes aren't supported for voltage deviation and other % based entities that do not report SOC, moisture or humidity
+        return None  # Device classes aren't supported for voltage deviation and other % based entities that do not report SOC, moisture or humidity
     elif unit in [member.value for member in UnitOfPower]:
         return SensorDeviceClass.POWER
     elif unit in [member.value for member in UnitOfEnergy]:
@@ -98,9 +122,11 @@ def determine_victron_device_class(name, unit):
     elif unit == UnitOfTime.SECONDS:
         return SensorDeviceClass.DURATION
     elif unit in [member.value for member in UnitOfTemperature]:
-        return  SensorDeviceClass.TEMPERATURE
+        return SensorDeviceClass.TEMPERATURE
     elif unit in [member.value for member in UnitOfVolume]:
-        return SensorDeviceClass.VOLUME_STORAGE # Perhaps change this to water if only water is measured in volume units
+        return (
+            SensorDeviceClass.VOLUME_STORAGE
+        )  # Perhaps change this to water if only water is measured in volume units
     elif unit in [member.value for member in UnitOfSpeed]:
         if "meteo" in name:
             return SensorDeviceClass.WIND_SPEED
@@ -117,12 +143,18 @@ def determine_victron_device_class(name, unit):
 @dataclass
 class VictronEntityDescription(SensorEntityDescription, VictronBaseEntityDescription):
     """Describes victron sensor entity."""
+
     entity_type: ReadEntityType = None
+
 
 class VictronSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Victron energy sensor."""
 
-    def __init__(self, coordinator: victronEnergyDeviceUpdateCoordinator, description: VictronEntityDescription) -> None:
+    def __init__(
+        self,
+        coordinator: victronEnergyDeviceUpdateCoordinator,
+        description: VictronEntityDescription,
+    ) -> None:
         """Initialize the sensor."""
         self.description: VictronEntityDescription = description
         self._attr_device_class = description.device_class
@@ -133,11 +165,11 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
 
         self._attr_unique_id = f"{description.slave}_{self.description.key}"
         if description.slave not in (0, 100, 225):
-            self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}_{description.slave}"
+            self.entity_id = (
+                f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}_{description.slave}"
+            )
         else:
             self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}"
-
-
 
         self._update_job = HassJob(self.async_schedule_update_ha_state)
         self._unsub_update = None
@@ -146,19 +178,32 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
 
     @callback
     def _handle_coordinator_update(self) -> None:
-        """Get the latest data and updates the states."""      
+        """Get the latest data and updates the states."""
         try:
             if self.available:
-                data = self.description.value_fn(self.coordinator.processed_data(), self.description.slave, self.description.key)
-                if self.entity_type is not None and isinstance(self.entity_type, TextReadEntityType):
+                data = self.description.value_fn(
+                    self.coordinator.processed_data(),
+                    self.description.slave,
+                    self.description.key,
+                )
+                if self.entity_type is not None and isinstance(
+                    self.entity_type, TextReadEntityType
+                ):
                     if data in set(item.value for item in self.entity_type.decodeEnum):
-                        self._attr_native_value = self.entity_type.decodeEnum(data).name.split("_DUPLICATE")[0]
+                        self._attr_native_value = self.entity_type.decodeEnum(
+                            data
+                        ).name.split("_DUPLICATE")[0]
                     else:
                         self._attr_native_value = "NONDECODABLE"
-                        _LOGGER.error("The reported value %s for entity %s isn't a decobale value. Please report this error to the integrations maintainer", data, self._attr_name, exc_info=1)
+                        _LOGGER.error(
+                            "The reported value %s for entity %s isn't a decobale value. Please report this error to the integrations maintainer",
+                            data,
+                            self._attr_name,
+                            exc_info=1,
+                        )
                 else:
                     self._attr_native_value = data
-                
+
             self.async_write_ha_state()
         except (TypeError, IndexError):
             _LOGGER.debug("failed to retrieve value")
@@ -174,10 +219,8 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
     def device_info(self) -> entity.DeviceInfo:
         """Return the device info."""
         return entity.DeviceInfo(
-            identifiers={
-                (DOMAIN, self.unique_id.split('_')[0])
-            },
-            name=self.unique_id.split('_')[1],
-            model=self.unique_id.split('_')[0],
-            manufacturer="victron", # to be dynamically set for gavazzi and redflow
+            identifiers={(DOMAIN, self.unique_id.split("_")[0])},
+            name=self.unique_id.split("_")[1],
+            model=self.unique_id.split("_")[0],
+            manufacturer="victron",  # to be dynamically set for gavazzi and redflow
         )
