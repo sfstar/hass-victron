@@ -2,22 +2,18 @@
 
 from __future__ import annotations
 
-from contextlib import suppress
 from typing import cast
 
 from homeassistant.core import HomeAssistant, HassJob
 
-from collections.abc import Callable
-from homeassistant.helpers.typing import StateType
 
 from dataclasses import dataclass
 
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers import event, entity
+from homeassistant.helpers import entity
 
 from homeassistant.components.binary_sensor import (
     BinarySensorEntityDescription,
@@ -27,7 +23,7 @@ from homeassistant.components.binary_sensor import (
 
 from .coordinator import victronEnergyDeviceUpdateCoordinator
 from .base import VictronBaseEntityDescription
-from .const import DOMAIN, CONF_ADVANCED_OPTIONS, register_info_dict, BoolReadEntityType
+from .const import DOMAIN, register_info_dict, BoolReadEntityType
 
 import logging
 

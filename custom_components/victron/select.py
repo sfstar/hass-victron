@@ -22,12 +22,10 @@ from homeassistant.helpers import entity
 from .const import DOMAIN, register_info_dict, SelectWriteType, CONF_ADVANCED_OPTIONS
 from .base import VictronWriteBaseEntityDescription
 
-from collections.abc import Callable
-from homeassistant.helpers.typing import StateType
 
 from datetime import timedelta
 from homeassistant.util import utcnow
-from homeassistant.helpers import event, entity
+from homeassistant.helpers import event
 
 import logging
 

@@ -1,5 +1,4 @@
 from pymodbus.client import ModbusTcpClient
-from pymodbus.exceptions import ModbusException
 
 import threading
 from collections import OrderedDict
