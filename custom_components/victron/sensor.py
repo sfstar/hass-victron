@@ -4,7 +4,9 @@ from dataclasses import dataclass
 
 import logging
 
-from homeassistant.helpers import entity
+from datetime import timedelta
+from homeassistant.util import utcnow
+from homeassistant.helpers import event, entity
 from homeassistant.core import HomeAssistant, HassJob, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
@@ -41,6 +43,8 @@ from homeassistant.const import (
     UnitOfPressure,
 )
 
+from collections.abc import Callable
+from homeassistant.helpers.typing import StateType
 
 _LOGGER = logging.getLogger(__name__)
 

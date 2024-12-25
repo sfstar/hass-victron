@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Optional, cast
 
 from homeassistant import config_entries
 from homeassistant.components.number import (
@@ -17,12 +19,15 @@ from homeassistant.const import (
     UnitOfElectricPotential,
     UnitOfPower,
     UnitOfElectricCurrent,
+    UnitOfTime,
 )
 
+import math
 
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .coordinator import victronEnergyDeviceUpdateCoordinator
 from .base import VictronWriteBaseEntityDescription
@@ -40,6 +45,7 @@ from .const import (
     CONF_AC_CURRENT_LIMIT,
 )
 
+from homeassistant.helpers.typing import StateType
 from homeassistant.helpers import entity
 
 import logging

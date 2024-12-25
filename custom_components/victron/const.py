@@ -3,6 +3,7 @@
 from enum import Enum
 from homeassistant.const import (
     PERCENTAGE,
+    UnitOfPower,
     UnitOfEnergy,
     UnitOfElectricPotential,
     UnitOfElectricCurrent,

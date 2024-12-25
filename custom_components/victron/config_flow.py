@@ -21,7 +21,7 @@ from homeassistant.helpers.selector import (
 
 from homeassistant.core import callback
 
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlow
 
 from .const import (
     DOMAIN,
@@ -129,7 +129,7 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             # not yet working
             await self.async_set_unique_id("victron")
             self._abort_if_unique_id_configured()
-        except Exception:
+        except Exception as e:
             errors["base"] = "already_configured"
             already_configured = True
 
