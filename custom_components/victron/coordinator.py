@@ -11,7 +11,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 from pymodbus.constants import Endian
 from pymodbus.payload import BinaryPayloadDecoder
-from pymodbus.pdu import register_read_message
+from pymodbus.pdu.register_message import ReadHoldingRegistersResponse
 
 from datetime import timedelta
 
@@ -106,7 +106,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
     def parse_register_data(
         self,
         buffer: ReadHoldingRegistersResponse,
-        registerInfo: OrderedDict(str, RegisterInfo),
+        registerInfo: OrderedDict[str, RegisterInfo],
         unit: int,
     ) -> dict:
         decoder = BinaryPayloadDecoder.fromRegisters(
@@ -184,7 +184,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
     def write_register(self, unit, address, value):
         # try:
 
-        resp = self.api_write(unit, address, value)
+        self.api_write(unit, address, value)
 
     # except:
     # TODO raise specific write error
