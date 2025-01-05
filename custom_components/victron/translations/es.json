@@ -1,0 +1,73 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "El dispositivo ya está configurado"
+        },
+        "error": {
+            "cannot_connect": "Error al conectar",
+            "invalid_auth": "Autenticación inválida",
+            "unknown": "Error inesperado",
+            "already_configured": "Solo se admite una instancia de la integración Victron en este momento"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "host": "Host",
+                    "port": "Puerto",
+                    "interval": "Intervalo de actualización en (s)",
+                    "advanced": "Habilita el soporte de escritura y permite establecer límites de escritura"
+                }
+            },
+            "advanced": {
+                "data": {
+                    "ac_voltage": "El voltaje AC de tu red en V",
+                    "ac_current": "El límite de corriente AC (por fase) de tu red en A",
+                    "dc_voltage": "El voltaje DC de tu batería en V",
+                    "dc_current": "El límite de corriente DC de tu batería en A",
+                    "number_of_phases": "La configuración de fases de tu sistema",
+                    "use_sliders": "Usar controles deslizantes escalonados para entidades numéricas editables"
+                }
+            },
+            "reconfigure": {
+                "data": {
+                    "host": "Host",
+                    "port": "Puerto"
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init_write": {
+                "data": {
+                    "rescan": "Reescanear dispositivos disponibles. Esto reescaneará todos los dispositivos disponibles",
+                    "interval": "Intervalo de actualización en (s)",
+                    "ac_voltage": "El voltaje AC de tu red en V",
+                    "ac_current": "El límite de corriente AC (por fase) de tu red en A",
+                    "dc_voltage": "El voltaje DC de tu batería en V",
+                    "dc_current": "El límite de corriente DC de tu batería en A",
+                    "number_of_phases": "La configuración de fases de tu sistema",
+                    "use_sliders": "Usar controles deslizantes escalonados para entidades numéricas editables",
+                    "advanced": "Cambiar al modo solo lectura si no está seleccionado (al enviar)"
+                }
+            },
+            "init_read": {
+                "data": {
+                    "rescan": "Reescanear dispositivos disponibles. Esto reescaneará todos los dispositivos disponibles",
+                    "interval": "Intervalo de actualización en (s)",
+                    "advanced": "Habilitar soporte de escritura"
+                }
+            },
+            "advanced": {
+                "data": {
+                    "ac_voltage": "El voltaje AC de tu red en V",
+                    "ac_current": "El límite de corriente AC de tu red en A",
+                    "dc_voltage": "El voltaje DC de tu batería en V",
+                    "dc_current": "El límite de corriente DC de tu batería en A",
+                    "number_of_phases": "La configuración de fases de tu sistema",
+                    "use_sliders": "Usar controles deslizantes escalonados para entidades numéricas editables"
+                }
+            }
+        }
+    }
+}

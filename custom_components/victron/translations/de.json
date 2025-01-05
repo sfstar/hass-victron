@@ -1,0 +1,73 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Gerät ist bereits konfiguriert"
+        },
+        "error": {
+            "cannot_connect": "Verbindung fehlgeschlagen",
+            "invalid_auth": "Ungültige Authentifizierung",
+            "unknown": "Unerwarteter Fehler",
+            "already_configured": "Nur eine Instanz der Victron-Integration wird derzeit unterstützt"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "host": "Host",
+                    "port": "Port",
+                    "interval": "Aktualisierungsintervall in (s)",
+                    "advanced": "Aktiviert Schreibunterstützung und ermöglicht das Setzen von Schreibgrenzen"
+                }
+            },
+            "advanced": {
+                "data": {
+                    "ac_voltage": "Die Wechselspannung Ihres Netzes in V",
+                    "ac_current": "Die Wechselstromgrenze (pro Phase) Ihres Netzes in A",
+                    "dc_voltage": "Die Gleichspannung Ihrer Batterie in V",
+                    "dc_current": "Die Gleichstromgrenze Ihrer Batterie in A",
+                    "number_of_phases": "Die Phasenkonfiguration Ihres Systems",
+                    "use_sliders": "Verwendet abgestufte Schieberegler für beschreibbare Zahlenwerte"
+                }
+            },
+            "reconfigure": {
+                "data": {
+                    "host": "Host",
+                    "port": "Port"
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init_write": {
+                "data": {
+                    "rescan": "Verfügbare Geräte erneut scannen. Dadurch werden alle verfügbaren Geräte erneut gescannt",
+                    "interval": "Aktualisierungsintervall in (s)",
+                    "ac_voltage": "Die Wechselspannung Ihres Netzes in V",
+                    "ac_current": "Die Wechselstromgrenze (pro Phase) Ihres Netzes in A",
+                    "dc_voltage": "Die Gleichspannung Ihrer Batterie in V",
+                    "dc_current": "Die Gleichstromgrenze Ihrer Batterie in A",
+                    "number_of_phases": "Die Phasenkonfiguration Ihres Systems",
+                    "use_sliders": "Verwendet abgestufte Schieberegler für beschreibbare Zahlenwerte",
+                    "advanced": "Wechselt in den Nur-Lesen-Modus, wenn nicht markiert (beim Absenden)"
+                }
+            },
+            "init_read": {
+                "data": {
+                    "rescan": "Verfügbare Geräte erneut scannen. Dadurch werden alle verfügbaren Geräte erneut gescannt",
+                    "interval": "Aktualisierungsintervall in (s)",
+                    "advanced": "Schreibunterstützung aktivieren"
+                }
+            },
+            "advanced": {
+                "data": {
+                    "ac_voltage": "Die Wechselspannung Ihres Netzes in V",
+                    "ac_current": "Die Wechselstromgrenze Ihres Netzes in A",
+                    "dc_voltage": "Die Gleichspannung Ihrer Batterie in V",
+                    "dc_current": "Die Gleichstromgrenze Ihrer Batterie in A",
+                    "number_of_phases": "Die Phasenkonfiguration Ihres Systems",
+                    "use_sliders": "Verwendet abgestufte Schieberegler für beschreibbare Zahlenwerte"
+                }
+            }
+        }
+    }
+}
