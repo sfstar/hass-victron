@@ -69,7 +69,7 @@ This could cause issues if you are using specific configuration options of the b
 
 ### Default
 1. Add the integration through this link: 
-[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sfstar&repository=hass-victron&category=integration)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=remcom&repository=hass-victron&category=integration)
 3. Restart home assistant
 4. Setup integration via the integration page.
 

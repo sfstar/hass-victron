@@ -2,19 +2,20 @@
   "domain": "victron",
   "name": "victron",
   "codeowners": [
-    "@sfstar"
+    "@sfstar",
+    "@remcom"
   ],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/sfstar/hass-victron",
+  "documentation": "https://github.com/remcom/hass-victron",
   "homekit": {},
   "integration_type": "hub",
   "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/sfstar/hass-victron/issues",
+  "issue_tracker": "https://github.com/remcom/hass-victron/issues",
   "requirements": [
     "pymodbus>=3.7.4"
   ],
   "ssdp": [],
-  "version": "0.0.11",
+  "version": "v0.0.0",
   "zeroconf": []
 }

@@ -1,6 +1,8 @@
 {
     "name": "Victron GX modbus TCP",
     "render_readme": true,
-    "homeassistant": "2024.12",
-    "hacs": "1.28.4"
+    "zip_release": true,
+    "filename": "alarmo.zip",
+    "hide_default_branch": true,
+    "homeassistant": "2025.1.0"
   }
