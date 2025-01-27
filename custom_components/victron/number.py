@@ -111,12 +111,12 @@ def determine_min_value(
 ) -> int:
     if unit == PERCENTAGE:
         return 0
-    if unit == UnitOfElectricPotential.VOLT:
+    elif unit == UnitOfElectricPotential.VOLT:
         series_type = (
             int(config_entry[CONF_DC_SYSTEM_VOLTAGE]) / 3
         )  # statically based on lifepo4 cells
         return series_type * 2.5  # statically based on lifepo4 cells
-    if unit == UnitOfPower.WATT:
+    elif unit == UnitOfPower.WATT:
         if negative:
             min_value = (
                 (
@@ -134,7 +134,7 @@ def determine_min_value(
             _LOGGER.debug(rounded_min)
             return rounded_min
         return 0
-    if unit == UnitOfElectricCurrent.AMPERE:
+    elif unit == UnitOfElectricCurrent.AMPERE:
         if negative:
             if powerType == "AC":
                 return -config_entry[CONF_AC_CURRENT_LIMIT]
@@ -142,7 +142,8 @@ def determine_min_value(
                 return -config_entry[CONF_DC_CURRENT_LIMIT]
             return None
         return 0
-    return 0
+    else:
+        return 0
 
 
 def determine_max_value(
@@ -150,12 +151,12 @@ def determine_max_value(
 ) -> int:
     if unit == PERCENTAGE:
         return 100
-    if unit == UnitOfElectricPotential.VOLT:
+    elif unit == UnitOfElectricPotential.VOLT:
         series_type = (
             int(config_entry[CONF_DC_SYSTEM_VOLTAGE]) / 3
         )  # statically based on lifepo4 cells
         return series_type * 3.65  # statically based on lifepo4 cells
-    if unit == UnitOfPower.WATT:
+    elif unit == UnitOfPower.WATT:
         max_value = (
             (
                 int(config_entry[CONF_AC_SYSTEM_VOLTAGE])
@@ -169,13 +170,16 @@ def determine_max_value(
             )
         )
         return round(max_value / 100) * 100
-    if unit == UnitOfElectricCurrent.AMPERE:
+    elif unit == UnitOfElectricCurrent.AMPERE:
         if powerType == "AC":
             return config_entry[CONF_AC_CURRENT_LIMIT]
         if powerType == "DC":
             return config_entry[CONF_DC_CURRENT_LIMIT]
         return None
-    return 0
+    else:
+        if powerType == "uint16":
+            return UINT16_MAX
+        return 0
 
 
 @dataclass
