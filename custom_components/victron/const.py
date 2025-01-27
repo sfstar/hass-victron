@@ -2865,7 +2865,7 @@ dcgenset_registers = {
     "dcgenset_engine_load": RegisterInfo(5207, UINT16, PERCENTAGE),
     "dcgenset_engine_speed": RegisterInfo(5208, UINT16, REVOLUTIONS_PER_MINUTE),
     "dcgenset_engine_operatinghours": RegisterInfo(
-        5209, UINT16, UnitOfTime.SECOND, 0.01
+        5209, UINT16, UnitOfTime.SECONDS, 0.01
     ),
     "dcgenset_engine_coolanttemperature": RegisterInfo(
         5210, INT16, UnitOfTemperature.CELSIUS, 10
@@ -2880,7 +2880,7 @@ dcgenset_registers = {
         5213, UINT16, UnitOfElectricPotential.VOLT, 100
     ),
     "dcgenset_engine_oilpressure": RegisterInfo(
-        5214, INT16, UnitOfPressure.KILOPASCAL, 1
+        5214, INT16, UnitOfPressure.KPA, 1
     ),
     "dcgenset_heatsinktemperature": RegisterInfo(
         5215, INT16, UnitOfTemperature.CELSIUS, 10
@@ -2958,13 +2958,13 @@ class dynamic_ess_mode(Enum):
 
 settings_dynamic_ess_registers = {
     "settings_dynamicess_batterycapacity": RegisterInfo(
-        5420, UINT16, UnitOfEnergy.KILOWATT_HOUR, 10
+        5420, UINT16, UnitOfEnergy.KILO_WATT_HOUR, 10
     ),
     "settings_dynamicess_fullchargeduration": RegisterInfo(
-        5421, UINT16, UnitOfTime.HOUR, SliderWriteType(powerType=UnitOfTime.HOUR)
+        5421, UINT16, UnitOfTime.HOURS, SliderWriteType(powerType=UnitOfTime.HOURS)
     ),  # TODO refactor powertype to unit of importance
     "settings_dynamicess_fullchargeinterval": RegisterInfo(
-        5422, UINT16, UnitOfTime.DAY, SliderWriteType(powerType=UnitOfTime.DAY)
+        5422, UINT16, UnitOfTime.DAYS, SliderWriteType(powerType=UnitOfTime.DAYS)
     ),
     "settings_dynamicess_mode": RegisterInfo(
         5423, UINT16, entityType=SelectWriteType(dynamic_ess_mode)
@@ -2973,7 +2973,7 @@ settings_dynamic_ess_registers = {
         5424, UINT16, entityType=SwitchWriteType()
     ),
     "settings_dynamicess_duration": RegisterInfo(
-        5425, UINT16, UnitOfTime.SECOND, SliderWriteType(UnitOfTime.SECOND)
+        5425, UINT16, UnitOfTime.SECONDS, SliderWriteType(UnitOfTime.SECONDS)
     ),
     "settings_dynamicess_restrictions": RegisterInfo(
         5426, UINT16, entityType=SelectWriteType(dynamic_ess_restrictions)
@@ -2982,7 +2982,7 @@ settings_dynamic_ess_registers = {
         5427, UINT16, PERCENTAGE, SliderWriteType(PERCENTAGE)
     ),
     "settings_dynamicess_schedule_starttime": RegisterInfo(
-        5428, INT32, UnitOfTime.SECOND, SliderWriteType(UnitOfTime.SECOND)
+        5428, INT32, UnitOfTime.SECONDS, SliderWriteType(UnitOfTime.SECONDS)
     ),  # TODO refactor to support date and time picker and although negative is allowed this is specified as unix timestamp in the docs
     "settings_dynamicess_strategy": RegisterInfo(
         5429, UINT16, entityType=SelectWriteType(dynamic_ess_strategy)
