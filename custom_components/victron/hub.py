@@ -1,16 +1,17 @@
-from pymodbus.client import ModbusTcpClient
-from pymodbus.exceptions import ModbusException
-
-import threading
 from collections import OrderedDict
-from .const import UINT32, INT32, STRING, register_info_dict, valid_unit_ids
-
 import logging
+import threading
+
+from pymodbus.client import ModbusTcpClient
+
+from homeassistant.exceptions import HomeAssistantError
+
+from .const import INT32, STRING, UINT32, register_info_dict, valid_unit_ids
 
 _LOGGER = logging.getLogger(__name__)
 
-class VictronHub:
 
+class VictronHub:
     def __init__(self, host: str, port: int) -> None:
         """Initialize."""
         self.host = host
@@ -23,10 +24,11 @@ class VictronHub:
 
     def connect(self):
         return self._client.connect()
-    
+
     def disconnect(self):
         if self._client.is_socket_open():
             return self._client.close()
+        return None
 
     def write_register(self, unit, address, value):
         with self._lock:
@@ -48,8 +50,9 @@ class VictronHub:
         elif isinstance(registerInfoDict[last_key].dataType, STRING):
             end_correction = registerInfoDict[last_key].dataType.length
 
-
-        return (registerInfoDict[last_key].register - registerInfoDict[first_key].register) + end_correction
+        return (
+            registerInfoDict[last_key].register - registerInfoDict[first_key].register
+        ) + end_correction
 
     def get_first_register_id(self, registerInfoDict: OrderedDict):
         first_register = next(iter(registerInfoDict))
@@ -61,8 +64,8 @@ class VictronHub:
         for unit in valid_unit_ids:
             working_registers = []
             for key, register_definition in register_info_dict.items():
-            #VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
-                if unit == 100 and not key.startswith(("settings", "system")) :
+                # VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
+                if unit == 100 and not key.startswith(("settings", "system")):
                     continue
 
                 try:
@@ -70,12 +73,18 @@ class VictronHub:
                     count = self.calculate_register_count(register_definition)
                     result = self.read_holding_registers(unit, address, count)
                     if result.isError():
-                        _LOGGER.debug("result is error for unit: " + str(unit) + " address: " + str(address) + " count: " + str(count))
+                        _LOGGER.debug(
+                            "result is error for unit: "
+                            + str(unit)
+                            + " address: "
+                            + str(address)
+                            + " count: "
+                            + str(count)
+                        )
                     else:
                         working_registers.append(key)
-                except Exception  as e:  # pylint: disable=broad-except
+                except HomeAssistantError as e:
                     _LOGGER.error(e)
-
 
             if len(working_registers) > 0:
                 valid_devices[unit] = working_registers

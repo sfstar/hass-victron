@@ -1,14 +1,22 @@
 """The victron integration."""
+
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN, CONF_HOST, CONF_PORT, SCAN_REGISTERS, CONF_INTERVAL
+from .const import CONF_HOST, CONF_INTERVAL, CONF_PORT, DOMAIN, SCAN_REGISTERS
 from .coordinator import victronEnergyDeviceUpdateCoordinator as Coordinator
 
-PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.SWITCH, Platform.NUMBER, Platform.SELECT, Platform.BINARY_SENSOR, Platform.BUTTON]
+PLATFORMS: list[Platform] = [
+    Platform.SENSOR,
+    Platform.SWITCH,
+    Platform.NUMBER,
+    Platform.SELECT,
+    Platform.BINARY_SENSOR,
+    Platform.BUTTON,
+]
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
@@ -20,8 +28,13 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
     # TODO 3. Store an API object for your platforms to access
     # hass.data[DOMAIN][entry.entry_id] = MyApi(...)
 
-    coordinator = Coordinator(hass, config_entry.options[CONF_HOST], config_entry.options[CONF_PORT], 
-                                       config_entry.data[SCAN_REGISTERS], config_entry.options[CONF_INTERVAL])
+    coordinator = Coordinator(
+        hass,
+        config_entry.options[CONF_HOST],
+        config_entry.options[CONF_PORT],
+        config_entry.data[SCAN_REGISTERS],
+        config_entry.options[CONF_INTERVAL],
+    )
     # try:
     #     await coordinator.async_config_entry_first_refresh()
     # except ConfigEntryNotReady:
@@ -41,10 +54,13 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
 async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Unload a config entry."""
-    if unload_ok := await hass.config_entries.async_unload_platforms(config_entry, PLATFORMS):
+    if unload_ok := await hass.config_entries.async_unload_platforms(
+        config_entry, PLATFORMS
+    ):
         hass.data[DOMAIN].pop(config_entry.entry_id)
 
     return unload_ok
+
 
 async def update_listener(hass: HomeAssistant, config_entry: ConfigEntry) -> None:
     """Update listener."""
