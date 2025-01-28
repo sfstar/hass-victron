@@ -643,7 +643,7 @@ battery_registers = {
     "battery_info_maxdischargecurrent": RegisterInfo(
         308, UINT16, UnitOfElectricCurrent.AMPERE, 10
     ),
-    "battery_capacity": RegisterInfo(309, UINT16, UnifOfElectricCurrent.AMPERE, 10),
+    "battery_capacity": RegisterInfo(309, UINT16, UnitOfElectricCurrent.AMPERE, 10),
     "battery_diagnostics_lasterror_1_time": RegisterInfo(310, INT32, "timestamp"),
     "battery_diagnostics_lasterror_2_time": RegisterInfo(312, INT32, "timestamp"),
     "battery_diagnostics_lasterror_3_time": RegisterInfo(314, INT32, "timestamp"),
