@@ -309,7 +309,9 @@ vebus_registers = {
     "vebus_activein_activeinput": RegisterInfo(
         register=29, dataType=UINT16, entityType=TextReadEntityType(generic_activeinput)
     ),
-    "vebus_soc": RegisterInfo(30, UINT16, PERCENTAGE, 10, SliderWriteType()),
+    "vebus_soc": RegisterInfo(
+        30, UINT16, PERCENTAGE, 10, SliderWriteType(PERCENTAGE, False)
+    ),
     "vebus_state": RegisterInfo(
         register=31,
         dataType=UINT16,
@@ -641,7 +643,7 @@ battery_registers = {
     "battery_info_maxdischargecurrent": RegisterInfo(
         308, UINT16, UnitOfElectricCurrent.AMPERE, 10
     ),
-    "battery_capacity": RegisterInfo(309, UINT16, UnitOfEnergy.KILO_WATT_HOUR, 1000),
+    "battery_capacity": RegisterInfo(309, UINT16, UnifOfElectricCurrent.AMPERE, 10),
     "battery_diagnostics_lasterror_1_time": RegisterInfo(310, INT32, "timestamp"),
     "battery_diagnostics_lasterror_2_time": RegisterInfo(312, INT32, "timestamp"),
     "battery_diagnostics_lasterror_3_time": RegisterInfo(314, INT32, "timestamp"),
@@ -767,10 +769,10 @@ battery_detail_registers = {
     "battery_system_batteriesseries": RegisterInfo(1288, UINT16),
     "battery_system_numberofcellsperbattery": RegisterInfo(1289, UINT16),
     "battery_system_mincellvoltage": RegisterInfo(
-        1290, UINT16, UnitOfElectricPotential.VOLT, 1000
+        1290, UINT16, UnitOfElectricPotential.VOLT, 100
     ),
     "battery_system_maxcellvoltage": RegisterInfo(
-        1291, UINT16, UnitOfElectricPotential.VOLT, 1000
+        1291, UINT16, UnitOfElectricPotential.VOLT, 100
     ),
     "battery_diagnostics_shutdownsdueerror": RegisterInfo(1292, UINT16),
     "battery_diagnostics_lasterror_1": RegisterInfo(
@@ -1007,9 +1009,9 @@ solarcharger_tracker_registers = {
 
 
 class generic_position(Enum):
-    MANUAL = 0
-    AUTO = 1
-    SCHEDULED = 2
+    AC_INPUT_1 = 0
+    AC_OUTPUT = 1
+    AC_INPUT_2 = 2
 
 
 pvinverter_registers = {
