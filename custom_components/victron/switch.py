@@ -42,7 +42,10 @@ async def async_setup_entry(
             for name in registerLedger:
                 for register_name, registerInfo in register_info_dict[name].items():
                     _LOGGER.debug(
-                        f"unit == {slave} registerLedger == {registerLedger} registerInfo "
+                        "unit == %s registerLedger == %s registerInfo == %s",
+                        slave,
+                        registerLedger,
+                        registerInfo,
                     )
 
                     if isinstance(registerInfo.entityType, SwitchWriteType):
@@ -81,6 +84,7 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
         coordinator: victronEnergyDeviceUpdateCoordinator,
         description: VictronEntityDescription,
     ) -> None:
+        """Initialize the switch."""
         self.coordinator = coordinator
         self.description: VictronEntityDescription = description
         self._attr_name = f"{description.name}"
