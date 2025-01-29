@@ -65,8 +65,8 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     #     your_validate_func, data["username"], data["password"]
     # )
 
-    _LOGGER.debug("host = " + data[CONF_HOST])
-    _LOGGER.debug("port = " + str(data[CONF_PORT]))
+    _LOGGER.debug("host = %s", data[CONF_HOST])
+    _LOGGER.debug("port = %s", data[CONF_PORT])
     hub = VictronHub(data[CONF_HOST], data[CONF_PORT])
 
     try:
@@ -75,11 +75,12 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
         discovered_devices = await scan_connected_devices(hub=hub)
         _LOGGER.debug("successfully discovered devices")
     except HomeAssistantError:
-        _LOGGER.error("failed to connect to the victron device:")
+        _LOGGER.error("Failed to connect to the victron device:")
     return {"title": DOMAIN, "data": discovered_devices}
 
 
 async def scan_connected_devices(hub: VictronHub) -> list:
+    """Scan for connected devices."""
     return hub.determine_present_devices()
 
 
@@ -90,6 +91,7 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     def __init__(self):
+        """Initialize the config flow."""
         self.advanced_options = None
         self.interval = None
         self.port = None

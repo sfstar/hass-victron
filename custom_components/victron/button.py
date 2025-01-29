@@ -41,11 +41,9 @@ async def async_setup_entry(
         for name in registerLedger:
             for register_name, registerInfo in register_info_dict[name].items():
                 _LOGGER.debug(
-                    "unit == "
-                    + str(slave)
-                    + " registerLedger == "
-                    + str(registerLedger)
-                    + " registerInfo "
+                    "unit == %s registerLedger == %s registerInfo",
+                    slave,
+                    registerLedger,
                 )
                 if not config_entry.options[CONF_ADVANCED_OPTIONS]:
                     continue
@@ -58,7 +56,7 @@ async def async_setup_entry(
                         device_class=ButtonDeviceClass.RESTART,
                         address=registerInfo.register,
                     )
-                    _LOGGER.debug("composed description == " + str(description))
+                    _LOGGER.debug("composed description == %s", description)
                     descriptions.append(description)
 
     entities = []
@@ -109,6 +107,7 @@ class VictronBinarySensor(CoordinatorEntity, ButtonEntity):
 
     @property
     def available(self) -> bool:
+        """Return True if entity available."""
         full_key = str(self.description.slave) + "." + self.description.key
         return self.coordinator.processed_data()["availability"][full_key]
 
