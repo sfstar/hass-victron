@@ -61,11 +61,9 @@ async def async_setup_entry(
             for name in registerLedger:
                 for register_name, registerInfo in register_info_dict[name].items():
                     _LOGGER.debug(
-                        "unit == "
-                        + str(slave)
-                        + " registerLedger == "
-                        + str(registerLedger)
-                        + " registerInfo "
+                        "unit == %s registerLedger == %s registerInfo",
+                        slave,
+                        registerLedger,
                     )
 
                     if isinstance(registerInfo.entityType, SliderWriteType):
@@ -93,7 +91,7 @@ async def async_setup_entry(
                             scale=registerInfo.scale,
                             native_step=registerInfo.step,
                         )
-                        _LOGGER.debug("composed description == " + str(descriptions))
+                        _LOGGER.debug("composed description == %s", descriptions)
                         descriptions.append(description)
 
     entities = []
@@ -109,6 +107,7 @@ async def async_setup_entry(
 def determine_min_value(
     unit, config_entry: config_entries.ConfigEntry, powerType, negative: bool
 ) -> int:
+    """Determine the minimum value for a number entity."""
     if unit == PERCENTAGE:
         return 0
     if unit == UnitOfElectricPotential.VOLT:
@@ -148,6 +147,7 @@ def determine_min_value(
 def determine_max_value(
     unit, config_entry: config_entries.ConfigEntry, powerType
 ) -> int:
+    """Determine the maximum value for a number entity."""
     if unit == PERCENTAGE:
         return 100
     if unit == UnitOfElectricPotential.VOLT:
@@ -188,6 +188,8 @@ class VictronNumberMixin:
 
 @dataclass
 class VictronNumberStep:
+    """A class that adds stepping to number entities."""
+
     native_step: float = 0
 
 
@@ -198,9 +200,10 @@ class VictronEntityDescription(
     VictronNumberMixin,
     VictronNumberStep,
 ):
+    """Describes victron number entity."""
+
     # Overwrite base entitydescription property to resolve automatic property ordering issues when a mix of non-default and default properties are used
     key: str | None = None
-    """Describes victron number entity."""
 
 
 class VictronNumber(NumberEntity):
@@ -266,6 +269,7 @@ class VictronNumber(NumberEntity):
 
     @property
     def native_step(self) -> float | None:
+        """Return the step width of the entity."""
         if (
             self.description.mode != NumberMode.SLIDER
         ):  # allow users to skip stepping in case of box mode
@@ -284,14 +288,17 @@ class VictronNumber(NumberEntity):
 
     @property
     def native_min_value(self) -> float:
+        """Return the minimum value of the entity."""
         return self.description.native_min_value
 
     @property
     def native_max_value(self) -> float:
+        """Return the maximum value of the entity."""
         return self.description.native_max_value
 
     @property
     def available(self) -> bool:
+        """Return True if entity is available."""
         full_key = str(self.description.slave) + "." + self.description.key
         return self.coordinator.processed_data()["availability"][full_key]
 
