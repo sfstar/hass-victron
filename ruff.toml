@@ -1,5 +1,5 @@
 # This extend our general Ruff rules specifically for tests
-extend = "../pyproject.toml"
+extend = "pyproject.toml"
 
 [lint]
 extend-ignore = [
