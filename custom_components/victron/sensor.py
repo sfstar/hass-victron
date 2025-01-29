@@ -61,11 +61,9 @@ async def async_setup_entry(
         for name in registerLedger:
             for register_name, registerInfo in register_info_dict[name].items():
                 _LOGGER.debug(
-                    "unit == "
-                    + str(slave)
-                    + " registerLedger == "
-                    + str(registerLedger)
-                    + " registerInfo "
+                    "unit == %s registerLedger == %s registerInfo",
+                    slave,
+                    registerLedger,
                 )
                 if config_entry.options[CONF_ADVANCED_OPTIONS]:
                     if not isinstance(
@@ -86,7 +84,7 @@ async def async_setup_entry(
                     if isinstance(registerInfo.entityType, TextReadEntityType)
                     else None,
                 )
-                _LOGGER.debug("composed description == " + str(description))
+                _LOGGER.debug("composed description == %s", description)
 
                 descriptions.append(description)
 
@@ -101,6 +99,7 @@ async def async_setup_entry(
 
 
 def determine_victron_device_class(name, unit):
+    """Determine the device class of a sensor based on its name and unit."""
     if unit == PERCENTAGE and "soc" in name:
         return SensorDeviceClass.BATTERY
     if unit == PERCENTAGE:
@@ -205,6 +204,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
 
     @property
     def available(self) -> bool:
+        """Return True if entity is available."""
         full_key = str(self.description.slave) + "." + self.description.key
         return self.coordinator.processed_data()["availability"][full_key]
 
