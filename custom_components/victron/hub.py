@@ -31,15 +31,15 @@ class VictronHub:
         return None
 
     def write_register(self, unit, address, value):
-        with self._lock:
-            kwargs = {"slave": int(unit)} if unit else {}
-            return self._client.write_register(address, value, **kwargs)
+        slave = int(unit) if unit else 1
+        return self._client.write_register(address=address, value=value, slave=slave)
 
     def read_holding_registers(self, unit, address, count):
         """Read holding registers."""
-        with self._lock:
-            kwargs = {"slave": int(unit)} if unit else {}
-            return self._client.read_holding_registers(address, count, **kwargs)
+        slave = int(unit) if unit else 1
+        return self._client.read_holding_registers(
+            address=address, count=count, slave=slave
+        )
 
     def calculate_register_count(self, registerInfoDict: OrderedDict):
         first_key = next(iter(registerInfoDict))
