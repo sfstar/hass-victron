@@ -1,0 +1,73 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Il dispositivo è già configurato"
+        },
+        "error": {
+            "cannot_connect": "Connessione fallita",
+            "invalid_auth": "Autenticazione non valida",
+            "unknown": "Errore inaspettato",
+            "already_configured": "È supportata solo un'istanza dell'integrazione Victron al momento"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "host": "Host",
+                    "port": "Porta",
+                    "interval": "Intervallo di aggiornamento in (s)",
+                    "advanced": "Abilita il supporto in scrittura e consente di impostare limiti di scrittura"
+                }
+            },
+            "advanced": {
+                "data": {
+                    "ac_voltage": "La tensione AC della tua rete in V",
+                    "ac_current": "Il limite di corrente AC (per fase) della tua rete in A",
+                    "dc_voltage": "La tensione DC della tua batteria in V",
+                    "dc_current": "Il limite di corrente DC della tua batteria in A",
+                    "number_of_phases": "La configurazione delle fasi del tuo sistema",
+                    "use_sliders": "Utilizza cursori a passi per entità numeriche scrivibili"
+                }
+            },
+            "reconfigure": {
+                "data": {
+                    "host": "Host",
+                    "port": "Porta"
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init_write": {
+                "data": {
+                    "rescan": "Esegui nuovamente la scansione dei dispositivi disponibili. Questo eseguirà la scansione di tutti i dispositivi disponibili",
+                    "interval": "Intervallo di aggiornamento in (s)",
+                    "ac_voltage": "La tensione AC della tua rete in V",
+                    "ac_current": "Il limite di corrente AC (per fase) della tua rete in A",
+                    "dc_voltage": "La tensione DC della tua batteria in V",
+                    "dc_current": "Il limite di corrente DC della tua batteria in A",
+                    "number_of_phases": "La configurazione delle fasi del tuo sistema",
+                    "use_sliders": "Utilizza cursori a passi per entità numeriche scrivibili",
+                    "advanced": "Passa alla modalità sola lettura se deselezionato (al momento dell'invio)"
+                }
+            },
+            "init_read": {
+                "data": {
+                    "rescan": "Esegui nuovamente la scansione dei dispositivi disponibili. Questo eseguirà la scansione di tutti i dispositivi disponibili",
+                    "interval": "Intervallo di aggiornamento in (s)",
+                    "advanced": "Abilita il supporto in scrittura"
+                }
+            },
+            "advanced": {
+                "data": {
+                    "ac_voltage": "La tensione AC della tua rete in V",
+                    "ac_current": "Il limite di corrente AC della tua rete in A",
+                    "dc_voltage": "La tensione DC della tua batteria in V",
+                    "dc_current": "Il limite di corrente DC della tua batteria in A",
+                    "number_of_phases": "La configurazione delle fasi del tuo sistema",
+                    "use_sliders": "Utilizza cursori a passi per entità numeriche scrivibili"
+                }
+            }
+        }
+    }
+}
