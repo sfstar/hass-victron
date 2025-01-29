@@ -328,7 +328,9 @@ vebus_registers = {
     "vebus_activein_activeinput": RegisterInfo(
         register=29, dataType=UINT16, entityType=TextReadEntityType(generic_activeinput)
     ),
-    "vebus_soc": RegisterInfo(30, UINT16, PERCENTAGE, 10, SliderWriteType()),
+    "vebus_soc": RegisterInfo(
+        30, UINT16, PERCENTAGE, 10, SliderWriteType(PERCENTAGE, False)
+    ),
     "vebus_state": RegisterInfo(
         register=31,
         dataType=UINT16,
@@ -571,7 +573,7 @@ class battery_mode(Enum):
 
 battery_registers = {
     "battery_power": RegisterInfo(
-        258, INT16, UnitOfPower.WATT, SliderWriteType("DC", True)
+        258, INT16, UnitOfPower.WATT, entityType=SliderWriteType("DC", True)
     ),
     "battery_voltage": RegisterInfo(259, UINT16, UnitOfElectricPotential.VOLT, 100),
     "battery_starter_voltage": RegisterInfo(
@@ -715,7 +717,7 @@ battery_registers = {
     "battery_info_maxdischargecurrent": RegisterInfo(
         308, UINT16, UnitOfElectricCurrent.AMPERE, 10
     ),
-    "battery_capacity": RegisterInfo(309, UINT16, UnitOfEnergy.KILO_WATT_HOUR, 1000),
+    "battery_capacity": RegisterInfo(309, UINT16, UnitOfElectricCurrent.AMPERE, 10),
     "battery_diagnostics_lasterror_1_time": RegisterInfo(310, INT32, "timestamp"),
     "battery_diagnostics_lasterror_2_time": RegisterInfo(312, INT32, "timestamp"),
     "battery_diagnostics_lasterror_3_time": RegisterInfo(314, INT32, "timestamp"),
@@ -855,10 +857,10 @@ battery_detail_registers = {
     "battery_system_batteriesseries": RegisterInfo(1288, UINT16),
     "battery_system_numberofcellsperbattery": RegisterInfo(1289, UINT16),
     "battery_system_mincellvoltage": RegisterInfo(
-        1290, UINT16, UnitOfElectricPotential.VOLT, 1000
+        1290, UINT16, UnitOfElectricPotential.VOLT, 100
     ),
     "battery_system_maxcellvoltage": RegisterInfo(
-        1291, UINT16, UnitOfElectricPotential.VOLT, 1000
+        1291, UINT16, UnitOfElectricPotential.VOLT, 100
     ),
     "battery_diagnostics_shutdownsdueerror": RegisterInfo(1292, UINT16),
     "battery_diagnostics_lasterror_1": RegisterInfo(
@@ -1132,9 +1134,9 @@ solarcharger_tracker_registers = {
 
 
 class generic_position(Enum):
-    MANUAL = 0
-    AUTO = 1
-    SCHEDULED = 2
+    AC_INPUT_1 = 0
+    AC_OUTPUT = 1
+    AC_INPUT_2 = 2
 
 
 pvinverter_registers = {
@@ -2879,9 +2881,7 @@ dcgenset_registers = {
     "dcgenset_startervoltage": RegisterInfo(
         5213, UINT16, UnitOfElectricPotential.VOLT, 100
     ),
-    "dcgenset_engine_oilpressure": RegisterInfo(
-        5214, INT16, UnitOfPressure.KPA, 1
-    ),
+    "dcgenset_engine_oilpressure": RegisterInfo(5214, INT16, UnitOfPressure.KPA, 1),
     "dcgenset_heatsinktemperature": RegisterInfo(
         5215, INT16, UnitOfTemperature.CELSIUS, 10
     ),
@@ -2961,10 +2961,16 @@ settings_dynamic_ess_registers = {
         5420, UINT16, UnitOfEnergy.KILO_WATT_HOUR, 10
     ),
     "settings_dynamicess_fullchargeduration": RegisterInfo(
-        5421, UINT16, UnitOfTime.HOURS, SliderWriteType(powerType=UnitOfTime.HOURS)
+        5421,
+        UINT16,
+        UnitOfTime.HOURS,
+        entityType=SliderWriteType(powerType=UnitOfTime.HOURS),
     ),  # TODO refactor powertype to unit of importance
     "settings_dynamicess_fullchargeinterval": RegisterInfo(
-        5422, UINT16, UnitOfTime.DAYS, SliderWriteType(powerType=UnitOfTime.DAYS)
+        5422,
+        UINT16,
+        UnitOfTime.DAYS,
+        entityType=SliderWriteType(powerType=UnitOfTime.DAYS),
     ),
     "settings_dynamicess_mode": RegisterInfo(
         5423, UINT16, entityType=SelectWriteType(dynamic_ess_mode)
@@ -2973,20 +2979,20 @@ settings_dynamic_ess_registers = {
         5424, UINT16, entityType=SwitchWriteType()
     ),
     "settings_dynamicess_duration": RegisterInfo(
-        5425, UINT16, UnitOfTime.SECONDS, SliderWriteType(UnitOfTime.SECONDS)
+        5425, UINT16, UnitOfTime.SECONDS, entityType=SliderWriteType(UnitOfTime.SECONDS)
     ),
     "settings_dynamicess_restrictions": RegisterInfo(
         5426, UINT16, entityType=SelectWriteType(dynamic_ess_restrictions)
     ),
     "settings_dynamicess_targetsoc": RegisterInfo(
-        5427, UINT16, PERCENTAGE, SliderWriteType(PERCENTAGE)
+        5427, UINT16, PERCENTAGE, entityType=SliderWriteType(PERCENTAGE)
     ),
     "settings_dynamicess_schedule_starttime": RegisterInfo(
-        5428, INT32, UnitOfTime.SECONDS, SliderWriteType(UnitOfTime.SECONDS)
+        5428, INT32, UnitOfTime.SECONDS, entityType=SliderWriteType(UnitOfTime.SECONDS)
     ),  # TODO refactor to support date and time picker and although negative is allowed this is specified as unix timestamp in the docs
-    "settings_dynamicess_strategy": RegisterInfo(
-        5429, UINT16, entityType=SelectWriteType(dynamic_ess_strategy)
-    ),
+    # "settings_dynamicess_strategy": RegisterInfo(
+    #     5429, UINT16, entityType=SelectWriteType(dynamic_ess_strategy)
+    # ),
 }
 
 
@@ -3240,7 +3246,7 @@ register_info_dict = {
     "multi_registers_2": multi_registers_2,
     "system_registers": system_registers,
     "system_invertercharger_registers": system_invertercharger_registers,
-    "system_internal_registers": system_internal_registers,
+    # "system_internal_registers": system_internal_registers,
     "system_battery_registers": system_battery_registers,
     "system_dc_registers": system_dc_registers,
     "system_charger_registers": system_charger_registers,
