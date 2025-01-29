@@ -57,7 +57,10 @@ PHASE_CONFIGURATIONS = {"single phase": 1, "split phase": 2, "three phase": 3}
 
 
 class STRING:
+    """Class for string data type."""
+
     def __init__(self, length=1, read_length=None):
+        """Initialize the string data type."""
         self.length = length
         self.readLength = read_length if read_length is not None else length * 2
 
@@ -239,6 +242,8 @@ gavazi_grid_registers = {
 
 
 class vebus_mode(Enum):
+    """Vebus mode."""
+
     CHARGER = 1
     INVERTER = 2
     ON = 3
@@ -246,12 +251,16 @@ class vebus_mode(Enum):
 
 
 class generic_activeinput(Enum):
+    """Generic active input."""
+
     AC_INPUT_1 = 0
     AC_INPUT_2 = 1
     DISCONNECTED = 240
 
 
 class generic_charger_state(Enum):
+    """Generic charger state."""
+
     OFF = 0
     LOW_POWER = 1
     FAULT = 2
@@ -268,6 +277,8 @@ class generic_charger_state(Enum):
 
 
 class vebus_error(Enum):
+    """Vebus error."""
+
     OK = 0
     EXTERNAL_PHASE_TRIGGERED_SWITCHOFF = 1
     MK2_TYPE_MISMATCH = 2
@@ -725,6 +736,8 @@ battery_registers = {
 
 
 class battery_state(Enum):
+    """Battery state."""
+
     WAIT_START_INIT = 0
     BEFORE_BOOT_INIT = 1
     BEFORE_BOOT_DELAY_INIT = 2
@@ -745,6 +758,8 @@ class battery_state(Enum):
 
 
 class battery_error(Enum):
+    """Battery error."""
+
     NONE = 0
     BATTERY_INIT_ERROR = 1
     NO_BATTERIES_CONNECTED = 2
@@ -846,11 +861,15 @@ battery_detail_registers = {
 
 
 class solarcharger_mode(Enum):
+    """Solar charger mode."""
+
     ON = 1
     OFF = 4
 
 
 class solarcharger_state(Enum):
+    """Solar charger state."""
+
     OFF = 0
     FAULT = 2
     BULK = 3
@@ -864,6 +883,8 @@ class solarcharger_state(Enum):
 
 
 class solarcharger_equalization_pending(Enum):
+    """Solar charger equalization pending."""
+
     NO = 0
     YES = 1
     ERROR = 2
@@ -871,6 +892,8 @@ class solarcharger_equalization_pending(Enum):
 
 
 class generic_charger_errorcode(Enum):
+    """Generic charger error code."""
+
     NONE = 0
     TEMPERATURE_HIGH = 1
     VOLTAGE_HIGH = 2
@@ -891,6 +914,8 @@ class generic_charger_errorcode(Enum):
 
 
 class generic_mppoperationmode(Enum):
+    """Generic MPP operation mode."""
+
     OFF = 0
     LIMITED = 1
     ACTIVE = 2
@@ -1041,6 +1066,8 @@ solarcharger_tracker_registers = {
 
 
 class generic_position(Enum):
+    """Generic position."""
+
     AC_INPUT_1 = 0
     AC_OUTPUT = 1
     AC_INPUT_2 = 2
@@ -1115,6 +1142,8 @@ motordrive_registers = {
 
 
 class charger_mode(Enum):
+    """Charger mode."""
+
     OFF = 0
     ON = 1
     ERROR = 2
@@ -1239,6 +1268,8 @@ gps_registers = {
 
 
 class ess_batterylife_state(Enum):
+    """ESS battery life state."""
+
     BL_DISABLED_DUPLICATE_1 = 0
     RESTARTING = 1
     SELF_CONSUMPTION = 2
@@ -1255,6 +1286,8 @@ class ess_batterylife_state(Enum):
 
 
 class ess_mode(Enum):
+    """ESS mode."""
+
     SELF_CONSUMPTION_WITH_BATTERY_LIFE = 0
     SELF_CONSUMPTION = 1
     KEEP_CHARGED = 2
@@ -1278,6 +1311,8 @@ settings_ess_registers = {
 
 
 class tank_fluidtype(Enum):
+    """Tank fluid type."""
+
     FUEL = 0
     FRESH_WATER = 1
     WASTE_WATER = 2
@@ -1293,6 +1328,8 @@ class tank_fluidtype(Enum):
 
 
 class tank_status(Enum):
+    """Tank status."""
+
     OK = 0
     DISCONNECTED = 1
     SHORT_CIRCUITED = 2
@@ -1378,6 +1415,8 @@ inverter_alarm_registers = {
 
 
 class inverter_mode(Enum):
+    """Inverter mode."""
+
     ON = 2
     OFF = 4
     ECO = 5
@@ -1484,6 +1523,8 @@ inverter_tracker_statistics_registers = {
 
 
 class genset_status(Enum):
+    """Genset status."""
+
     STANDBY = 0
     STARTUP_1 = 1
     STARTUP_2 = 2
@@ -1498,6 +1539,8 @@ class genset_status(Enum):
 
 
 class genset_errorcode(Enum):
+    """Genset error code."""
+
     NONE = 0
     AC_L1_VOLTAGE_TOO_LOW = 1
     AC_L1_FREQUENCY_TOO_LOW = 2
@@ -1644,12 +1687,16 @@ genset_registers = {
 
 
 class temperature_type(Enum):
+    """Temperature type."""
+
     BATTERY = 0
     FRIDGE = 1
     GENERIC = 2
 
 
 class temperature_status(Enum):
+    """Temperature status."""
+
     OK = 0
     DISCONNECTED = 1
     SHORT_CIRCUITED = 2
@@ -1687,6 +1734,8 @@ pulsemeter_registers = {
 
 
 class digitalinput_state(Enum):
+    """Digital input state."""
+
     LOW = 0
     HIGH = 1
     OFF = 2
@@ -1702,6 +1751,8 @@ class digitalinput_state(Enum):
 
 
 class digitalinput_type(Enum):
+    """Digital input type."""
+
     DOOR = 2
     BILGE_PUMP = 3
     BILGE_ALARM = 4
@@ -1730,6 +1781,8 @@ digitalinput_registers = {
 
 
 class generator_runningbyconditioncode(Enum):
+    """Generator running by condition code."""
+
     STOPPED = 0
     MANUAL = 1
     TEST_RUN = 2
@@ -1744,12 +1797,16 @@ class generator_runningbyconditioncode(Enum):
 
 
 class generator_state(Enum):
+    """Generator state."""
+
     STOPPED = 0
     RUNNING = 1
     ERROR = 10
 
 
 class generator_error(Enum):
+    """Generator error."""
+
     NONE = 0
     REMOTE_DISABLED = 1
     REMOTE_FAULT = 2
@@ -1801,12 +1858,16 @@ evcharger_productid_registers = {"evcharger_productid": RegisterInfo(3800, UINT1
 
 
 class evcharger_mode(Enum):
+    """EV charger mode."""
+
     AC_INPUT_1 = 0
     AC_OUTPUT = 1
     AC_INPUT_2 = 2
 
 
 class evcharger_status(Enum):
+    """EV charger status."""
+
     DISCONNECTED = 0
     CONNECTED = 1
     CHARGING = 2
@@ -1933,6 +1994,8 @@ fuelcell_registers = {
 
 
 class alternator_state(Enum):
+    """Alternator state."""
+
     OFF = 0
     FAULT = 2
     BULK = 3
@@ -1944,6 +2007,8 @@ class alternator_state(Enum):
 
 
 class alternator_errorcode(Enum):
+    """Alternator error code."""
+
     HIGH_BATTERY_TEMPERATURE = 12
     HIGH_BATTERY_VOLTAGE = 13
     LOW_BATTERY_VOLTAGE = 14
@@ -2177,6 +2242,8 @@ dcsystem_registers = {
 
 
 class multi_mode(Enum):
+    """Multi mode."""
+
     CHARGER = 1
     INVERTER = 2
     ON = 3
@@ -2184,6 +2251,8 @@ class multi_mode(Enum):
 
 
 class multi_input_type(Enum):
+    """Multi input type."""
+
     UNUSED = 0
     GRID = 1
     GENSET = 2
@@ -2450,6 +2519,8 @@ multi_registers = {
 
 
 class register_input_source(Enum):
+    """Input source."""
+
     UNKNOWN = 0
     GRID = 1
     GENERATOR = 2
@@ -2492,6 +2563,8 @@ system_registers = {
 
 
 class system_battery_state(Enum):
+    """Battery state."""
+
     IDLE = 0
     CHARGING = 1
     DISCHARGING = 2
