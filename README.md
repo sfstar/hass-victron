@@ -49,8 +49,8 @@ As of november 2022 the built-in home assistant modbus integration runs on a ver
 If you install this integration the built-in modbus integration will stop to work due to breaking changes between 2.x.x and 3.0.0
 
 ## Important announcement:
-Starting from homeassistant core version 2023.2.x the built-in modbus integration now uses pymodbus version 3.1.1.
-Version 0.0.7 (and up) of this integration will also use the 3.1.1 pymodbus version.
+Starting from homeassistant core version 2025.1.x the built-in modbus integration now uses pymodbus version 3.7.4.
+Version 0.4.0 (and up) of this integration will also use the 3.7.4 pymodbus version.
 
 Although core version >= 2023.2 and previous versions of this integration should be compatible it is recommended that all users update both core and this integration in the same patch round.
 Since having multiple library version requirements might cause the built-in 3.1.1 library to be overwritten by 3.0.2 reference of versions 0.0.6 and earlier.
@@ -68,7 +68,7 @@ This could cause issues if you are using specific configuration options of the b
 ## HACS
 
 ### Default
-1. Add the integration through this link: 
+1. Add the integration through this link:
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=sfstar&repository=hass-victron&category=integration)
 3. Restart home assistant
 4. Setup integration via the integration page.
@@ -87,7 +87,7 @@ Although this integration speaks to the (exposed by victron) modbusTCP server it
 - (when implemented) writing to write_registers (for example changing the ess setpoint value)
 
 Therefore the following applies to anyone using this code:
-- This code is provided as is. 
+- This code is provided as is.
 - The developer does not assume any liability for issues caused by the use of this integration.
 - Use at your own risk.
 
@@ -137,7 +137,7 @@ The voltage profile to use in order to calculate the voltage boundaries (i.e. 4s
 The AC voltage for a single phase in your region (currently supported is US: 120v and EU: 230v)
 This setting is used in combination with AC current to automatically calcultate the max wattage for applicable wattage settings.
 
-# Resources 
+# Resources
 The following links can be helpfull resources:
 - [setting up modbusTCP on the gx device](https://www.victronenergy.com/live/ccgx:modbustcp_faq)
 - [Great UI card for the gx device data](https://github.com/flyrmyr/system-flow-card)
