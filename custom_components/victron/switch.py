@@ -42,11 +42,7 @@ async def async_setup_entry(
             for name in registerLedger:
                 for register_name, registerInfo in register_info_dict[name].items():
                     _LOGGER.debug(
-                        "unit == "
-                        + str(slave)
-                        + " registerLedger == "
-                        + str(registerLedger)
-                        + " registerInfo "
+                        f"unit == {slave} registerLedger == {registerLedger} registerInfo "
                     )
 
                     if isinstance(registerInfo.entityType, SwitchWriteType):
@@ -57,7 +53,7 @@ async def async_setup_entry(
                             address=registerInfo.register,
                         )
                         descriptions.append(description)
-                        _LOGGER.debug("composed description == " + str(description))
+                        _LOGGER.debug("composed description == %s", description)
 
     entities = []
     entity = {}
@@ -118,16 +114,17 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
 
     @property
     def is_on(self) -> bool:
+        """Return true if switch is on."""
         data = self.description.value_fn(
             self.coordinator.processed_data(),
             self.description.slave,
             self.description.key,
         )
-        """Return true if switch is on."""
         return cast(bool, data)
 
     @property
     def available(self) -> bool:
+        """Return True if entity is available."""
         full_key = str(self.description.slave) + "." + self.description.key
         return self.coordinator.processed_data()["availability"][full_key]
 
