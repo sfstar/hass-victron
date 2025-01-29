@@ -284,7 +284,10 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 class parsedEntry:
+    """Parsed entry."""
+
     def __init__(self, decoderInfo: RegisterInfo, value):
+        """Initialize the parsed entry."""
         self.decoderInfo = decoderInfo
         self.value = value
 
@@ -400,6 +403,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
         return None
 
     def init_read_form(self, errors: dict):
+        """Handle read support and limit settings if requested."""
         return self.async_show_form(
             step_id="init_read",
             errors=errors,
@@ -415,6 +419,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
         )
 
     def init_write_form(self, errors: dict):
+        """Handle write support and limit settings if requested."""
         config = dict(self.config_entry.options)
         system_ac_voltage_default = self.config_entry.options.get(
             CONF_AC_SYSTEM_VOLTAGE, AC_VOLTAGES["US (120)"]
@@ -496,6 +501,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
 
     @staticmethod
     def get_dict_key(dict, val):
+        """Get the key from a dictionary."""
         for key, value in dict.items():
             if val == value:
                 return key

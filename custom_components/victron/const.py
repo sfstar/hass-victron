@@ -22,6 +22,8 @@ from homeassistant.const import (
 
 
 class DeviceType(Enum):
+    """Enum for device types."""
+
     GRID = 1
     TANK = 2
     MULTI = 3
@@ -70,50 +72,76 @@ UINT16_MAX = 65535
 
 
 class EntityType:
+    """Base entityType."""
+
     def __init__(self, entityTypeName) -> None:
+        """Initialize the entity type."""
         self.entityTypeName = entityTypeName
 
 
 class ReadEntityType(EntityType):
+    """Read entity type."""
+
     def __init__(self, entityTypeName: str = "read") -> None:
+        """Initialize the read entity type."""
         super().__init__(entityTypeName=entityTypeName)
 
 
 class TextReadEntityType(ReadEntityType):
+    """Text read entity type."""
+
     def __init__(self, decodeEnum: Enum) -> None:
+        """Initialize the text read entity type."""
         super().__init__()
         self.decodeEnum = decodeEnum
 
 
 class BoolReadEntityType(ReadEntityType):
+    """Bool read entity type."""
+
     def __init__(self) -> None:
+        """Initialize the bool read entity type."""
         super().__init__(entityTypeName="bool")
 
 
 class ButtonWriteType(EntityType):
+    """Button write type."""
+
     def __init__(self) -> None:
+        """Initialize the button write type."""
         super().__init__(entityTypeName="button")
 
 
 class SwitchWriteType(EntityType):
+    """Switch write type."""
+
     def __init__(self) -> None:
+        """Initialize the switch write type."""
         super().__init__(entityTypeName="switch")
 
 
 class SliderWriteType(EntityType):
+    """Slider write type."""
+
     def __init__(self, powerType="", negative: bool = False) -> None:
+        """Initialize the slider write type."""
         super().__init__(entityTypeName="slider")
         self.powerType = powerType
         self.negative = negative
 
 
 class SelectWriteType(EntityType):
+    """Select write type."""
+
     def __init__(self, optionsEnum: Enum) -> None:
+        """Initialize the select write type."""
         super().__init__(entityTypeName="select")
         self.options = optionsEnum
 
 
 class RegisterInfo:
+    """Class for register information."""
+
     def __init__(
         self,
         register,
@@ -123,6 +151,7 @@ class RegisterInfo:
         entityType: EntityType = ReadEntityType(),
         step=0,
     ) -> None:
+        """Initialize the register info."""
         self.register = register
         self.dataType = dataType
         self.unit = (
@@ -137,6 +166,7 @@ class RegisterInfo:
         self.entityType = entityType
 
     def determine_stateclass(self):
+        """Determine the state class."""
         if self.unit == UnitOfEnergy.KILO_WATT_HOUR:
             return SensorStateClass.TOTAL_INCREASING
         if self.unit is None:
@@ -145,6 +175,8 @@ class RegisterInfo:
 
 
 class generic_alarm_ledger(Enum):
+    """Generic alarm ledger."""
+
     OK = 0
     WARNING = 1
     ALARM = 2
