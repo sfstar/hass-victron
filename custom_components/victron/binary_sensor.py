@@ -43,11 +43,9 @@ async def async_setup_entry(
         for name in registerLedger:
             for register_name, registerInfo in register_info_dict[name].items():
                 _LOGGER.debug(
-                    "unit == "
-                    + str(slave)
-                    + " registerLedger == "
-                    + str(registerLedger)
-                    + " registerInfo "
+                    "unit == %s registerLedger == %s registerInfo",
+                    slave,
+                    registerLedger,
                 )
 
                 if isinstance(registerInfo.entityType, BoolReadEntityType):
