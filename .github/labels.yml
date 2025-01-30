@@ -76,3 +76,30 @@
 - name: "minor"
   color: 0e8a16
   description: "This PR causes a minor version bump in the version number."
+
+
+- name: "shipped"
+  color: 006b75
+  description: "This issue has been shipped. 🚢"
+- name: "on-hold"
+  color: 0052cc
+  description: "This issue is on hold and will not be worked on until further notice."
+- name: "duplicate"
+  color: fef2c0
+  description: "This reported issue already exists."
+- name: "wontfix"
+  color: ffffff
+  description: "This issue will not be fixed."
+
+- name: "connection stability"
+  color: 32AE82
+  description: "Issue related to the stability of the connection."
+- name: "data accuracy"
+  color: 32AE82
+  description: "Issue related to the format or representation of returned/to be returned data."
+- name: "specsheet mismatch"
+  color: d93f0b
+  description: "Issue related to the mismatch between the victron specsheet and the actual implementation."
+- name: "shipping next release (do not close)🚢"
+  color: b60205
+  description: "This issue is scheduled to be shipped in the next release."
