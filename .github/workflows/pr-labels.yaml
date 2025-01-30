@@ -1,3 +1,5 @@
+---
+name: PR Labels
 
 # yamllint disable-line rule:truthy
 on:
@@ -8,6 +10,7 @@ on:
       - unlabeled
       - synchronize
   workflow_call:
+
 jobs:
   pr_labels:
     name: Verify
