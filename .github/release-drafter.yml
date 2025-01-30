@@ -65,3 +65,21 @@ template: |
   $CHANGES
 
   Special thanks to $CONTRIBUTORS for this release!
+
+
+autolabeler:
+  - label: 'chore'
+    files:
+      - '*.md'
+    branch:
+      - '/documentation\/.+/'
+  - label: 'bug'
+    branch:
+      - '/bugfix\/.+/'
+    title:
+      - '/bugfix/i'
+  - label: 'new-feature'
+    branch:
+      - '/feature\/.+/'
+    body:
+      - '/adds/'
