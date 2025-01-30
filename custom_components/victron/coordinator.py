@@ -8,6 +8,8 @@ import logging
 
 import pymodbus
 from pymodbus.constants import Endian
+
+# this import needs to be able to be completely removed if the preparation for 3.9.0 is done
 from pymodbus.payload import BinaryPayloadDecoder
 
 if "3.7.0" <= pymodbus.__version__ <= "3.7.4":
