@@ -1,4 +1,5 @@
 """Support for Victron Energy devices."""
+
 from collections import OrderedDict
 import logging
 import threading
