@@ -1,0 +1,73 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Apparaat is al geconfigureerd"
+        },
+        "error": {
+            "cannot_connect": "Verbinding mislukt",
+            "invalid_auth": "Ongeldige authenticatie",
+            "unknown": "Onverwachte fout",
+            "already_configured": "Er wordt op dit moment slechts één instance van de Victron-integratie ondersteund"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "host": "Host",
+                    "port": "Poort",
+                    "interval": "Update-interval in (s)",
+                    "advanced": "Schakelt schrijfondersteuning in en maakt het instellen van schrijfbeperkingen mogelijk"
+                }
+            },
+            "advanced": {
+                "data": {
+                    "ac_voltage": "De AC-spanning van uw netwerk in V",
+                    "ac_current": "De AC (per fase) stroomlimiet van uw netwerk in A",
+                    "dc_voltage": "De DC-spanning van uw batterij in V",
+                    "dc_current": "De DC-stroomlimiet van uw batterij in A",
+                    "number_of_phases": "De faseconfiguratie van uw systeem",
+                    "use_sliders": "Gebruik trapsgewijze schuifregelaars voor beschrijfbare numerieke eenheden"
+                }
+            },
+            "reconfigure": {
+                "data": {
+                    "host": "Host",
+                    "port": "Poort"
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init_write": {
+                "data": {
+                    "rescan": "Beschikbare apparaten opnieuw scannen. Dit scant alle beschikbare apparaten opnieuw",
+                    "interval": "Update-interval in (s)",
+                    "ac_voltage": "De AC-spanning van uw netwerk in V",
+                    "ac_current": "De AC (per fase) stroomlimiet van uw netwerk in A",
+                    "dc_voltage": "De DC-spanning van uw batterij in V",
+                    "dc_current": "De DC-stroomlimiet van uw batterij in A",
+                    "number_of_phases": "De faseconfiguratie van uw systeem",
+                    "use_sliders": "Gebruik trapsgewijze schuifregelaars voor beschrijfbare numerieke eenheden",
+                    "advanced": "Schakel over naar alleen-lezen modus als uitgeschakeld (bij indienen)"
+                }
+            },
+            "init_read": {
+                "data": {
+                    "rescan": "Beschikbare apparaten opnieuw scannen. Dit scant alle beschikbare apparaten opnieuw",
+                    "interval": "Update-interval in (s)",
+                    "advanced": "Schrijfondersteuning inschakelen"
+                }
+            },
+            "advanced": {
+                "data": {
+                    "ac_voltage": "De AC-spanning van uw netwerk in V",
+                    "ac_current": "De AC-stroomlimiet van uw netwerk in A",
+                    "dc_voltage": "De DC-spanning van uw batterij in V",
+                    "dc_current": "De DC-stroomlimiet van uw batterij in A",
+                    "number_of_phases": "De faseconfiguratie van uw systeem",
+                    "use_sliders": "Gebruik trapsgewijze schuifregelaars voor beschrijfbare numerieke eenheden"
+                }
+            }
+        }
+    }
+}

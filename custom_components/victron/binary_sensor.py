@@ -43,11 +43,9 @@ async def async_setup_entry(
         for name in registerLedger:
             for register_name, registerInfo in register_info_dict[name].items():
                 _LOGGER.debug(
-                    "unit == "
-                    + str(slave)
-                    + " registerLedger == "
-                    + str(registerLedger)
-                    + " registerInfo "
+                    "unit == %s registerLedger == %s registerInfo",
+                    slave,
+                    registerLedger,
                 )
 
                 if isinstance(registerInfo.entityType, BoolReadEntityType):
@@ -56,7 +54,7 @@ async def async_setup_entry(
                         name=register_name.replace("_", " "),
                         slave=slave,
                     )
-                    _LOGGER.debug("composed description == " + str(description))
+                    _LOGGER.debug("composed description == %s", description)
                     descriptions.append(description)
 
     entities = []
@@ -112,6 +110,7 @@ class VictronBinarySensor(CoordinatorEntity, BinarySensorEntity):
 
     @property
     def available(self) -> bool:
+        """Return True if entity is available."""
         full_key = str(self.description.slave) + "." + self.description.key
         return self.coordinator.processed_data()["availability"][full_key]
 

@@ -1,3 +1,5 @@
+"""Support for Victron Energy devices."""
+
 from collections import OrderedDict
 import logging
 import threading
@@ -12,6 +14,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class VictronHub:
+    """Victron Hub."""
+
     def __init__(self, host: str, port: int) -> None:
         """Initialize."""
         self.host = host
@@ -20,17 +24,21 @@ class VictronHub:
         self._lock = threading.Lock()
 
     def is_still_connected(self):
+        """Check if the connection is still open."""
         return self._client.is_socket_open()
 
     def connect(self):
+        """Connect to the Modbus TCP server."""
         return self._client.connect()
 
     def disconnect(self):
+        """Disconnect from the Modbus TCP server."""
         if self._client.is_socket_open():
             return self._client.close()
         return None
 
     def write_register(self, unit, address, value):
+        """Write a register."""
         slave = int(unit) if unit else 1
         return self._client.write_register(address=address, value=value, slave=slave)
 
@@ -42,6 +50,7 @@ class VictronHub:
         )
 
     def calculate_register_count(self, registerInfoDict: OrderedDict):
+        """Calculate the number of registers to read."""
         first_key = next(iter(registerInfoDict))
         last_key = next(reversed(registerInfoDict))
         end_correction = 1
@@ -55,10 +64,12 @@ class VictronHub:
         ) + end_correction
 
     def get_first_register_id(self, registerInfoDict: OrderedDict):
+        """Return first register id."""
         first_register = next(iter(registerInfoDict))
         return registerInfoDict[first_register].register
 
     def determine_present_devices(self):
+        """Determine which devices are present."""
         valid_devices = {}
 
         for unit in valid_unit_ids:
@@ -74,12 +85,10 @@ class VictronHub:
                     result = self.read_holding_registers(unit, address, count)
                     if result.isError():
                         _LOGGER.debug(
-                            "result is error for unit: "
-                            + str(unit)
-                            + " address: "
-                            + str(address)
-                            + " count: "
-                            + str(count)
+                            "result is error for unit: %s address: %s count: %s",
+                            unit,
+                            address,
+                            count,
                         )
                     else:
                         working_registers.append(key)
@@ -89,6 +98,6 @@ class VictronHub:
             if len(working_registers) > 0:
                 valid_devices[unit] = working_registers
             else:
-                _LOGGER.debug("no registers found for unit: " + str(unit))
+                _LOGGER.debug("no registers found for unit: %s", unit)
 
         return valid_devices

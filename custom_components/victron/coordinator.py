@@ -1,13 +1,14 @@
+"""Define the Victron Energy Device Update Coordinator."""
+
 from __future__ import annotations
 
 from collections import OrderedDict
 from datetime import timedelta
 import logging
 
+import pymodbus
 from pymodbus.constants import Endian
 from pymodbus.payload import BinaryPayloadDecoder
-
-import pymodbus
 
 if "3.7.0" <= pymodbus.__version__ <= "3.7.4":
     from pymodbus.pdu.register_read_message import ReadHoldingRegistersResponse
@@ -86,7 +87,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                         unavailable_entities[full_key] = False
 
                     _LOGGER.warning(
-                        "no valid data returned for entities of slave: %s (if the device continues to no longer update) check if the device was physically removed. Before opening an issue please force a rescan to attempt to resolve this issue",
+                        "No valid data returned for entities of slave: %s (if the device continues to no longer update) check if the device was physically removed. Before opening an issue please force a rescan to attempt to resolve this issue",
                         unit,
                     )
                 else:
@@ -114,6 +115,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         registerInfo: OrderedDict(str, RegisterInfo),
         unit: int,
     ) -> dict:
+        """Parse the register data."""
         decoder = BinaryPayloadDecoder.fromRegisters(
             buffer.registers, byteorder=Endian.BIG
         )
@@ -149,11 +151,13 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         return decoded_data
 
     def decode_scaling(self, number, scale, unit):
+        """Decode the scaling."""
         if unit == "" and scale == 1:
             return round(number)
         return number / scale
 
     def encode_scaling(self, value, unit, scale):
+        """Encode the scaling."""
         if scale == 0:
             return value
         if unit == "" and scale == 1:
@@ -161,19 +165,23 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         return int(value * scale)
 
     def get_data(self):
+        """Return the data."""
         return self.data
 
     async def async_update_local_entry(self, key, value):
+        """Update the local entry."""
         data = self.data
         data["data"][key] = value
         self.async_set_updated_data(data)
-        """Force update data after change."""
+
         await self.async_request_refresh()
 
     def processed_data(self):
+        """Return the processed data."""
         return self.data
 
     async def fetch_registers(self, unit, registerData):
+        """Fetch the registers."""
         try:
             # run api_update in async job
             return await self.hass.async_add_executor_job(
@@ -184,6 +192,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             raise UpdateFailed("Fetching registers failed") from e
 
     def write_register(self, unit, address, value):
+        """Write to the register."""
         # try:
 
         self.api_write(unit, address, value)
@@ -193,10 +202,12 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
     # _LOGGER.error("failed to write to option:", e
 
     def api_write(self, unit, address, value):
+        """Write to the api."""
         # recycle connection
         return self.api.write_register(unit=unit, address=address, value=value)
 
     def api_update(self, unit, registerInfo):
+        """Update the api."""
         # recycle connection
         return self.api.read_holding_registers(
             unit=unit,
@@ -206,10 +217,13 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
 
 
 class DecodeDataTypeUnsupported(Exception):
-    pass
+    """Exception for unsupported data type."""
 
 
 class DataEntry:
+    """Data entry class."""
+
     def __init__(self, unit, value) -> None:
+        """Initialize the data entry."""
         self.unit = unit
         self.value = value

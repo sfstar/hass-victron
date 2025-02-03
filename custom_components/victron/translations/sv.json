@@ -1,0 +1,73 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Enheten är redan konfigurerad"
+        },
+        "error": {
+            "cannot_connect": "Misslyckades med att ansluta",
+            "invalid_auth": "Ogiltig autentisering",
+            "unknown": "Oväntat fel",
+            "already_configured": "Endast en instans av Victron-integrationen stöds för närvarande"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "host": "Värd",
+                    "port": "Port",
+                    "interval": "Uppdateringsintervall i (s)",
+                    "advanced": "Aktiverar skrivstöd och möjliggör inställning av skrivgränser"
+                }
+            },
+            "advanced": {
+                "data": {
+                    "ac_voltage": "Växelspänningen i ditt elnät i V",
+                    "ac_current": "Växelströmbegränsningen (per fas) i ditt elnät i A",
+                    "dc_voltage": "Likspänningen i ditt batteri i V",
+                    "dc_current": "Likströmsbegränsningen i ditt batteri i A",
+                    "number_of_phases": "Faskonfigurationen i ditt system",
+                    "use_sliders": "Använder stegade reglage för skrivbara numeriska värden"
+                }
+            },
+            "reconfigure": {
+                "data": {
+                    "host": "Värd",
+                    "port": "Port"
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init_write": {
+                "data": {
+                    "rescan": "Skanna om tillgängliga enheter. Detta kommer att skanna om alla tillgängliga enheter",
+                    "interval": "Uppdateringsintervall i (s)",
+                    "ac_voltage": "Växelspänningen i ditt elnät i V",
+                    "ac_current": "Växelströmbegränsningen (per fas) i ditt elnät i A",
+                    "dc_voltage": "Likspänningen i ditt batteri i V",
+                    "dc_current": "Likströmsbegränsningen i ditt batteri i A",
+                    "number_of_phases": "Faskonfigurationen i ditt system",
+                    "use_sliders": "Använder stegade reglage för skrivbara numeriska värden",
+                    "advanced": "Växla till skrivskyddat läge om det inte är markerat (vid insändning)"
+                }
+            },
+            "init_read": {
+                "data": {
+                    "rescan": "Skanna om tillgängliga enheter. Detta kommer att skanna om alla tillgängliga enheter",
+                    "interval": "Uppdateringsintervall i (s)",
+                    "advanced": "Aktivera skrivstöd"
+                }
+            },
+            "advanced": {
+                "data": {
+                    "ac_voltage": "Växelspänningen i ditt elnät i V",
+                    "ac_current": "Växelströmbegränsningen i ditt elnät i A",
+                    "dc_voltage": "Likspänningen i ditt batteri i V",
+                    "dc_current": "Likströmsbegränsningen i ditt batteri i A",
+                    "number_of_phases": "Faskonfigurationen i ditt system",
+                    "use_sliders": "Använder stegade reglage för skrivbara numeriska värden"
+                }
+            }
+        }
+    }
+}
