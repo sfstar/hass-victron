@@ -30,6 +30,7 @@ class DeviceType(Enum):
     VEBUS = 4
 
 
+AMPHOURS = "Ah"
 DOMAIN = "victron"
 
 CONF_HOST = "host"
@@ -631,7 +632,7 @@ battery_registers = {
     "battery_midvoltage": RegisterInfo(263, UINT16, UnitOfElectricPotential.VOLT, 100),
     "battery_midvoltagedeviation": RegisterInfo(264, UINT16, PERCENTAGE, 100),
     "battery_consumedamphours": RegisterInfo(
-        265, UINT16, UnitOfElectricCurrent.AMPERE, -10
+        265, UINT16, AMPHOURS, -10
     ),
     "battery_soc": RegisterInfo(266, UINT16, PERCENTAGE, 10),
     "battery_alarm": RegisterInfo(
@@ -702,20 +703,12 @@ battery_registers = {
     "battery_relay": RegisterInfo(
         register=280, dataType=UINT16, entityType=SwitchWriteType()
     ),
-    "battery_history_deepestdischarge": RegisterInfo(
-        281, UINT16, UnitOfElectricCurrent.AMPERE, -10
-    ),
-    "battery_history_lastdischarge": RegisterInfo(
-        282, UINT16, UnitOfElectricCurrent.AMPERE, -10
-    ),
-    "battery_history_averagedischarge": RegisterInfo(
-        283, UINT16, UnitOfElectricCurrent.AMPERE, -10
-    ),
+    "battery_history_deepestdischarge": RegisterInfo(281, UINT16, AMPHOURS, -10),
+    "battery_history_lastdischarge": RegisterInfo(282, UINT16, AMPHOURS, -10),
+    "battery_history_averagedischarge": RegisterInfo(283, UINT16, AMPHOURS, -10),
     "battery_history_chargecycles": RegisterInfo(284, UINT16),
     "battery_history_fulldischarges": RegisterInfo(285, UINT16),
-    "battery_history_totalahdrawn": RegisterInfo(
-        286, UINT16, UnitOfElectricCurrent.AMPERE, -10
-    ),
+    "battery_history_totalahdrawn": RegisterInfo(286, UINT16, AMPHOURS, -10),
     "battery_history_minimumvoltage": RegisterInfo(
         287, UINT16, UnitOfElectricPotential.VOLT, 100
     ),
@@ -2339,7 +2332,7 @@ alternator_registers = {
     "alternator_cumulative_amp_hours_charged": RegisterInfo(
         4120,
         UINT32,
-        UnitOfElectricCurrent.AMPERE,
+        AMPHOURS,
         10,  # note should become ah when available as data type in ha
     ),
 }
@@ -2879,7 +2872,7 @@ dcdc_registers = {
     "dcdc_input_voltage": RegisterInfo(4809, UINT16, UnitOfElectricPotential.VOLT, 100),
     "dcdc_input_power": RegisterInfo(4810, UINT16, UnitOfPower.WATT),
     "dcdc_accumulated_ah": RegisterInfo(
-        4811, UINT16, UnitOfElectricCurrent.AMPERE, 10
+        4811, UINT16, AMPHOURS, 10
     ),  # Needs to be changed to ah when supported by home assistant
 }
 
@@ -3194,7 +3187,7 @@ system_battery_registers = {
         entityType=TextReadEntityType(system_battery_state),
     ),
     "system_battery_amphours": RegisterInfo(
-        845, UINT16, UnitOfElectricCurrent.AMPERE, -10
+        845, UINT16, AMPHOURS, -10
     ),  #  NOTE should be amp hours
     "system_battery_time_to_go": RegisterInfo(846, UINT16, UnitOfTime.SECONDS, 0.01),
 }
