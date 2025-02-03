@@ -1,0 +1,38 @@
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: 🚀 Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get version
+        id: version
+        uses: home-assistant/actions/helpers/version@main
+
+      - name: 🔢 Adjust version number
+        run: |
+          sed -i 's/v0.0.0/${{ steps.version.outputs.version }}/' custom_components/victron/manifest.json
+
+      - name: 📦 Created zipped release package
+        shell: bash
+        run: |
+          cd "${{ github.workspace }}/custom_components/victron"
+          zip victron.zip ./* -x '.*'
+
+      - name: 🔏 Sign release package
+        uses: sigstore/gh-action-sigstore-python@v3.0.0
+        with:
+          inputs: ${{ github.workspace }}/custom_components/victron/victron.zip
+
+      - name: ⬆️ Upload zip to release
+        uses: softprops/action-gh-release@v2.2.1
+        with:
+          files: ${{ github.workspace }}/custom_components/victron/victron.zip

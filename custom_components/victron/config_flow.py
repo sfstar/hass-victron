@@ -65,8 +65,8 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     #     your_validate_func, data["username"], data["password"]
     # )
 
-    _LOGGER.debug("host = " + data[CONF_HOST])
-    _LOGGER.debug("port = " + str(data[CONF_PORT]))
+    _LOGGER.debug("host = %s", data[CONF_HOST])
+    _LOGGER.debug("port = %s", data[CONF_PORT])
     hub = VictronHub(data[CONF_HOST], data[CONF_PORT])
 
     try:
@@ -75,11 +75,12 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
         discovered_devices = await scan_connected_devices(hub=hub)
         _LOGGER.debug("successfully discovered devices")
     except HomeAssistantError:
-        _LOGGER.error("failed to connect to the victron device:")
+        _LOGGER.error("Failed to connect to the victron device:")
     return {"title": DOMAIN, "data": discovered_devices}
 
 
 async def scan_connected_devices(hub: VictronHub) -> list:
+    """Scan for connected devices."""
     return hub.determine_present_devices()
 
 
@@ -90,6 +91,7 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     def __init__(self):
+        """Initialize the config flow."""
         self.advanced_options = None
         self.interval = None
         self.port = None
@@ -282,7 +284,10 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
 
 class parsedEntry:
+    """Parsed entry."""
+
     def __init__(self, decoderInfo: RegisterInfo, value):
+        """Initialize the parsed entry."""
         self.decoderInfo = decoderInfo
         self.value = value
 
@@ -398,6 +403,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
         return None
 
     def init_read_form(self, errors: dict):
+        """Handle read support and limit settings if requested."""
         return self.async_show_form(
             step_id="init_read",
             errors=errors,
@@ -413,6 +419,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
         )
 
     def init_write_form(self, errors: dict):
+        """Handle write support and limit settings if requested."""
         config = dict(self.config_entry.options)
         system_ac_voltage_default = self.config_entry.options.get(
             CONF_AC_SYSTEM_VOLTAGE, AC_VOLTAGES["US (120)"]
@@ -494,6 +501,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
 
     @staticmethod
     def get_dict_key(dict, val):
+        """Get the key from a dictionary."""
         for key, value in dict.items():
             if val == value:
                 return key

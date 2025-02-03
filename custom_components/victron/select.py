@@ -45,11 +45,9 @@ async def async_setup_entry(
                 for register_name, registerInfo in register_info_dict[name].items():
                     if isinstance(registerInfo.entityType, SelectWriteType):
                         _LOGGER.debug(
-                            "unit == "
-                            + str(slave)
-                            + " registerLedger == "
-                            + str(registerLedger)
-                            + " registerInfo "
+                            "unit == %s registerLedger == %s registerInfo",
+                            slave,
+                            registerLedger,
                         )
 
                         description = VictronEntityDescription(
@@ -61,7 +59,7 @@ async def async_setup_entry(
                         )
 
                         descriptions.append(description)
-                        _LOGGER.debug("composed description == " + str(description))
+                        _LOGGER.debug("composed description == %s", description)
 
     entities = []
     entity = {}
@@ -93,6 +91,7 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
         coordinator: victronEnergyDeviceUpdateCoordinator,
         description: VictronEntityDescription,
     ) -> None:
+        """Initialize the select."""
         self._attr_native_value = None
         _LOGGER.debug("select init")
         self.coordinator = coordinator
@@ -138,6 +137,7 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
 
     @property
     def current_option(self) -> str:
+        """Return the currently selected option."""
         return self.description.options(
             self.description.value_fn(
                 self.coordinator.processed_data(),
@@ -148,6 +148,7 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
 
     @property
     def options(self) -> list:
+        """Return a list of available options."""
         return [option.name for option in self.description.options]
 
     async def async_select_option(self, option: str) -> None:
@@ -163,6 +164,7 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
     # TODO extract these type of property definitions to base class
     @property
     def available(self) -> bool:
+        """Return True if entity available."""
         full_key = str(self.description.slave) + "." + self.description.key
         return self.coordinator.processed_data()["availability"][full_key]
 
