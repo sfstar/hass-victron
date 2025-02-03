@@ -305,6 +305,8 @@ class vebus_error(Enum):
 
 
 class vebus_charger_state(Enum):
+    """Vebus charger state."""
+
     INITIALIZING = 0
     BULK = 1
     ABSORPTION = 2
@@ -610,6 +612,8 @@ vebus_registers = {
 
 
 class battery_mode(Enum):
+    """Battery mode."""
+
     OPEN = 0
     STANDBY = 14
 
@@ -875,11 +879,15 @@ class battery_error(Enum):
 
 
 class battery_mode_alternative(Enum):
+    """Battery mode alternative."""
+
     ON = 3
     STANDBY = 252
 
 
 class battery_balancer_status(Enum):
+    """Battery balancer status."""
+
     UNKNOWN = 0
     BALANCED = 1
     BALANCING = 2
@@ -1339,6 +1347,8 @@ charger_registers = {
 
 
 class acinput_source(Enum):
+    """AC input source."""
+
     UNUSED = 0
     GRID = 1
     GENSET = 2
@@ -2036,9 +2046,6 @@ generator_registers = {
         entityType=TextReadEntityType(generic_alarm_ledger),
     ),
     "generator_autostartenabled": RegisterInfo(
-        register=3509, dataType=UINT16, entityType=SwitchWriteType()
-    ),
-    "generator_autostartenabled": RegisterInfo(
         3509, UINT16, entityType=SwitchWriteType()
     ),
     "generator_servicecounter": RegisterInfo(3510, UINT32, UnitOfTime.SECONDS),
@@ -2261,6 +2268,8 @@ class alternator_errorcode(Enum):
 
 
 class alternator_mode(Enum):
+    """Alternator mode."""
+
     ON = 1
     OFF = 4
 
@@ -2751,10 +2760,7 @@ multi_registers = {
         dataType=UINT16,
         entityType=TextReadEntityType(generic_alarm_ledger),
     ),
-    "multi_alarm_lowsoc": RegisterInfo(
-        4602, UINT16, entityType=TextReadEntityType(generic_alarm_ledger)
-    ),
-    "multi_yield_user": RegisterInfo(4603, UINT32, UnitOfEnergy.KILO_WATT_HOUR),
+    "multi_yield_user_2": RegisterInfo(4603, UINT32, UnitOfEnergy.KILO_WATT_HOUR),
     "multi_mppoperationmode_0": RegisterInfo(
         4605, UINT16, entityType=TextReadEntityType(generic_mppoperationmode)
     ),
@@ -2786,11 +2792,15 @@ multi_registers_2 = {
 
 
 class pump_state(Enum):
+    """Pump state."""
+
     STOPPED = 0
     RUNNING = 1
 
 
 class pump_mode(Enum):
+    """Pump mode."""
+
     AUTO = 0
     ON = 1
     OFF = 2
@@ -2810,6 +2820,8 @@ pump_registers = {
 
 
 class dcdc_errorcode(Enum):
+    """DCDC error codes."""
+
     NO_ERROR = 0
     BATTERY_TEMPERATURE_TOO_HIGH = 1
     BATTERY_VOLTAGE_TOO_HIGH = 2
@@ -2830,11 +2842,15 @@ class dcdc_errorcode(Enum):
 
 
 class dcdc_mode(Enum):
+    """DCDC mode."""
+
     ON = 1
     OFF = 4
 
 
 class dcdc_state(Enum):
+    """DCDC state."""
+
     OFF = 0
     FAULT = 2
     BULK = 3
@@ -2869,6 +2885,8 @@ dcdc_registers = {
 
 
 class acsystem_state(Enum):
+    """AC system state."""
+
     OFF = 0
     LOW_POWER = 1
     FAULT = 2
@@ -3005,6 +3023,8 @@ dcgenset_registers_thirdparty = {
 
 
 class dynamic_ess_error(Enum):
+    """Dynamic ESS error codes."""
+
     NO_ERROR = 0
     NO_ESS = 1
     ESS_MODE = 2
@@ -3014,6 +3034,8 @@ class dynamic_ess_error(Enum):
 
 
 class dynamic_ess_restrictions(Enum):
+    """Dynamic ESS restrictions."""
+
     NO_RESTRICTIONS_BETWEEN_BATTERY_AND_GRID = 0
     GRID_TO_BATTERY_RESTRICTED = 1
     BATTERY_TO_GRID_RESTRICTED = 2
@@ -3021,6 +3043,8 @@ class dynamic_ess_restrictions(Enum):
 
 
 class dynamic_ess_strategy(Enum):
+    """Dynamic ESS strategy."""
+
     TARGET_SOC = 0
     SELF_CONSUMPTION = 1
 
@@ -3052,6 +3076,8 @@ system_dynamic_ess_registers = {
 
 
 class dynamic_ess_mode(Enum):
+    """Dynamic ESS mode."""
+
     OFF = 0
     AUTO = 1
     NODE_RED = 4
