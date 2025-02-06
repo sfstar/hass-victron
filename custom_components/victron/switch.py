@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import logging
-from typing import Any, cast
+from typing import Any, cast, dataclass_transform
 
 from homeassistant.components.switch import (
     DOMAIN as SWITCH_DOMAIN,
@@ -19,7 +18,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .base import VictronWriteBaseEntityDescription
 from .const import CONF_ADVANCED_OPTIONS, DOMAIN, SwitchWriteType, register_info_dict
-from .coordinator import victronEnergyDeviceUpdateCoordinator
+from .coordinator import VictronEnergyDeviceUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,7 +29,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up victron switch devices."""
-    victron_coordinator: victronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][
+    victron_coordinator: VictronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][
         config_entry.entry_id
     ]
     _LOGGER.debug("attempting to setup switch entities")
@@ -40,48 +39,49 @@ async def async_setup_entry(
         register_set = victron_coordinator.processed_data()["register_set"]
         for slave, registerLedger in register_set.items():
             for name in registerLedger:
-                for register_name, registerInfo in register_info_dict[name].items():
+                for register_name, register_info in register_info_dict[name].items():
                     _LOGGER.debug(
-                        "unit == %s registerLedger == %s registerInfo == %s",
+                        "unit == %s registerLedger == %s register_info == %s",
                         slave,
                         registerLedger,
-                        registerInfo,
+                        register_info,
                     )
 
-                    if isinstance(registerInfo.entityType, SwitchWriteType):
+                    if isinstance(register_info.entity_type, SwitchWriteType):
                         description = VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace("_", " "),
                             slave=slave,
-                            address=registerInfo.register,
+                            address=register_info.register,
                         )
                         descriptions.append(description)
                         _LOGGER.debug("composed description == %s", description)
 
-    entities = []
-    entity = {}
-    for description in descriptions:
-        entity = description
-        entities.append(VictronSwitch(hass, victron_coordinator, entity))
+    entities = [
+        VictronSwitch(hass, victron_coordinator, description)
+        for description in descriptions
+    ]
+
     _LOGGER.debug("adding switches")
     _LOGGER.debug(entities)
     async_add_entities(entities)
 
 
-@dataclass
+@dataclass_transform(frozen_default=True)
 class VictronEntityDescription(
-    SwitchEntityDescription, VictronWriteBaseEntityDescription
+    SwitchEntityDescription,  # type: ignore[misc]
+    VictronWriteBaseEntityDescription,
 ):
     """Describes victron sensor entity."""
 
 
-class VictronSwitch(CoordinatorEntity, SwitchEntity):
+class VictronSwitch(CoordinatorEntity, SwitchEntity):  # type: ignore[misc]
     """Representation of a Victron switch."""
 
     def __init__(
         self,
         hass: HomeAssistant,
-        coordinator: victronEnergyDeviceUpdateCoordinator,
+        coordinator: VictronEnergyDeviceUpdateCoordinator,
         description: VictronEntityDescription,
     ) -> None:
         """Initialize the switch."""
@@ -119,7 +119,7 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
     @property
     def is_on(self) -> bool:
         """Return true if switch is on."""
-        data = self.description.value_fn(
+        data = self.description.value_fn(  # type: ignore[call-arg]
             self.coordinator.processed_data(),
             self.description.slave,
             self.description.key,
@@ -127,7 +127,7 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
         return cast(bool, data)
 
     @property
-    def available(self) -> bool:
+    def available(self) -> Any:
         """Return True if entity is available."""
         full_key = str(self.description.slave) + "." + self.description.key
         return self.coordinator.processed_data()["availability"][full_key]
@@ -138,6 +138,6 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
         return entity.DeviceInfo(
             identifiers={(DOMAIN, self.unique_id.split("_")[0])},
             name=self.unique_id.split("_")[1],
-            model=self.unique_id.split("_")[0],
+            model=self.unique_id.split("_", maxsplit=1)[0],
             manufacturer="victron",
         )

@@ -1,13 +1,22 @@
 """Support for Victron Energy devices."""
-from collections import OrderedDict
+
 import logging
 import threading
+from typing import Any
 
 from pymodbus.client import ModbusTcpClient
+from pymodbus.pdu import ModbusPDU
 
 from homeassistant.exceptions import HomeAssistantError
 
-from .const import INT32, STRING, UINT32, register_info_dict, valid_unit_ids
+from .const import (
+    INT32,
+    STRING,
+    UINT32,
+    RegisterInfo,
+    register_info_dict,
+    valid_unit_ids,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -15,59 +24,70 @@ _LOGGER = logging.getLogger(__name__)
 class VictronHub:
     """Victron Hub."""
 
-    def __init__(self, host: str, port: int) -> None:
+    def __init__(self, host: str, port: str) -> None:
         """Initialize."""
         self.host = host
         self.port = port
         self._client = ModbusTcpClient(host=self.host, port=self.port)
         self._lock = threading.Lock()
 
-    def is_still_connected(self):
+    def is_still_connected(self) -> Any:
         """Check if the connection is still open."""
         return self._client.is_socket_open()
 
-    def connect(self):
+    def connect(self) -> Any:
         """Connect to the Modbus TCP server."""
         return self._client.connect()
 
-    def disconnect(self):
+    def disconnect(self) -> Any:
         """Disconnect from the Modbus TCP server."""
         if self._client.is_socket_open():
             return self._client.close()
         return None
 
-    def write_register(self, unit, address, value):
-        """Write a register."""
+    def write_register(
+        self, unit: int | None, address: float | None, value: float
+    ) -> ModbusPDU:
+        """Write a register.
+
+        :param unit:
+        :param address:
+        :param value:
+        :return:
+        """
         slave = int(unit) if unit else 1
         return self._client.write_register(address=address, value=value, slave=slave)
 
-    def read_holding_registers(self, unit, address, count):
+    def read_holding_registers(self, unit: int, address: int, count: int) -> Any:
         """Read holding registers."""
         slave = int(unit) if unit else 1
         return self._client.read_holding_registers(
             address=address, count=count, slave=slave
         )
 
-    def calculate_register_count(self, registerInfoDict: OrderedDict):
+    def calculate_register_count(
+        self, register_info_dict: dict[str, RegisterInfo]
+    ) -> Any:
         """Calculate the number of registers to read."""
-        first_key = next(iter(registerInfoDict))
-        last_key = next(reversed(registerInfoDict))
+        first_key = next(iter(register_info_dict))
+        last_key = next(reversed(register_info_dict))
         end_correction = 1
-        if registerInfoDict[last_key].dataType in (INT32, UINT32):
+        if register_info_dict[last_key].data_type in (INT32, UINT32):
             end_correction = 2
-        elif isinstance(registerInfoDict[last_key].dataType, STRING):
-            end_correction = registerInfoDict[last_key].dataType.length
+        elif isinstance(register_info_dict[last_key].data_type, STRING):
+            end_correction = register_info_dict[last_key].data_type.length
 
         return (
-            registerInfoDict[last_key].register - registerInfoDict[first_key].register
+            register_info_dict[last_key].register
+            - register_info_dict[first_key].register
         ) + end_correction
 
-    def get_first_register_id(self, registerInfoDict: OrderedDict):
+    def get_first_register_id(self, registerInfoDict: dict[str, RegisterInfo]) -> Any:
         """Return first register id."""
         first_register = next(iter(registerInfoDict))
         return registerInfoDict[first_register].register
 
-    def determine_present_devices(self):
+    def determine_present_devices(self) -> Any:
         """Determine which devices are present."""
         valid_devices = {}
 

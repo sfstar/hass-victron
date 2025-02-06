@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import logging
-from typing import cast
+from typing import Any, cast, dataclass_transform
 
 from homeassistant.components.binary_sensor import (
     DOMAIN as BINARY_SENSOR_DOMAIN,
@@ -19,7 +18,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .base import VictronBaseEntityDescription
 from .const import DOMAIN, BoolReadEntityType, register_info_dict
-from .coordinator import victronEnergyDeviceUpdateCoordinator
+from .coordinator import VictronEnergyDeviceUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,7 +30,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up Victron energy binary sensor entries."""
     _LOGGER.debug("attempting to setup binary sensor entities")
-    victron_coordinator: victronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][
+    victron_coordinator: VictronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][
         config_entry.entry_id
     ]
     _LOGGER.debug(victron_coordinator.processed_data()["register_set"])
@@ -43,12 +42,12 @@ async def async_setup_entry(
         for name in registerLedger:
             for register_name, registerInfo in register_info_dict[name].items():
                 _LOGGER.debug(
-                    "unit == %s registerLedger == %s registerInfo",
+                    "unit == %s registerLedger == %s register_info",
                     slave,
                     registerLedger,
                 )
 
-                if isinstance(registerInfo.entityType, BoolReadEntityType):
+                if isinstance(registerInfo.entity_type, BoolReadEntityType):
                     description = VictronEntityDescription(
                         key=register_name,
                         name=register_name.replace("_", " "),
@@ -57,28 +56,28 @@ async def async_setup_entry(
                     _LOGGER.debug("composed description == %s", description)
                     descriptions.append(description)
 
-    entities = []
-    entity = {}
-    for description in descriptions:
-        entity = description
-        entities.append(VictronBinarySensor(victron_coordinator, entity))
+    entities = [
+        VictronBinarySensor(victron_coordinator, description)
+        for description in descriptions
+    ]
 
     async_add_entities(entities, True)
 
 
-@dataclass
+@dataclass_transform(frozen_default=True)
 class VictronEntityDescription(
-    BinarySensorEntityDescription, VictronBaseEntityDescription
+    BinarySensorEntityDescription,  # type: ignore[misc]
+    VictronBaseEntityDescription,
 ):
     """Describes victron sensor entity."""
 
 
-class VictronBinarySensor(CoordinatorEntity, BinarySensorEntity):
+class VictronBinarySensor(CoordinatorEntity, BinarySensorEntity):  # type: ignore[misc]
     """A binary sensor implementation for Victron energy device."""
 
     def __init__(
         self,
-        coordinator: victronEnergyDeviceUpdateCoordinator,
+        coordinator: VictronEnergyDeviceUpdateCoordinator,
         description: VictronEntityDescription,
     ) -> None:
         """Initialize the binary sensor."""
@@ -102,14 +101,14 @@ class VictronBinarySensor(CoordinatorEntity, BinarySensorEntity):
     def is_on(self) -> bool:
         """Return True if the binary sensor is on."""
         data = self.description.value_fn(
-            self.coordinator.processed_data(),
+            self.coordinator.processed_data(),  # type: ignore[call-arg]
             self.description.slave,
             self.description.key,
         )
         return cast(bool, data)
 
     @property
-    def available(self) -> bool:
+    def available(self) -> Any:
         """Return True if entity is available."""
         full_key = str(self.description.slave) + "." + self.description.key
         return self.coordinator.processed_data()["availability"][full_key]
@@ -120,6 +119,6 @@ class VictronBinarySensor(CoordinatorEntity, BinarySensorEntity):
         return entity.DeviceInfo(
             identifiers={(DOMAIN, self.unique_id.split("_")[0])},
             name=self.unique_id.split("_")[1],
-            model=self.unique_id.split("_")[0],
+            model=self.unique_id.split("_", maxsplit=1)[0],
             manufacturer="victron",
         )

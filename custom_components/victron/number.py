@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import logging
+from typing import Any, dataclass_transform
 
 from homeassistant import config_entries
 from homeassistant.components.number import (
@@ -37,7 +37,7 @@ from .const import (
     SliderWriteType,
     register_info_dict,
 )
-from .coordinator import victronEnergyDeviceUpdateCoordinator
+from .coordinator import VictronEnergyDeviceUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -48,11 +48,11 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up victron switch devices."""
-    victron_coordinator: victronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][
+    victron_coordinator: VictronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][
         config_entry.entry_id
     ]
     _LOGGER.debug("attempting to setup number entities")
-    descriptions = []
+    descriptions: list = []
     _LOGGER.debug(config_entry)
     # TODO cleanup
     if config_entry.options[CONF_ADVANCED_OPTIONS]:
@@ -61,12 +61,12 @@ async def async_setup_entry(
             for name in registerLedger:
                 for register_name, registerInfo in register_info_dict[name].items():
                     _LOGGER.debug(
-                        "unit == %s registerLedger == %s registerInfo",
+                        "unit == %s registerLedger == %s register_info",
                         slave,
                         registerLedger,
                     )
 
-                    if isinstance(registerInfo.entityType, SliderWriteType):
+                    if isinstance(registerInfo.entity_type, SliderWriteType):
                         description = VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace("_", " "),
@@ -78,13 +78,13 @@ async def async_setup_entry(
                             native_min_value=determine_min_value(
                                 registerInfo.unit,
                                 config_entry.options,
-                                registerInfo.entityType.powerType,
-                                registerInfo.entityType.negative,
+                                registerInfo.entity_type.power_type,
+                                registerInfo.entity_type.negative,
                             ),
                             native_max_value=determine_max_value(
                                 registerInfo.unit,
                                 config_entry.options,
-                                registerInfo.entityType.powerType,
+                                registerInfo.entity_type.power_type,
                             ),
                             entity_category=EntityCategory.CONFIG,
                             address=registerInfo.register,
@@ -94,20 +94,29 @@ async def async_setup_entry(
                         _LOGGER.debug("composed description == %s", descriptions)
                         descriptions.append(description)
 
-    entities = []
-    entity = {}
-    for description in descriptions:
-        entity = description
-        entities.append(VictronNumber(victron_coordinator, entity))
+    entities = [
+        VictronNumber(victron_coordinator, description) for description in descriptions
+    ]
+
     _LOGGER.debug("adding number")
     async_add_entities(entities)
     _LOGGER.debug("adding numbering")
 
 
 def determine_min_value(
-    unit, config_entry: config_entries.ConfigEntry, powerType, negative: bool
-) -> int:
-    """Determine the minimum value for a number entity."""
+    unit: str | None,
+    config_entry: config_entries.ConfigEntry,
+    power_type: str,
+    negative: bool,
+) -> Any:
+    """Determine the minimum value for a number entity.
+
+    :param unit:
+    :param config_entry:
+    :param power_type:
+    :param negative:
+    :return:
+    """
     if unit == PERCENTAGE:
         return 0
     if unit == UnitOfElectricPotential.VOLT:
@@ -123,7 +132,7 @@ def determine_min_value(
                     * int(config_entry[CONF_NUMBER_OF_PHASES])
                     * config_entry[CONF_AC_CURRENT_LIMIT]
                 )
-                if powerType == "AC"
+                if power_type == "AC"
                 else (
                     int(config_entry[CONF_DC_SYSTEM_VOLTAGE].dc_voltage)
                     * config_entry[CONF_DC_CURRENT_LIMIT]
@@ -135,9 +144,9 @@ def determine_min_value(
         return 0
     if unit == UnitOfElectricCurrent.AMPERE:
         if negative:
-            if powerType == "AC":
+            if power_type == "AC":
                 return -config_entry[CONF_AC_CURRENT_LIMIT]
-            if powerType == "DC":
+            if power_type == "DC":
                 return -config_entry[CONF_DC_CURRENT_LIMIT]
             return None
         return 0
@@ -145,9 +154,15 @@ def determine_min_value(
 
 
 def determine_max_value(
-    unit, config_entry: config_entries.ConfigEntry, powerType
-) -> int:
-    """Determine the maximum value for a number entity."""
+    unit: str | None, config_entry: config_entries.ConfigEntry, power_type: str
+) -> Any:
+    """Determine the maximum value for a number entity.
+
+    :param unit:
+    :param config_entry:
+    :param power_type:
+    :return:
+    """
     if unit == PERCENTAGE:
         return 100
     if unit == UnitOfElectricPotential.VOLT:
@@ -162,7 +177,7 @@ def determine_max_value(
                 * int(config_entry[CONF_NUMBER_OF_PHASES])
                 * config_entry[CONF_AC_CURRENT_LIMIT]
             )
-            if powerType == "AC"
+            if power_type == "AC"
             else (
                 int(config_entry[CONF_DC_SYSTEM_VOLTAGE])
                 * config_entry[CONF_DC_CURRENT_LIMIT]
@@ -170,15 +185,15 @@ def determine_max_value(
         )
         return round(max_value / 100) * 100
     if unit == UnitOfElectricCurrent.AMPERE:
-        if powerType == "AC":
+        if power_type == "AC":
             return config_entry[CONF_AC_CURRENT_LIMIT]
-        if powerType == "DC":
+        if power_type == "DC":
             return config_entry[CONF_DC_CURRENT_LIMIT]
         return None
     return 0
 
 
-@dataclass
+@dataclass_transform(frozen_default=True)
 class VictronNumberMixin:
     """A class that describes number entities."""
 
@@ -186,16 +201,16 @@ class VictronNumberMixin:
     mode: bool | None = None
 
 
-@dataclass
+@dataclass_transform(frozen_default=True)
 class VictronNumberStep:
     """A class that adds stepping to number entities."""
 
     native_step: float = 0
 
 
-@dataclass
+@dataclass_transform(frozen_default=False)
 class VictronEntityDescription(
-    NumberEntityDescription,
+    NumberEntityDescription,  # type: ignore[misc]
     VictronWriteBaseEntityDescription,
     VictronNumberMixin,
     VictronNumberStep,
@@ -206,14 +221,14 @@ class VictronEntityDescription(
     key: str | None = None
 
 
-class VictronNumber(NumberEntity):
+class VictronNumber(NumberEntity):  # type: ignore[misc]
     """Victron number."""
 
     description: VictronEntityDescription
 
     def __init__(
         self,
-        coordinator: victronEnergyDeviceUpdateCoordinator,
+        coordinator: VictronEnergyDeviceUpdateCoordinator,
         description: VictronEntityDescription,
     ) -> None:
         """Initialize the entity."""
@@ -223,7 +238,7 @@ class VictronNumber(NumberEntity):
 
         self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
-        self._attr_native_value = self.description.value_fn(
+        self._attr_native_value = self.description.value_fn(  # type: ignore[call-arg]
             self.coordinator.processed_data(),
             self.description.slave,
             self.description.key,
@@ -254,10 +269,10 @@ class VictronNumber(NumberEntity):
         await self.coordinator.async_update_local_entry(self.data_key, int(value))
 
     @property
-    def native_value(self) -> float:
+    def native_value(self) -> Any:
         """Return the state of the entity."""
         value = self.description.value_fn(
-            data=self.coordinator.processed_data(),
+            data=self.coordinator.processed_data(),  # type: ignore[call-arg]
             slave=self.description.slave,
             key=self.description.key,
         )
@@ -268,7 +283,7 @@ class VictronNumber(NumberEntity):
         return value
 
     @property
-    def native_step(self) -> float | None:
+    def native_step(self) -> Any:
         """Return the step width of the entity."""
         if (
             self.description.mode != NumberMode.SLIDER
@@ -287,27 +302,30 @@ class VictronNumber(NumberEntity):
         return 1
 
     @property
-    def native_min_value(self) -> float:
+    def native_min_value(self) -> Any:
         """Return the minimum value of the entity."""
         return self.description.native_min_value
 
     @property
-    def native_max_value(self) -> float:
+    def native_max_value(self) -> Any:
         """Return the maximum value of the entity."""
         return self.description.native_max_value
 
     @property
-    def available(self) -> bool:
+    def available(self) -> Any:
         """Return True if entity is available."""
-        full_key = str(self.description.slave) + "." + self.description.key
+        if self.description.key:
+            full_key = str(self.description.slave) + "." + self.description.key
+        else:
+            full_key = str(self.description.slave) + "."
         return self.coordinator.processed_data()["availability"][full_key]
 
     @property
     def device_info(self) -> entity.DeviceInfo:
         """Return the device info."""
         return entity.DeviceInfo(
-            identifiers={(DOMAIN, self.unique_id.split("_")[0])},
+            identifiers={(DOMAIN, self.unique_id.split("_", maxsplit=1)[0])},
             name=self.unique_id.split("_")[1],
-            model=self.unique_id.split("_")[0],
+            model=self.unique_id.split("_", maxsplit=1)[0],
             manufacturer="victron",
         )

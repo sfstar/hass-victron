@@ -5,12 +5,14 @@ from __future__ import annotations
 from collections import OrderedDict
 from datetime import timedelta
 import logging
+from typing import Any, Generic, TypeVar
 
 import pymodbus
 from pymodbus.constants import Endian
 
 # this import needs to be able to be completely removed if the preparation for 3.9.0 is done
 from pymodbus.payload import BinaryPayloadDecoder
+from pymodbus.pdu import ModbusPDU
 
 if "3.7.0" <= pymodbus.__version__ <= "3.7.4":
     from pymodbus.pdu.register_read_message import ReadHoldingRegistersResponse
@@ -33,10 +35,12 @@ from .const import (
 )
 from .hub import VictronHub
 
+_DataT = TypeVar("_DataT", default=dict[str, Any])
+
 _LOGGER = logging.getLogger(__name__)
 
 
-class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
+class VictronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator, Generic[_DataT]):  # type: ignore[misc]
     """Gather data for the energy device."""
 
     api: VictronHub
@@ -46,7 +50,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         hass: HomeAssistant,
         host: str,
         port: str,
-        decodeInfo: OrderedDict,
+        decode_info: OrderedDict,
         interval: int,
     ) -> None:
         """Initialize Update Coordinator."""
@@ -56,7 +60,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         )
         self.api = VictronHub(host, port)
         self.api.connect()
-        self.decodeInfo = decodeInfo
+        self.decodeInfo = decode_info
         self.interval = interval
 
     # async def force_update_data(self) -> None:
@@ -64,17 +68,18 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
     #     self.async_set_updated_data(data)
 
     async def _async_update_data(self) -> dict:
-        """Fetch all device and sensor data from api."""
-        data = ""
-        """Get the latest data from victron"""
+        """Get the latest data from victron."""
         self.logger.debug("Fetching victron data")
         self.logger.debug(self.decodeInfo)
 
-        parsed_data = OrderedDict()
-        unavailable_entities = OrderedDict()
+        parsed_data: dict = OrderedDict()
+        unavailable_entities: dict = OrderedDict()
 
         if self.data is None:
-            self.data = {"data": OrderedDict(), "availability": OrderedDict()}
+            self.data: dict[str, _DataT] = {  # type: ignore[unreachable]
+                "data": OrderedDict(),
+                "availability": OrderedDict(),
+            }
 
         for unit, registerInfo in self.decodeInfo.items():
             for name in registerInfo:
@@ -114,7 +119,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
     def parse_register_data(
         self,
         buffer: ReadHoldingRegistersResponse,
-        registerInfo: OrderedDict(str, RegisterInfo),
+        register_info: dict[str, RegisterInfo],
         unit: int,
     ) -> dict:
         """Parse the register data."""
@@ -122,79 +127,113 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             buffer.registers, byteorder=Endian.BIG
         )
         decoded_data = OrderedDict()
-        for key, value in registerInfo.items():
+        for key, value in register_info.items():
             full_key = str(unit) + "." + key
-            if value.dataType == UINT16:
+            if value.data_type == UINT16:
                 decoded_data[full_key] = self.decode_scaling(
                     decoder.decode_16bit_uint(), value.scale, value.unit
                 )
-            elif value.dataType == INT16:
+            elif value.data_type == INT16:
                 decoded_data[full_key] = self.decode_scaling(
                     decoder.decode_16bit_int(), value.scale, value.unit
                 )
-            elif value.dataType == UINT32:
+            elif value.data_type == UINT32:
                 decoded_data[full_key] = self.decode_scaling(
                     decoder.decode_32bit_uint(), value.scale, value.unit
                 )
-            elif value.dataType == INT32:
+            elif value.data_type == INT32:
                 decoded_data[full_key] = self.decode_scaling(
                     decoder.decode_32bit_int(), value.scale, value.unit
                 )
-            elif isinstance(value.dataType, STRING):
+            elif isinstance(value.data_type, STRING):
                 decoded_data[full_key] = (
-                    decoder.decode_string(value.dataType.readLength)
+                    decoder.decode_string(value.data_type.read_length)
                     .split(b"\x00")[0]
                     .decode()
                 )
             else:
-                raise DecodeDataTypeUnsupported(
-                    f"Not supported dataType: {value.dataType}"
+                raise DecodedataTypeUnsupported(
+                    f"Not supported data_type: {value.data_type}"
                 )
         return decoded_data
 
-    def decode_scaling(self, number, scale, unit):
-        """Decode the scaling."""
+    def decode_scaling(self, number: float, scale: float, unit: str | None) -> float:
+        """Decode the scaling.
+
+        :param number:
+        :param scale:
+        :param unit:
+        :return:
+        """
         if unit == "" and scale == 1:
             return round(number)
         return number / scale
 
-    def encode_scaling(self, value, unit, scale):
-        """Encode the scaling."""
+    def encode_scaling(self, value: float, unit: str, scale: int | None) -> Any:
+        """Encode the scaling.
+
+        :param value:
+        :param unit:
+        :param scale:
+        :return:
+        """
         if scale == 0:
             return value
         if unit == "" and scale == 1:
             return int(round(value))
-        return int(value * scale)
+        if scale is not None:
+            return int(value * scale)
+        return None
 
-    def get_data(self):
+    def get_data(self) -> dict[str, _DataT]:
         """Return the data."""
         return self.data
 
-    async def async_update_local_entry(self, key, value):
-        """Update the local entry."""
+    async def async_update_local_entry(self, key: str, value: Any) -> Any:
+        """Update the local entry.
+
+        :param key:
+        :param value:
+        :return:
+        """
         data = self.data
-        data["data"][key] = value
+        data["data"][key] = value  # type:ignore[index]
         self.async_set_updated_data(data)
 
         await self.async_request_refresh()
 
-    def processed_data(self):
+    def processed_data(self) -> Any:
         """Return the processed data."""
         return self.data
 
-    async def fetch_registers(self, unit, registerData):
-        """Fetch the registers."""
+    async def fetch_registers(
+        self, unit: str, register_data: dict[str, RegisterInfo]
+    ) -> Any:
+        """Fetch the registers.
+
+        :param unit:
+        :param register_data:
+        :return:
+        """
         try:
             # run api_update in async job
             return await self.hass.async_add_executor_job(
-                self.api_update, unit, registerData
+                self.api_update, unit, register_data
             )
 
         except HomeAssistantError as e:
             raise UpdateFailed("Fetching registers failed") from e
 
-    def write_register(self, unit, address, value):
-        """Write to the register."""
+    def write_register(
+        self, unit: int | None, address: float | None, value: float
+    ) -> None:
+        """Write to the register.
+
+        :param unit:
+        :param address:
+        :param value:
+        :return:
+        """
         # try:
 
         self.api_write(unit, address, value)
@@ -203,29 +242,40 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
     # TODO raise specific write error
     # _LOGGER.error("failed to write to option:", e
 
-    def api_write(self, unit, address, value):
+    def api_write(
+        self, unit: int | None, address: float | None, value: float
+    ) -> ModbusPDU:
         """Write to the api."""
         # recycle connection
         return self.api.write_register(unit=unit, address=address, value=value)
 
-    def api_update(self, unit, registerInfo):
-        """Update the api."""
+    def api_update(self, unit: int, register_info: dict[str, RegisterInfo]) -> Any:
+        """Update the api.
+
+        :param unit:
+        :param register_info:
+        :return:
+        """
         # recycle connection
         return self.api.read_holding_registers(
             unit=unit,
-            address=self.api.get_first_register_id(registerInfo),
-            count=self.api.calculate_register_count(registerInfo),
+            address=self.api.get_first_register_id(register_info),
+            count=self.api.calculate_register_count(register_info),
         )
 
 
-class DecodeDataTypeUnsupported(Exception):
+class DecodedataTypeUnsupported(Exception):
     """Exception for unsupported data type."""
 
 
 class DataEntry:
     """Data entry class."""
 
-    def __init__(self, unit, value) -> None:
-        """Initialize the data entry."""
+    def __init__(self, unit: int, value: int) -> None:
+        """Initialize the data entry.
+
+        :param unit:
+        :param value:
+        """
         self.unit = unit
         self.value = value
