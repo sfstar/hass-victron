@@ -82,10 +82,10 @@ class VictronHub:
             - register_info_dict[first_key].register
         ) + end_correction
 
-    def get_first_register_id(self, registerInfoDict: dict[str, RegisterInfo]) -> Any:
+    def get_first_register_id(self, register_infoDict: dict[str, RegisterInfo]) -> Any:
         """Return first register id."""
-        first_register = next(iter(registerInfoDict))
-        return registerInfoDict[first_register].register
+        first_register = next(iter(register_infoDict))
+        return register_infoDict[first_register].register
 
     def determine_present_devices(self) -> Any:
         """Determine which devices are present."""

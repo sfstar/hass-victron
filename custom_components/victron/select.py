@@ -40,22 +40,22 @@ async def async_setup_entry(
     # TODO cleanup
     if config_entry.options[CONF_ADVANCED_OPTIONS]:
         register_set = victron_coordinator.processed_data()["register_set"]
-        for slave, registerLedger in register_set.items():
-            for name in registerLedger:
-                for register_name, registerInfo in register_info_dict[name].items():
-                    if isinstance(registerInfo.entity_type, SelectWriteType):
+        for slave, register_ledger in register_set.items():
+            for name in register_ledger:
+                for register_name, register_info in register_info_dict[name].items():
+                    if isinstance(register_info.entity_type, SelectWriteType):
                         _LOGGER.debug(
-                            "unit == %s registerLedger == %s register_info",
+                            "unit == %s register_ledger == %s register_info",
                             slave,
-                            registerLedger,
+                            register_ledger,
                         )
 
                         description = VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace("_", " "),
                             slave=slave,
-                            options=registerInfo.entity_type.options,
-                            address=registerInfo.register,
+                            options=register_info.entity_type.options,
+                            address=register_info.register,
                         )
 
                         descriptions.append(description)

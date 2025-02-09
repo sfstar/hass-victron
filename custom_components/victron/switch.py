@@ -37,13 +37,13 @@ async def async_setup_entry(
     # TODO cleanup
     if config_entry.options[CONF_ADVANCED_OPTIONS]:
         register_set = victron_coordinator.processed_data()["register_set"]
-        for slave, registerLedger in register_set.items():
-            for name in registerLedger:
+        for slave, register_ledger in register_set.items():
+            for name in register_ledger:
                 for register_name, register_info in register_info_dict[name].items():
                     _LOGGER.debug(
-                        "unit == %s registerLedger == %s register_info == %s",
+                        "unit == %s register_ledger == %s register_info == %s",
                         slave,
-                        registerLedger,
+                        register_ledger,
                         register_info,
                     )
 

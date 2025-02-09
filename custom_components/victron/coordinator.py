@@ -81,8 +81,8 @@ class VictronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator, Generic[_DataT
                 "availability": OrderedDict(),
             }
 
-        for unit, registerInfo in self.decodeInfo.items():
-            for name in registerInfo:
+        for unit, register_info in self.decodeInfo.items():
+            for name in register_info:
                 data = await self.fetch_registers(unit, register_info_dict[name])
                 # TODO safety check if result is actual data if not unavailable
                 if data.isError():

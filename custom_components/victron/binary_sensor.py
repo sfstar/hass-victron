@@ -38,16 +38,16 @@ async def async_setup_entry(
     descriptions = []
     # TODO cleanup
     register_set = victron_coordinator.processed_data()["register_set"]
-    for slave, registerLedger in register_set.items():
-        for name in registerLedger:
-            for register_name, registerInfo in register_info_dict[name].items():
+    for slave, register_ledger in register_set.items():
+        for name in register_ledger:
+            for register_name, register_info in register_info_dict[name].items():
                 _LOGGER.debug(
-                    "unit == %s registerLedger == %s register_info",
+                    "unit == %s register_ledger == %s register_info",
                     slave,
-                    registerLedger,
+                    register_ledger,
                 )
 
-                if isinstance(registerInfo.entity_type, BoolReadEntityType):
+                if isinstance(register_info.entity_type, BoolReadEntityType):
                     description = VictronEntityDescription(
                         key=register_name,
                         name=register_name.replace("_", " "),

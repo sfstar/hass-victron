@@ -57,31 +57,31 @@ async def async_setup_entry(
     descriptions = []
     # TODO cleanup
     register_set = victron_coordinator.processed_data()["register_set"]
-    for slave, registerLedger in register_set.items():
-        for name in registerLedger:
-            for register_name, registerInfo in register_info_dict[name].items():
+    for slave, register_ledger in register_set.items():
+        for name in register_ledger:
+            for register_name, register_info in register_info_dict[name].items():
                 _LOGGER.debug(
-                    "unit == %s registerLedger == %s register_info",
+                    "unit == %s register_ledger == %s register_info",
                     slave,
-                    registerLedger,
+                    register_ledger,
                 )
                 if config_entry.options[CONF_ADVANCED_OPTIONS]:
                     if not isinstance(
-                        registerInfo.entity_type, ReadEntityType
-                    ) or isinstance(registerInfo.entity_type, BoolReadEntityType):
+                        register_info.entity_type, ReadEntityType
+                    ) or isinstance(register_info.entity_type, BoolReadEntityType):
                         continue
 
                 description = VictronEntityDescription(
                     key=register_name,
                     name=register_name.replace("_", " "),
-                    native_unit_of_measurement=registerInfo.unit,
-                    state_class=registerInfo.determine_stateclass(),
+                    native_unit_of_measurement=register_info.unit,
+                    state_class=register_info.determine_stateclass(),
                     slave=slave,
                     device_class=determine_victron_device_class(
-                        register_name, registerInfo.unit
+                        register_name, register_info.unit
                     ),
-                    entity_type=registerInfo.entity_type
-                    if isinstance(registerInfo.entity_type, TextReadEntityType)
+                    entity_type=register_info.entity_type
+                    if isinstance(register_info.entity_type, TextReadEntityType)
                     else None,
                 )
                 _LOGGER.debug("composed description == %s", description)

@@ -57,39 +57,39 @@ async def async_setup_entry(
     # TODO cleanup
     if config_entry.options[CONF_ADVANCED_OPTIONS]:
         register_set = victron_coordinator.processed_data()["register_set"]
-        for slave, registerLedger in register_set.items():
-            for name in registerLedger:
-                for register_name, registerInfo in register_info_dict[name].items():
+        for slave, register_ledger in register_set.items():
+            for name in register_ledger:
+                for register_name, register_info in register_info_dict[name].items():
                     _LOGGER.debug(
-                        "unit == %s registerLedger == %s register_info",
+                        "unit == %s register_ledger == %s register_info",
                         slave,
-                        registerLedger,
+                        register_ledger,
                     )
 
-                    if isinstance(registerInfo.entity_type, SliderWriteType):
+                    if isinstance(register_info.entity_type, SliderWriteType):
                         description = VictronEntityDescription(
                             key=register_name,
                             name=register_name.replace("_", " "),
                             slave=slave,
-                            native_unit_of_measurement=registerInfo.unit,
+                            native_unit_of_measurement=register_info.unit,
                             mode=NumberMode.SLIDER
                             if config_entry.options[CONF_USE_SLIDERS]
                             else NumberMode.BOX,
                             native_min_value=determine_min_value(
-                                registerInfo.unit,
+                                register_info.unit,
                                 config_entry.options,
-                                registerInfo.entity_type.power_type,
-                                registerInfo.entity_type.negative,
+                                register_info.entity_type.power_type,
+                                register_info.entity_type.negative,
                             ),
                             native_max_value=determine_max_value(
-                                registerInfo.unit,
+                                register_info.unit,
                                 config_entry.options,
-                                registerInfo.entity_type.power_type,
+                                register_info.entity_type.power_type,
                             ),
                             entity_category=EntityCategory.CONFIG,
-                            address=registerInfo.register,
-                            scale=registerInfo.scale,
-                            native_step=registerInfo.step,
+                            address=register_info.register,
+                            scale=register_info.scale,
+                            native_step=register_info.step,
                         )
                         _LOGGER.debug("composed description == %s", descriptions)
                         descriptions.append(description)
