@@ -49,7 +49,7 @@ class VictronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator, Generic[_DataT
         self,
         hass: HomeAssistant,
         host: str,
-        port: str,
+        port: int,
         decode_info: OrderedDict,
         interval: int,
     ) -> None:

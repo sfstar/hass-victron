@@ -24,7 +24,7 @@ _LOGGER = logging.getLogger(__name__)
 class VictronHub:
     """Victron Hub."""
 
-    def __init__(self, host: str, port: str) -> None:
+    def __init__(self, host: str, port: int) -> None:
         """Initialize."""
         self.host = host
         self.port = port
