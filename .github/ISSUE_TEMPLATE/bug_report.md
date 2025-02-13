@@ -1,3 +1,11 @@
+---
+name: Bug report Request
+about: Report an issue experienced with the integration.
+title: ''
+labels: ["bugfix"]
+assignees: ''
+---
+
 <!-- READ THIS FIRST:
   - Provide as many details as possible. Paste logs, configuration samples and code into the backticks.
   DO NOT DELETE ANY TEXT from this template! Otherwise, your issue may be closed without comment.
