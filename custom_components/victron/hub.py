@@ -55,10 +55,9 @@ class VictronHub:
         """Read holding registers."""
         try:
             slave = int(unit) if unit else 1
-            result = self._client.read_holding_registers(
+            return self._client.read_holding_registers(
                 address=address, count=count, slave=slave
             )
-            return result
         except BrokenPipeError:
             self.__handle_broken_pipe_error()
             return None
