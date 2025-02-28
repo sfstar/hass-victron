@@ -26,7 +26,8 @@ class VictronHub:
         """Initialize."""
         self.host = host
         self.port = port
-        self._client = ModbusTcpClient(host=self.host, port=self.port)
+        # Fail more quickly and only retry once before executing retry logic
+        self._client = ModbusTcpClient(host=self.host, port=self.port, timeout=10, retries=1)
         self._lock = threading.Lock()
 
     def is_still_connected(self):
