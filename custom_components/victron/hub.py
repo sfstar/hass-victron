@@ -8,7 +8,15 @@ from pymodbus.client import ModbusTcpClient
 
 from homeassistant.exceptions import HomeAssistantError
 
-from .const import INT32, STRING, UINT32, INT64, UINT64, register_info_dict, valid_unit_ids
+from .const import (
+    INT32,
+    INT64,
+    STRING,
+    UINT32,
+    UINT64,
+    register_info_dict,
+    valid_unit_ids,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
