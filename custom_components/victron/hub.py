@@ -8,7 +8,7 @@ from pymodbus.client import ModbusTcpClient
 
 from homeassistant.exceptions import HomeAssistantError
 
-from .const import INT32, STRING, UINT32, register_info_dict, valid_unit_ids
+from .const import INT32, STRING, UINT32, INT64, UINT64, register_info_dict, valid_unit_ids
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -56,6 +56,8 @@ class VictronHub:
         end_correction = 1
         if registerInfoDict[last_key].dataType in (INT32, UINT32):
             end_correction = 2
+        elif registerInfoDict[last_key].dataType in (INT64, UINT64):
+            end_correction = 4
         elif isinstance(registerInfoDict[last_key].dataType, STRING):
             end_correction = registerInfoDict[last_key].dataType.length
 

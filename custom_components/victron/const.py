@@ -71,6 +71,7 @@ UINT16 = "uint16"
 INT16 = "int16"
 UINT32 = "uint32"
 INT32 = "int32"
+INT64 = "int64"
 UINT64 = "uint64"
 
 UINT16_MAX = 65535
@@ -631,9 +632,7 @@ battery_registers = {
     "battery_temperature": RegisterInfo(262, INT16, UnitOfTemperature.CELSIUS, 10),
     "battery_midvoltage": RegisterInfo(263, UINT16, UnitOfElectricPotential.VOLT, 100),
     "battery_midvoltagedeviation": RegisterInfo(264, UINT16, PERCENTAGE, 100),
-    "battery_consumedamphours": RegisterInfo(
-        265, UINT16, AMPHOURS, -10
-    ),
+    "battery_consumedamphours": RegisterInfo(265, UINT16, AMPHOURS, -10),
     "battery_soc": RegisterInfo(266, UINT16, PERCENTAGE, 10),
     "battery_alarm": RegisterInfo(
         register=267,
