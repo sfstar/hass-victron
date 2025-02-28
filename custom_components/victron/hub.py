@@ -6,8 +6,6 @@ import threading
 
 from pymodbus.client import ModbusTcpClient
 
-from homeassistant.exceptions import HomeAssistantError
-
 from .const import (
     INT32,
     INT64,
