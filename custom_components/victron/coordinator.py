@@ -70,7 +70,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         self.logger.debug(self.decodeInfo)
 
         parsed_data = OrderedDict()
-        unavailable_entities = OrderedDict()
+        available_entities = OrderedDict()
 
         if self.data is None:
             self.data = {"data": OrderedDict(), "availability": OrderedDict()}
@@ -85,7 +85,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                     for key in register_info_dict[name]:
                         full_key = str(unit) + "." + key
                         # self.data["data"][full_key] = None
-                        unavailable_entities[full_key] = False
+                        available_entities[full_key] = False
 
                     _LOGGER.warning(
                         "No valid data returned for entities of slave: %s (if the device continues to no longer update) check if the device was physically removed. Before opening an issue please force a rescan to attempt to resolve this issue",
@@ -102,12 +102,12 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                     )
                     for key in register_info_dict[name]:
                         full_key = str(unit) + "." + key
-                        unavailable_entities[full_key] = True
+                        available_entities[full_key] = True
 
         return {
             "register_set": self.decodeInfo,
             "data": parsed_data,
-            "availability": unavailable_entities,
+            "availability": available_entities,
         }
 
     def parse_register_data(
