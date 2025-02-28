@@ -52,10 +52,18 @@ class VictronHub:
 
     def read_holding_registers(self, unit, address, count):
         """Read holding registers."""
-        slave = int(unit) if unit else 1
-        return self._client.read_holding_registers(
-            address=address, count=count, slave=slave
-        )
+        try:
+
+            slave = int(unit) if unit else 1
+            result = self._client.read_holding_registers(
+                address=address, count=count, slave=slave
+            )
+            return result
+        except BrokenPipeError:
+            _LOGGER.warning("connection to the remote gx device is broken, trying to reconnect")
+            if not self.is_still_connected():
+                self.connect()
+                _LOGGER.info("connection to GX device re-established")
 
     def calculate_register_count(self, registerInfoDict: OrderedDict):
         """Calculate the number of registers to read."""
@@ -103,6 +111,11 @@ class VictronHub:
                         )
                     else:
                         working_registers.append(key)
+
+except BrokenPipeError:
+    print("The pipe is broken. Handling the error.")
+    # Handle the error, e.g., clean up or retry the operation
+
                 except HomeAssistantError as e:
                     _LOGGER.error(e)
 
