@@ -95,10 +95,11 @@ class VictronHub:
                     result = self.read_holding_registers(unit, address, count)
                     if result.isError():
                         _LOGGER.debug(
-                            "result is error for unit: %s address: %s count: %s",
+                            "result is error for unit: %s address: %s count: %s and result: %s",
                             unit,
                             address,
                             count,
+                            result,
                         )
                     else:
                         working_registers.append(key)
