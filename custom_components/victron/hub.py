@@ -27,7 +27,9 @@ class VictronHub:
         self.host = host
         self.port = port
         # Fail more quickly and only retry once before executing retry logic
-        self._client = ModbusTcpClient(host=self.host, port=self.port, timeout=10, retries=1)
+        self._client = ModbusTcpClient(
+            host=self.host, port=self.port, timeout=10, retries=1
+        )
         self._lock = threading.Lock()
 
     def is_still_connected(self):
@@ -47,7 +49,15 @@ class VictronHub:
     def write_register(self, unit, address, value):
         """Write a register."""
         try:
-            slave = int(unit) if unit else 1
+            slave = int(unit)
+            if not unit:
+                _LOGGER.error(
+                    "Unit for this device (%s) isn't set correctly. Cannot write (%s) to register (%s). Ensure that the config was migrated to latest state by forcing a rescan",
+                    unit,
+                    value,
+                    address,
+                )
+                return
             self._client.write_register(address=address, value=value, slave=slave)
         except BrokenPipeError:
             self.__handle_broken_pipe_error()
@@ -55,13 +65,22 @@ class VictronHub:
     def read_holding_registers(self, unit, address, count):
         """Read holding registers."""
         try:
-            slave = int(unit) if unit else 1
+            if not unit:
+                return None
+
+            slave = int(unit)
             return self._client.read_holding_registers(
                 address=address, count=count, slave=slave
             )
         except BrokenPipeError:
             self.__handle_broken_pipe_error()
             return None
+        except ValueError as e:
+            _LOGGER.error(
+                "Unit for this device (%s) isn't set correctly. Cannot read register (%s). Ensure that the config was migrated to latest state by forcing a rescan",
+                unit,
+                address,
+            )
 
     def __handle_broken_pipe_error(self):
         _LOGGER.warning(
