@@ -68,10 +68,10 @@ class VictronHub:
 
 
     def handle_broken_pipe_error(self):
-        _LOGGER.warning("connection to the remote gx device is broken, trying to reconnect")
+        _LOGGER.warning("Connection to the remote gx device is broken, trying to reconnect")
         if not self.is_still_connected():
             self.connect()
-            _LOGGER.info("connection to GX device re-established")
+            _LOGGER.info("Connection to GX device re-established")
 
     def calculate_register_count(self, registerInfoDict: OrderedDict):
         """Calculate the number of registers to read."""
