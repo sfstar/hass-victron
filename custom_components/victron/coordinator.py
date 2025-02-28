@@ -85,11 +85,11 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                     # TODO change this to work with partial updates
                     for key in register_info_dict[name]:
                         full_key = str(unit) + "." + key
-                        # self.data["data"][full_key] = None
                         available_entities[full_key] = False
 
                     _LOGGER.warning(
-                        "No valid data returned for entities of slave: %s (if the device continues to no longer update) check if the device was physically removed. Before opening an issue please force a rescan to attempt to resolve this issue",
+                        "No valid data: %s returned for entities of slave: %s (if the device continues to no longer update) check if the device was physically removed. Before opening an issue please force a rescan to attempt to resolve this issue",
+                        data,
                         unit,
                     )
                 else:
@@ -203,13 +203,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
 
     def write_register(self, unit, address, value):
         """Write to the register."""
-        # try:
-
         self.api_write(unit, address, value)
-
-    # except HomeAssistantError as e:
-    # TODO raise specific write error
-    # _LOGGER.error("failed to write to option:", e
 
     def api_write(self, unit, address, value):
         """Write to the api."""
