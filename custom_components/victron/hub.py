@@ -49,24 +49,24 @@ class VictronHub:
             slave = int(unit) if unit else 1
             self._client.write_register(address=address, value=value, slave=slave)
         except BrokenPipeError:
-            self.handle_broken_pipe_error()
+            self.__handle_broken_pipe_error()
 
     def read_holding_registers(self, unit, address, count):
         """Read holding registers."""
         try:
-
             slave = int(unit) if unit else 1
             result = self._client.read_holding_registers(
                 address=address, count=count, slave=slave
             )
             return result
         except BrokenPipeError:
-             self.handle_broken_pipe_error()
-             return None
+            self.__handle_broken_pipe_error()
+            return None
 
-
-    def handle_broken_pipe_error(self):
-        _LOGGER.warning("Connection to the remote gx device is broken, trying to reconnect")
+    def __handle_broken_pipe_error(self):
+        _LOGGER.warning(
+            "Connection to the remote gx device is broken, trying to reconnect"
+        )
         if not self.is_still_connected():
             self.connect()
             _LOGGER.info("Connection to GX device re-established")
