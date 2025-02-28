@@ -47,8 +47,11 @@ class VictronHub:
 
     def write_register(self, unit, address, value):
         """Write a register."""
-        slave = int(unit) if unit else 1
-        return self._client.write_register(address=address, value=value, slave=slave)
+        try:
+            slave = int(unit) if unit else 1
+            self._client.write_register(address=address, value=value, slave=slave)
+        except BrokenPipeError:
+            self.handle_broken_pipe_error()
 
     def read_holding_registers(self, unit, address, count):
         """Read holding registers."""
@@ -60,10 +63,15 @@ class VictronHub:
             )
             return result
         except BrokenPipeError:
-            _LOGGER.warning("connection to the remote gx device is broken, trying to reconnect")
-            if not self.is_still_connected():
-                self.connect()
-                _LOGGER.info("connection to GX device re-established")
+             self.handle_broken_pipe_error()
+             return None
+
+
+    def handle_broken_pipe_error(self):
+        _LOGGER.warning("connection to the remote gx device is broken, trying to reconnect")
+        if not self.is_still_connected():
+            self.connect()
+            _LOGGER.info("connection to GX device re-established")
 
     def calculate_register_count(self, registerInfoDict: OrderedDict):
         """Calculate the number of registers to read."""
@@ -97,27 +105,19 @@ class VictronHub:
                 if unit == 100 and not key.startswith(("settings", "system")):
                     continue
 
-                try:
-                    address = self.get_first_register_id(register_definition)
-                    count = self.calculate_register_count(register_definition)
-                    result = self.read_holding_registers(unit, address, count)
-                    if result.isError():
-                        _LOGGER.debug(
-                            "result is error for unit: %s address: %s count: %s and result: %s",
-                            unit,
-                            address,
-                            count,
-                            result,
-                        )
-                    else:
-                        working_registers.append(key)
-
-except BrokenPipeError:
-    print("The pipe is broken. Handling the error.")
-    # Handle the error, e.g., clean up or retry the operation
-
-                except HomeAssistantError as e:
-                    _LOGGER.error(e)
+                address = self.get_first_register_id(register_definition)
+                count = self.calculate_register_count(register_definition)
+                result = self.read_holding_registers(unit, address, count)
+                if result is None:
+                    _LOGGER.debug(
+                        "result is error for unit: %s address: %s count: %s and result: %s",
+                        unit,
+                        address,
+                        count,
+                        result,
+                    )
+                else:
+                    working_registers.append(key)
 
             if len(working_registers) > 0:
                 valid_devices[unit] = working_registers
