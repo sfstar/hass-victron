@@ -75,7 +75,7 @@ class VictronHub:
         except BrokenPipeError:
             self.__handle_broken_pipe_error()
             return None
-        except ValueError as e:
+        except ValueError:
             _LOGGER.error(
                 "Unit for this device (%s) isn't set correctly. Cannot read register (%s). Ensure that the config was migrated to latest state by forcing a rescan",
                 unit,
