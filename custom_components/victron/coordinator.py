@@ -23,9 +23,11 @@ from .const import (
     DOMAIN,
     INT16,
     INT32,
+    INT64,
     STRING,
     UINT16,
     UINT32,
+    UINT64,
     RegisterInfo,
     register_info_dict,
 )
@@ -69,7 +71,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         self.logger.debug(self.decodeInfo)
 
         parsed_data = OrderedDict()
-        unavailable_entities = OrderedDict()
+        available_entities = OrderedDict()
 
         if self.data is None:
             self.data = {"data": OrderedDict(), "availability": OrderedDict()}
@@ -83,11 +85,11 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                     # TODO change this to work with partial updates
                     for key in register_info_dict[name]:
                         full_key = str(unit) + "." + key
-                        # self.data["data"][full_key] = None
-                        unavailable_entities[full_key] = False
+                        available_entities[full_key] = False
 
                     _LOGGER.warning(
-                        "No valid data returned for entities of slave: %s (if the device continues to no longer update) check if the device was physically removed. Before opening an issue please force a rescan to attempt to resolve this issue",
+                        "No valid data: %s returned for entities of slave: %s (if the device continues to no longer update) check if the device was physically removed. Before opening an issue please force a rescan to attempt to resolve this issue",
+                        data,
                         unit,
                     )
                 else:
@@ -101,12 +103,12 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                     )
                     for key in register_info_dict[name]:
                         full_key = str(unit) + "." + key
-                        unavailable_entities[full_key] = True
+                        available_entities[full_key] = True
 
         return {
             "register_set": self.decodeInfo,
             "data": parsed_data,
-            "availability": unavailable_entities,
+            "availability": available_entities,
         }
 
     def parse_register_data(
@@ -137,6 +139,14 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             elif value.dataType == INT32:
                 decoded_data[full_key] = self.decode_scaling(
                     decoder.decode_32bit_int(), value.scale, value.unit
+                )
+            elif value.dataType == UINT64:
+                decoded_data[full_key] = self.decode_scaling(
+                    decoder.decode_64bit_uint(), value.scale, value.unit
+                )
+            elif value.dataType == INT64:
+                decoded_data[full_key] = self.decode_scaling(
+                    decoder.decode_64bit_int(), value.scale, value.unit
                 )
             elif isinstance(value.dataType, STRING):
                 decoded_data[full_key] = (
@@ -193,13 +203,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
 
     def write_register(self, unit, address, value):
         """Write to the register."""
-        # try:
-
         self.api_write(unit, address, value)
-
-    # except HomeAssistantError as e:
-    # TODO raise specific write error
-    # _LOGGER.error("failed to write to option:", e
 
     def api_write(self, unit, address, value):
         """Write to the api."""
