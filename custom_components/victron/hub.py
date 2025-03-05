@@ -4,7 +4,7 @@ from collections import OrderedDict
 import logging
 import threading
 
-from pymodbus.client import ModbusTcpClient
+from pymodbus.client import AsyncModbusTcpClient
 
 from .const import (
     INT32,
@@ -27,8 +27,8 @@ class VictronHub:
         self.host = host
         self.port = port
         # Fail more quickly and only retry once before executing retry logic
-        self._client = ModbusTcpClient(
-            host=self.host, port=self.port, timeout=10, retries=1
+        self._client = AsyncModbusTcpClient(
+            host=self.host, port=self.port, timeout=30, retries=10
         )
         self._lock = threading.Lock()
 
@@ -36,40 +36,45 @@ class VictronHub:
         """Check if the connection is still open."""
         return self._client.is_socket_open()
 
-    def connect(self):
+    async def connect(self):
         """Connect to the Modbus TCP server."""
-        return self._client.connect()
+        return await self._client.connect()
 
-    def disconnect(self):
+    async def disconnect(self):
         """Disconnect from the Modbus TCP server."""
         if self._client.is_socket_open():
             return self._client.close()
         return None
 
-    def write_register(self, unit, address, value):
+    async def write_register(self, unit, address, value):
         """Write a register."""
         try:
             slave = int(unit)
-            if not unit:
+            if not (0 <= slave <= 254):
                 _LOGGER.error(
                     "Unit for this device (%s) isn't set correctly. Cannot write (%s) to register (%s). Ensure that the config was migrated to latest state by forcing a rescan",
-                    unit,
+                    slave,
                     value,
                     address,
                 )
                 return
-            self._client.write_register(address=address, value=value, slave=slave)
+            await self._client.write_register(address=address, value=value, slave=slave)
         except BrokenPipeError:
             self.__handle_broken_pipe_error()
 
-    def read_holding_registers(self, unit, address, count):
+    async def read_holding_registers(self, unit, address, count):
         """Read holding registers."""
         try:
-            if not unit:
+            slave = int(unit)
+            if not (0 <= slave <= 254):
+                _LOGGER.error(
+                    "Unit for this device (%s) isn't set correctly. Cannot read register (%s). Ensure that the config was migrated to latest state by forcing a rescan",
+                    slave,
+                    address,
+                )
                 return None
 
-            slave = int(unit)
-            return self._client.read_holding_registers(
+            return await self._client.read_holding_registers(
                 address=address, count=count, slave=slave
             )
         except BrokenPipeError:
@@ -111,7 +116,7 @@ class VictronHub:
         first_register = next(iter(registerInfoDict))
         return registerInfoDict[first_register].register
 
-    def determine_present_devices(self):
+    async def determine_present_devices(self):
         """Determine which devices are present."""
         valid_devices = {}
 
@@ -124,7 +129,7 @@ class VictronHub:
 
                 address = self.get_first_register_id(register_definition)
                 count = self.calculate_register_count(register_definition)
-                result = self.read_holding_registers(unit, address, count)
+                result = await self.read_holding_registers(unit, address, count)
                 if result is None:
                     _LOGGER.debug(
                         "result is error for unit: %s address: %s count: %s and result: %s",

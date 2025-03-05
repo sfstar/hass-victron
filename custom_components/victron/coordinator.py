@@ -55,7 +55,6 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             hass, _LOGGER, name=DOMAIN, update_interval=timedelta(seconds=interval)
         )
         self.api = VictronHub(host, port)
-        self.api.connect()
         self.decodeInfo = decodeInfo
         self.interval = interval
 
@@ -194,9 +193,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         """Fetch the registers."""
         try:
             # run api_update in async job
-            return await self.hass.async_add_executor_job(
-                self.api_update, unit, registerData
-            )
+            return await self.api_update(unit, registerData)
 
         except HomeAssistantError as e:
             raise UpdateFailed("Fetching registers failed") from e
@@ -210,10 +207,10 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         # recycle connection
         return self.api.write_register(unit=unit, address=address, value=value)
 
-    def api_update(self, unit, registerInfo):
+    async def api_update(self, unit, registerInfo):
         """Update the api."""
         # recycle connection
-        return self.api.read_holding_registers(
+        return await self.api.read_holding_registers(
             unit=unit,
             address=self.api.get_first_register_id(registerInfo),
             count=self.api.calculate_register_count(registerInfo),
