@@ -199,10 +199,6 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             raise UpdateFailed("Fetching registers failed") from e
 
     def write_register(self, unit, address, value):
-        """Write to the register."""
-        self.api_write(unit, address, value)
-
-    def api_write(self, unit, address, value):
         """Write to the api."""
         # recycle connection
         return self.api.write_register(unit=unit, address=address, value=value)
