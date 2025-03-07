@@ -70,7 +70,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     hub = VictronHub(data[CONF_HOST], data[CONF_PORT])
 
     try:
-        hub.connect()
+        await hub.connect()
         _LOGGER.debug("connection was succesfull")
         discovered_devices = await scan_connected_devices(hub=hub)
         _LOGGER.debug("successfully discovered devices")
@@ -81,7 +81,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
 
 async def scan_connected_devices(hub: VictronHub) -> list:
     """Scan for connected devices."""
-    return hub.determine_present_devices()
+    return await hub.determine_present_devices()
 
 
 class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):

@@ -35,6 +35,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         config_entry.data[SCAN_REGISTERS],
         config_entry.options[CONF_INTERVAL],
     )
+
+    await coordinator.api.connect()
     # try:
     #     await coordinator.async_config_entry_first_refresh()
     # except ConfigEntryNotReady:
