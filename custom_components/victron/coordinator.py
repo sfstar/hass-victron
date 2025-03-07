@@ -193,7 +193,11 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         """Fetch the registers."""
         try:
             # run api_update in async job
-            return await self.api_update(unit, registerData)
+            return await self.api.read_holding_registers(
+                unit=unit,
+                address=self.api.get_first_register_id(registerData),
+                count=self.api.calculate_register_count(registerData),
+            )
 
         except HomeAssistantError as e:
             raise UpdateFailed("Fetching registers failed") from e
@@ -202,15 +206,6 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         """Write to the api."""
         # recycle connection
         return self.api.write_register(unit=unit, address=address, value=value)
-
-    async def api_update(self, unit, registerInfo):
-        """Update the api."""
-        # recycle connection
-        return await self.api.read_holding_registers(
-            unit=unit,
-            address=self.api.get_first_register_id(registerInfo),
-            count=self.api.calculate_register_count(registerInfo),
-        )
 
 
 class DecodeDataTypeUnsupported(Exception):
