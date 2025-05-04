@@ -69,5 +69,40 @@
                 }
             }
         }
+    },
+    "device": {
+        "battery": { "name": "Batterie" },
+        "grid": { "name": "Netz" },
+        "pvinverter": { "name": "PV-Wechselrichter" },
+        "settings": { "name": "Einstellungen" },
+        "vebus": { "name": "VE-BUS" }
+    },
+    "entity": {
+        "sensor": {
+            "grid_L1_power": { "name": "AC-Phase L1 Leistung" },
+            "grid_L2_power": { "name": "AC-Phase L2 Leistung" },
+            "grid_L3_power": { "name": "AC-Phase L3 Leistung"},
+            "grid_L1_energy_forward": { "name": "Energie L1 eingespeist"},
+            "grid_L2_energy_forward": { "name": "Energie L2 eingespeist"},
+            "grid_L3_energy_forward": { "name": "Energie L3 eingespeist"},
+            "grid_L1_energy_reverse": { "name": "Energie L1 bezogen"},
+            "grid_L2_energy_reverse": { "name": "Energie L2 bezogen"},
+            "grid_L3_energy_reverse": { "name": "Energie L3 bezogen"},
+            "grid_serial": { "name": "Seriennummer"},
+            "grid_L1_voltage": { "name": "AC-Phase L1 Spannung"},
+            "grid_L1_current": { "name": "AC-Phase L1 Stromstärke"},
+            "grid_L2_voltage": { "name": "AC-Phase L2 Spannung"},
+            "grid_L2_current": { "name": "AC-Phase L2 Stromstärke"},
+            "grid_L3_voltage": { "name": "AC-Phase L3 Spannung"},
+            "grid_L3_current": { "name": "AC-Phase L3 Stromstärke"},
+            "grid_L1_energy_forward_total": { "name": "Energie L1 Gesamt eingespeist"},
+            "grid_L2_energy_forward_total": { "name": "Energie L2 Gesamt eingespeist"},
+            "grid_L3_energy_forward_total": { "name": "Energie L3 Gesamt eingespeist"},
+            "grid_L1_energy_reverse_total": { "name": "Energie L1 Gesamt bezogen"},
+            "grid_L2_energy_reverse_total": { "name": "Energie L2 Gesamt bezogen"},
+            "grid_L3_energy_reverse_total": { "name": "Energie L3 Gesamt bezogen"},
+            "grid_energy_forward_total": { "name": "Energie Gesamt eingespeist"},
+            "grid_energy_reverse_total": { "name": "Energie Gesamt bezogen"}
+        }
     }
 }

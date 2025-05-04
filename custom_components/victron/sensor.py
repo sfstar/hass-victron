@@ -142,6 +142,8 @@ class VictronEntityDescription(SensorEntityDescription, VictronBaseEntityDescrip
 class VictronSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Victron energy sensor."""
 
+    _attr_has_entity_name = True
+
     def __init__(
         self,
         coordinator: victronEnergyDeviceUpdateCoordinator,
@@ -150,7 +152,10 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         """Initialize the sensor."""
         self.description: VictronEntityDescription = description
         self._attr_device_class = description.device_class
-        self._attr_name = f"{description.name}"
+        if description.key.startswith("grid") is False:
+            self._attr_name = f"{description.name}"
+        else:
+            self._attr_translation_key = description.key
         self._attr_native_unit_of_measurement = description.native_unit_of_measurement
         self._attr_state_class = description.state_class
         self.entity_type = description.entity_type
@@ -214,6 +219,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         return entity.DeviceInfo(
             identifiers={(DOMAIN, self.unique_id.split("_")[0])},
             name=self.unique_id.split("_")[1],
+            translation_key=self.unique_id.split("_")[1],
             model=self.unique_id.split("_")[0],
             manufacturer="victron",  # to be dynamically set for gavazzi and redflow
         )

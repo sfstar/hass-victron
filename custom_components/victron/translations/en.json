@@ -25,13 +25,13 @@
                     "dc_voltage": "The DC voltage of your battery in V",
                     "dc_current": "The DC current limit of your battery in A",
                     "number_of_phases": "The phase configuration of your system",
-                    "use_sliders": "Use stepped sliders for writeable number entities"                    
+                    "use_sliders": "Use stepped sliders for writeable number entities"
                 }
             },
             "reconfigure": {
                 "data": {
                     "host": "Host",
-                    "port": "Port"                
+                    "port": "Port"
                 }
             }
         }
@@ -66,8 +66,43 @@
                     "dc_current": "The DC current limit of your battery in A",
                     "number_of_phases": "The phase configuration of your system",
                     "use_sliders": "Use stepped sliders for writeable number entities"
-                }                
+                }
             }
+        }
+    },
+    "device": {
+        "battery": { "name": "Battery" },
+        "grid": { "name": "Grid" },
+        "pvinverter": { "name": "PV-Inverter" },
+        "settings": { "name": "Settings" },
+        "vebus": { "name": "VE-BUS" }
+    },
+    "entity": {
+        "sensor": {
+            "grid_L1_power": { "name": "AC Phase L1 Power" },
+            "grid_L2_power": { "name": "AC Phase L2 Power" },
+            "grid_L3_power": { "name": "AC Phase L3 Power"},
+            "grid_L1_energy_forward": { "name": "Energy L1 forwarded"},
+            "grid_L2_energy_forward": { "name": "Energy L2 forwarded"},
+            "grid_L3_energy_forward": { "name": "Energy L3 forwarded"},
+            "grid_L1_energy_reverse": { "name": "Energy L1 reversed"},
+            "grid_L2_energy_reverse": { "name": "Energy L2 reversed"},
+            "grid_L3_energy_reverse": { "name": "Energy L3 reversed"},
+            "grid_serial": { "name": "Serial number"},
+            "grid_L1_voltage": { "name": "AC Phase L1 Voltage"},
+            "grid_L1_current": { "name": "AC Phase L1 Current"},
+            "grid_L2_voltage": { "name": "AC Phase L2 Voltage"},
+            "grid_L2_current": { "name": "AC Phase L2 Current"},
+            "grid_L3_voltage": { "name": "AC Phase L3 Voltage"},
+            "grid_L3_current": { "name": "AC Phase L3 Current"},
+            "grid_L1_energy_forward_total": { "name": "Energy L1 Totals forwarded"},
+            "grid_L2_energy_forward_total": { "name": "Energy L2 Totals forwarded"},
+            "grid_L3_energy_forward_total": { "name": "Energy L3 Totals forwarded"},
+            "grid_L1_energy_reverse_total": { "name": "Energy L1 Totals reversed"},
+            "grid_L2_energy_reverse_total": { "name": "Energy L2 Totals reversed"},
+            "grid_L3_energy_reverse_total": { "name": "Energy L3 Totals reversed"},
+            "grid_energy_forward_total": { "name": "Energy Totals forwarded"},
+            "grid_energy_reverse_total": { "name": "Energy Totals reversed"}
         }
     }
 }
