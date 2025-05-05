@@ -70,12 +70,13 @@
             }
         }
     },
+    "__comment": "translations from https://github.com/victronenergy/gui-v2/tree/main/i18n",
     "device": {
         "battery": { "name": "Battery" },
         "grid": { "name": "Grid" },
-        "pvinverter": { "name": "PV-Inverter" },
+        "pvinverter": { "name": "PV Inverter" },
         "settings": { "name": "Settings" },
-        "vebus": { "name": "VE-BUS" }
+        "vebus": { "name": "VE.Bus" }
     },
     "entity": {
         "sensor": {
@@ -102,7 +103,121 @@
             "grid_L2_energy_reverse_total": { "name": "Energy L2 Totals reversed"},
             "grid_L3_energy_reverse_total": { "name": "Energy L3 Totals reversed"},
             "grid_energy_forward_total": { "name": "Energy Totals forwarded"},
-            "grid_energy_reverse_total": { "name": "Energy Totals reversed"}
+            "grid_energy_reverse_total": { "name": "Energy Totals reversed"},
+
+            "vebus_activein_L1_voltage": { "name": "AC In: L1 Voltage"},
+            "vebus_activein_L2_voltage": { "name": "AC In: L2 Voltage"},
+            "vebus_activein_L3_voltage": { "name": "AC In: L3 Voltage"},
+            "vebus_activein_L1_current": { "name": "AC In: L1 Current"},
+            "vebus_activein_L2_current": { "name": "AC In: L2 Current"},
+            "vebus_activein_L3_current": { "name": "AC In: L3 Current"},
+            "vebus_activein_L1_frequency": { "name": "AC In: L1 Frequency"},
+            "vebus_activein_L2_frequency": { "name": "AC In: L2 Frequency"},
+            "vebus_activein_L3_frequency": { "name": "AC In: L3 Frequency"},
+            "vebus_activein_L1_power": { "name": "AC In: L1 Power"},
+            "vebus_activein_L2_power": { "name": "AC In: L2 Power"},
+            "vebus_activein_L3_power": { "name": "AC In: L3 Power"},
+            "vebus_out_L1_voltage": { "name": "AC Out: L1 Voltage"},
+            "vebus_out_L2_voltage": { "name": "AC Out: L2 Voltage"},
+            "vebus_out_L3_voltage": { "name": "AC Out: L3 Voltage"},
+            "vebus_out_L1_current": { "name": "AC Out: L1 Current"},
+            "vebus_out_L2_current": { "name": "AC Out: L2 Current"},
+            "vebus_out_L3_current": { "name": "AC Out: L3 Current"},
+            "vebus_out_L1_frequency": { "name": "AC Out: L1 Frequency"},
+            "vebus_activein_currentlimit": { "name": "Grid current limit"},
+            "vebus_out_L1_power": { "name": "AC Out: L1 Power"},
+            "vebus_out_L2_power": { "name": "AC Out: L2 Power"},
+            "vebus_out_L3_power": { "name": "AC Out: L3 Power"},
+            "vebus_battery_voltage": { "name": "DC Voltage"},
+            "vebus_battery_current": { "name": "DC Current"},
+            "vebus_numberofphases": { "name": "Number of phases"},
+            "vebus_activein_activeinput": {
+                "name": "Active AC input",
+                "state": {
+                    "AC_INPUT_1": "AC In 1",
+                    "AC_INPUT_2": "AC IN 2",
+                    "DISCONNECTED": "Disconnected"
+                }
+            },
+            "vebus_soc": { "name": "State of charge"},
+            "vebus_state": {
+                "name": "State",
+                "state": {
+                    "OFF": "Off",
+                    "LOW_POWER": "Low Power",
+                    "FAULT": "Fault condition",
+                    "BULK": "Bulk charging",
+                    "ABSORPTION": "Absorption charging",
+                    "FLOAT": "Float charging",
+                    "STORAGE": "Storage mode",
+                    "EQUALIZE": "Equalization charging",
+                    "PASSTHRU": "Pass-thru",
+                    "INVERTING": "Inverting",
+                    "POWER_ASSIST": "Assisting",
+                    "POWER_SUPPLY": "Power supply mode",
+                    "EXTERNAL_CONTROL": "External control"
+                }
+            },
+            "vebus_error": { "name": "Error"},
+            "vebus_mode": {
+                "name": "Mode",
+                "state": {
+                    "CHARGER": "Charger only",
+                    "INVERTER": "Inverter only",
+                    "ON": "On",
+                    "OFF": "Off"
+                }
+            },
+            "vebus_alarm_hightemperature": { "name": "Alarm status: Temperature"},
+            "vebus_alarm_lowbattery": { "name": "Alarm status: Low battery voltage"},
+            "vebus_alarm_overload": { "name": "Alarm status: Overload"},
+            "vebus_L1_acpowersetpoint": { "name": "Grid setpoint L1 Power"},
+            "vebus_disablecharge": { "name": "Disable charging"},
+            "vebus_disablefeedin": { "name": "Feed-in limiting active"},
+            "vebus_L2_acpowersetpoint": { "name": "Grid setpoint L2 Power"},
+            "vebus_L3_acpowersetpoint": { "name": "Grid setpoint L3 Power"},
+            "vebus_alarm_temperaturesensor": { "name": "Alarm status: Temperature sensor"},
+            "vebus_alarm_voltagesensor": { "name": "Alarm status: Voltage Sensor"},
+            "vebus_alarm_L1_higtemperature": { "name": "Alarm status: L1 Temperature"},
+            "vebus_alarm_L1_lowbattery": { "name": "Alarm status: L1 Low battery voltage"},
+            "vebus_alarm_L1_overload": { "name": "Alarm status: L1 Overload"},
+            "vebus_alarm_L1_ripple": { "name": "Alarm status: L1 Ripple"},
+            "vebus_alarm_L2_higtemperature": { "name": "Alarm status: L2 Temperature"},
+            "vebus_alarm_L2_lowbattery": { "name": "Alarm status: L2 Low battery voltage"},
+            "vebus_alarm_L2_overload": { "name": "Alarm status: L2 Overload"},
+            "vebus_alarm_L2_ripple": { "name": "Alarm status: L2 Ripple"},
+            "vebus_alarm_L3_higtemperature": { "name": "Alarm status: L3 Temperature"},
+            "vebus_alarm_L3_lowbattery": { "name": "Alarm status: L3 Low battery voltage"},
+            "vebus_alarm_L3_overload": { "name": "Alarm status: L1 Overload"},
+            "vebus_alarm_L3_ripple": { "name": "Alarm status: L3 Ripple"},
+            "vebus_pvinverter_disable": { "name": "Disable PV Inverter"},
+            "vebus_bms_allowtocharge": { "name": "BMS: Allow to charge"},
+            "vebus_bms_allowtodischarge": { "name": "BMS: Allow to discharge"},
+            "vebus_bms_bmsexpected": { "name": "BMS: Expected"},
+            "vebus_bms_error": { "name": "BMS: Error"},
+            "vebus_battery_temperature": { "name": "Battery temperature"},
+            "vebus_systemreset": { "name": "System reset"},
+            "vebus_alarm_phaserotation": { "name": "Alarm status: Phase rotation"},
+            "vebus_alarm_gridlost": { "name": "Alarm status: Grid lost"},
+            "vebus_donotfeedinovervoltage": { "name": "Do not feed in overvoltage"},
+            "vebus_L1_maxfeedinpower": { "name": "Maximum feed-in Power L1"},
+            "vebus_L2_maxfeedinpower": { "name": "Maximum feed-in Power L2"},
+            "vebus_L3_maxfeedinpower": { "name": "Maximum feed-in Power L3"},
+            "vebus_state_ignoreacin1": { "name": "Ignore AC In 1"},
+            "vebus_state_ignoreacin2": { "name": "Ignore AC In 2"},
+            "vebus_targetpowerismaxfeedin": { "name": "Target Power is max. feed-in"},
+            "vebus_fixsolaroffsetto100mv": { "name": "Fix solar offset to 100mv"},
+            "vebus_sustain": { "name": "Sustain"},
+            "vebus_acin1toacout": { "name": "AC In 1 to AC Out"},
+            "vebus_acin1toinverter": { "name": "AC In 1 to PV Inverter"},
+            "vebus_acin2toacout": { "name": "AC In 2 to AC Out"},
+            "vebus_acin2toinverter": { "name": "AC In 2 to PV Inverter"},
+            "vebus_acouttoacin1": { "name": "AC Out to AC In 1"},
+            "vebus_acouttoacin2": { "name": "AC Out to AC In 2"},
+            "vebus_invertertoacin1": { "name": "PV Inverter to AC In 1"},
+            "vebus_invertertoacin2": { "name": "PV Inverter to AC In 2"},
+            "vebus_invertertoacout": { "name": "PV Inverter to AC Out"},
+            "vebus_outtoinverter": { "name": "AC Out to PV Inverter"}
         }
     }
 }

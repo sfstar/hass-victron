@@ -152,7 +152,9 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         """Initialize the sensor."""
         self.description: VictronEntityDescription = description
         self._attr_device_class = description.device_class
-        if description.key.startswith("grid") is False:
+        if (description.key.startswith("grid")) or (
+            description.key.startswith("vebus")
+        ) is False:
             self._attr_name = f"{description.name}"
         else:
             self._attr_translation_key = description.key
