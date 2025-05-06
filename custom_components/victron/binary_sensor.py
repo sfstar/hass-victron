@@ -76,6 +76,8 @@ class VictronEntityDescription(
 class VictronBinarySensor(CoordinatorEntity, BinarySensorEntity):
     """A binary sensor implementation for Victron energy device."""
 
+    _attr_has_entity_name = True
+
     def __init__(
         self,
         coordinator: victronEnergyDeviceUpdateCoordinator,
@@ -85,7 +87,14 @@ class VictronBinarySensor(CoordinatorEntity, BinarySensorEntity):
         self.description: VictronEntityDescription = description
         # this needs to be changed to allow multiple of the same type
         self._attr_device_class = description.device_class
-        self._attr_name = f"{description.name}"
+        if (
+            description.key.startswith("grid")
+            or description.key.startswith("vebus")
+            or description.key.startswith("battery")
+        ) is False:
+            self._attr_name = f"{description.name}"
+        else:
+            self._attr_translation_key = description.key
 
         self._attr_unique_id = f"{self.description.slave}_{self.description.key}"
         if self.description.slave not in (100, 225):

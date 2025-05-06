@@ -209,6 +209,8 @@ class VictronEntityDescription(
 class VictronNumber(NumberEntity):
     """Victron number."""
 
+    _attr_has_entity_name = True
+
     description: VictronEntityDescription
 
     def __init__(
@@ -219,7 +221,14 @@ class VictronNumber(NumberEntity):
         """Initialize the entity."""
         self.coordinator = coordinator
         self.description = description
-        self._attr_name = f"{description.name}"
+        if (
+            description.key.startswith("grid")
+            or description.key.startswith("vebus")
+            or description.key.startswith("battery")
+        ) is False:
+            self._attr_name = f"{description.name}"
+        else:
+            self._attr_translation_key = description.key
 
         self.data_key = str(self.description.slave) + "." + str(self.description.key)
 

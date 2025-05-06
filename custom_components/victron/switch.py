@@ -78,6 +78,8 @@ class VictronEntityDescription(
 class VictronSwitch(CoordinatorEntity, SwitchEntity):
     """Representation of a Victron switch."""
 
+    _attr_has_entity_name = True
+
     def __init__(
         self,
         hass: HomeAssistant,
@@ -87,7 +89,14 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
         """Initialize the switch."""
         self.coordinator = coordinator
         self.description: VictronEntityDescription = description
-        self._attr_name = f"{description.name}"
+        if (
+            description.key.startswith("grid")
+            or description.key.startswith("vebus")
+            or description.key.startswith("battery")
+        ) is False:
+            self._attr_name = f"{description.name}"
+        else:
+            self._attr_translation_key = description.key
         self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
         self._attr_unique_id = f"{description.slave}_{self.description.key}"
