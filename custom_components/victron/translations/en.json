@@ -135,7 +135,7 @@
                 "name": "Active AC input",
                 "state": {
                     "AC_INPUT_1": "AC In 1",
-                    "AC_INPUT_2": "AC IN 2",
+                    "AC_INPUT_2": "AC In 2",
                     "DISCONNECTED": "Disconnected"
                 }
             },
@@ -371,7 +371,130 @@
             "battery_system_minvoltagecellid": { "name": "Lowest cell voltage ID"},
             "battery_system_maxvoltagecellid": { "name": "Highest cell voltage ID"},
             "battery_system_mintemperaturecellid": { "name": "Minimum cell temperature ID"},
-            "battery_system_maxtemperaturecellid": { "name": "Maximum cell temperature ID"}
+            "battery_system_maxtemperaturecellid": { "name": "Maximum cell temperature ID"},
+
+            "pvinverter_position": {
+                "name": "Position",
+                "state": {
+                    "AC_INPUT_1": "AC In 1",
+                    "AC_OUTPUT": "AC Out",
+                    "AC_INPUT_2": "AC In 2"
+                }
+            },
+            "pvinverter_L1_voltage": { "name": "AC Phase L1 Voltage"},
+            "pvinverter_L1_current": { "name": "AC Phase L1 Current"},
+            "pvinverter_L1_power": { "name": "AC Phase L1 Power"},
+            "pvinverter_L1_energy_forward": { "name": "Energy L1 forwarded"},
+            "pvinverter_L2_voltage": { "name": "AC Phase L2 Voltage"},
+            "pvinverter_L2_current": { "name": "AC Phase L2 Current"},
+            "pvinverter_L2_power": { "name": "AC Phase L2 Power"},
+            "pvinverter_L2_energy_forward": { "name": "Energy L2 forwarded"},
+            "pvinverter_L3_voltage": { "name": "AC Phase L3 Voltage"},
+            "pvinverter_L3_current": { "name": "AC Phase L3 Current"},
+            "pvinverter_L3_power": { "name": "AC Phase L3 Power"},
+            "pvinverter_L3_energy_forward": { "name": "Energy L3 forwarded"},
+            "pvinverter_serial": { "name": "Serial number"},
+            "pvinverter_L1_energy_forward_total": { "name": "Energy L1 Totals forwarded"},
+            "pvinverter_L2_energy_forward_total": { "name": "Energy L2 Totals forwarded"},
+            "pvinverter_L3_energy_forward_total": { "name": "Energy L3 Totals forwarded"},
+            "pvinverter_power_total": { "name": "AC Total Power "},
+            "pvinverter_power_max_capacity": { "name": "Maximum Power"},
+            "pvinverter_powerlimit": { "name": "Power limit"},
+
+            "__comment: TODO - Missing Translations": "motordrive, charger, gps, tank, inverter, genset, temperature, pulsemeter, digitalinput, generator, meteo, evcharger, acloads, fuelcell, alternator, dcsource, dcload, dcsystem, multi",
+
+            "settings_ess_acpowersetpoint": { "name": "ESS: Grid setpoint"},
+            "settings_ess_maxchargepercentage": { "name": "ESS: Maximum charge percentage"},
+            "settings_ess_maxdischargepercentage": { "name": "ESS: Maximum discharge percentage"},
+            "settings_ess_acpowersetpoint2": { "name": "ESS: Grid setpoint 2"},
+            "settings_ess_maxdischargepower": { "name": "ESS: Maximum discharge power"},
+            "settings_ess_maxchargecurrent": { "name": "ESS: Maximum charge current"},
+            "settings_ess_maxfeedinpower": { "name": "ESS: Maximum feed-in power"},
+            "settings_ess_overvoltagefeedin": { "name": "ESS: Feed-in excess DC-coupled PV"},
+            "settings_ess_preventfeedback": { "name": "ESS: Don't feed in excess AC-coupled PV"},
+            "settings_ess_feedinpowerlimit": { "name": "ESS: Feed-in limiting active"},
+            "settings_systemsetup_maxchargevoltage": { "name": "Maximum charge voltage"},
+            "settings_ess_batterylife_state": {
+                "name": "ESS: Battery life state",
+                "state": {
+                    "BL_DISABLED_DUPLICATE_1": "Battery life Disabled - Duplicate 1",
+                    "RESTARTING": "Restarting",
+                    "SELF_CONSUMPTION": "Self-consumption",
+                    "SELF_CONSUMPTION_DUPLICATE_1": "Self-consumption - Duplicate 1",
+                    "SELF_CONSUMPTION_DUPLICATE_2": "Self-consumption - Duplicate 2",
+                    "DISCHARGE_DISABLED": "Discharge Disabled",
+                    "FORCE_CHARGE": "Force charge",
+                    "SUSTAIN": "Sustain",
+                    "LOW_SOC_RECHARGE": "Low SOC recharge",
+                    "KEEP_BATTERIES_CHARGED": "Keep batteries charged",
+                    "BL_DISABLED": "Battery life Disabled",
+                    "BL_DISABLED_LOW_SOC": "Battery life Disabled: Low SOC",
+                    "BL_DISABLED_LOC_SOC_RECHARGE": "Battery life Disabled: Low SOC recharge"
+                }
+            },
+            "settings_ess_batterylife_minimumsoc": { "name": "ESS: Minimum SOC (unless grid fails)"},
+            "settings_ess_mode": {
+                "name": "ESS: Mode",
+                "state": {
+                    "SELF_CONSUMPTION_WITH_BATTERY_LIFE": "Optimized with battery life",
+                    "SELF_CONSUMPTION": "Optimized without battery life",
+                    "KEEP_CHARGED": "Keep batteries charged",
+                    "EXTERNAL_CONTROL": "External control"
+                }
+            },
+            "settings_ess_batterylife_soclimit": { "name": "ESS: Battery life SOC limit"},
+
+            "system_serial": { "name": "System: Serial number"},
+            "system_relay_0": { "name": "System: Relay 1 on"},
+            "system_relay_1": { "name": "System: Relay 2 on"},
+            "system_pvonoutput_L1": { "name": "System: PV on AC Out L1"},
+            "system_pvonoutput_L2": { "name": "System: PV on AC Out L2"},
+            "system_pvonoutput_L3": { "name": "System: PV on AC Out L3"},
+            "system_pvongrid_L1": { "name": "System: PV on Grid L1"},
+            "system_pvongrid_L2": { "name": "System: PV on Grid L2"},
+            "system_pvongrid_L3": { "name": "System: PV on Grid L3"},
+            "system_pvongenset_L1": { "name": "System: PV on Genset L1"},
+            "system_pvongenset_L2": { "name": "System: PV on Genset L2"},
+            "system_pvongenset_L3": { "name": "System: PV on Genset L3"},
+            "system_consumption_L1": { "name": "System: Consumption L1"},
+            "system_consumption_L2": { "name": "System: Consumption L2"},
+            "system_consumption_L3": { "name": "System: Consumption L3"},
+            "system_grid_L1": { "name": "System: Grid L1"},
+            "system_grid_L2": { "name": "System: Grid L2"},
+            "system_grid_L3": { "name": "System: Grid L3"},
+            "system_genset_L1": { "name": "System: Genset L1"},
+            "system_genset_L2": { "name": "System: Genset L2"},
+            "system_genset_L3": { "name": "System: Genset L3"},
+            "system_input_source": {
+                "name": "System: Input Source",
+                "state": {
+                    "UNKNOWN": "Unknown",
+                    "GRID": "Grid",
+                    "GENERATOR": "Generator",
+                    "SHORE": "Shore",
+                    "NOT_CONNECTED": "Not connected"
+                }
+            },
+            "system_battery_voltage": { "name": "System: Battery Voltage"},
+            "system_battery_current": { "name": "System: Battery Current"},
+            "system_battery_power": { "name": "System: Battery Power"},
+            "system_battery_soc": { "name": "System: Battery SOC"},
+            "system_battery_state": {
+                "name": "System: Battery State",
+                "state": {
+                    "IDLE": "Idle",
+                    "CHARGING": "Charging",
+                    "DISCHARGING": "Discharging"
+                }
+            },
+            "system_battery_amphours": { "name": "System: Battery Ah"},
+            "system_battery_time_to_go": { "name": "System: Battery Time to go"},
+            "system_dc_pv_power": { "name": "System: PV Power"},
+            "system_dc_pv_current": { "name": "System: PV Current"},
+            "system_charger_power": { "name": "System: Charger Power"},
+            "system_system_power": { "name": "System: System Power"},
+            "system_bus_charge_current": { "name": "System: Bus Charge Current"},
+            "system_bus_charge_power": { "name": "System: Bus Charge Power"}
         },
         "binary_sensor": {
             "vebus_bms_allowtocharge": { "name": "BMS: Allow to charge"},
@@ -385,7 +508,8 @@
             "battery_balancing": { "name": "Balancing"},
             "battery_io_allowtocharge": { "name": "Allow to charge"},
             "battery_io_allowtodischarge": { "name": "Allow to discharge"},
-            "battery_io_externalrelay": { "name": "External relay"}
+            "battery_io_externalrelay": { "name": "External relay"},
+            "settings_ess_feedinpowerlimit": { "name": "ESS: Limit system feed-in"}
         },
         "button": {
             "vebus_systemreset": { "name": "System reset"}
@@ -398,7 +522,17 @@
             "vebus_L3_acpowersetpoint": { "name": "Grid setpoint L3 Power"},
             "vebus_L1_maxfeedinpower": { "name": "Maximum feed-in Power L1"},
             "vebus_L2_maxfeedinpower": { "name": "Maximum feed-in Power L2"},
-            "vebus_L3_maxfeedinpower": { "name": "Maximum feed-in Power L3"}
+            "vebus_L3_maxfeedinpower": { "name": "Maximum feed-in Power L3"},
+            "pvinverter_powerlimit": { "name": "Power limit"},
+            "settings_ess_acpowersetpoint": { "name": "ESS: Grid setpoint"},
+            "settings_ess_maxchargepercentage": { "name": "ESS: Maximum charge percentage"},
+            "settings_ess_maxdischargepercentage": { "name": "ESS: Maximum discharge percentage"},
+            "settings_ess_acpowersetpoint2": { "name": "ESS: Grid setpoint 2"},
+            "settings_ess_maxdischargepower": { "name": "ESS: Maximum discharge power"},
+            "settings_ess_maxchargecurrent": { "name": "ESS: Maximum charge current"},
+            "settings_ess_maxfeedinpower": { "name": "ESS: Maximum feed-in power"},
+            "settings_systemsetup_maxchargevoltage": { "name": "Maximum charge voltage"},
+            "settings_ess_batterylife_minimumsoc": { "name": "ESS: Minimum SOC (unless grid fails)"}
         },
         "select": {
             "vebus_mode": {
@@ -409,6 +543,33 @@
                     "ON": "On",
                     "OFF": "Off"
                 }
+            },
+            "settings_ess_batterylife_state": {
+                "name": "ESS: Battery life state",
+                "state": {
+                    "BL_DISABLED_DUPLICATE_1": "Battery life Disabled - Duplicate 1",
+                    "RESTARTING": "Restarting",
+                    "SELF_CONSUMPTION": "Self-consumption",
+                    "SELF_CONSUMPTION_DUPLICATE_1": "Self-consumption - Duplicate 1",
+                    "SELF_CONSUMPTION_DUPLICATE_2": "Self-consumption - Duplicate 2",
+                    "DISCHARGE_DISABLED": "Discharge Disabled",
+                    "FORCE_CHARGE": "Force charge",
+                    "SUSTAIN": "Sustain",
+                    "LOW_SOC_RECHARGE": "Low SOC recharge",
+                    "KEEP_BATTERIES_CHARGED": "Keep batteries charged",
+                    "BL_DISABLED": "Battery life Disabled",
+                    "BL_DISABLED_LOW_SOC": "Battery life Disabled: Low SOC",
+                    "BL_DISABLED_LOC_SOC_RECHARGE": "Battery life Disabled: Low SOC recharge"
+                }
+            },
+            "settings_ess_mode": {
+                "name": "ESS: Mode",
+                "state": {
+                    "SELF_CONSUMPTION_WITH_BATTERY_LIFE": "Optimized with battery life",
+                    "SELF_CONSUMPTION": "Optimized without battery life",
+                    "KEEP_CHARGED": "Keep batteries charged",
+                    "EXTERNAL_CONTROL": "External control"
+                }
             }
         },
         "switch": {
@@ -418,7 +579,11 @@
             "vebus_donotfeedinovervoltage": { "name": "Do not feed in overvoltage"},
             "vebus_targetpowerismaxfeedin": { "name": "Target Power is max. feed-in"},
             "vebus_fixsolaroffsetto100mv": { "name": "Fix solar offset to 100mv"},
-            "battery_relay": { "name": "Relay"}
+            "battery_relay": { "name": "Relay"},
+            "settings_ess_overvoltagefeedin": { "name": "ESS: Feed-in excess DC-coupled PV"},
+            "settings_ess_preventfeedback": { "name": "ESS: Don't feed in excess AC-coupled PV"},
+            "system_relay_0": { "name": "System: Relay 1 on"},
+            "system_relay_1": { "name": "System: Relay 2 on"}
         }
     }
 }

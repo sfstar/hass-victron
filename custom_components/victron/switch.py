@@ -93,6 +93,9 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
             description.key.startswith("grid")
             or description.key.startswith("vebus")
             or description.key.startswith("battery")
+            or description.key.startswith("pvinverter")
+            or description.key.startswith("settings")
+            or description.key.startswith("system")
         ) is False:
             self._attr_name = f"{description.name}"
         else:
