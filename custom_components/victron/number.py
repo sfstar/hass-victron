@@ -33,6 +33,7 @@ from .const import (
     CONF_NUMBER_OF_PHASES,
     CONF_USE_SLIDERS,
     DOMAIN,
+    TRANSLATED_ENTITY_TYPES,
     UINT16_MAX,
     SliderWriteType,
     register_info_dict,
@@ -221,17 +222,10 @@ class VictronNumber(NumberEntity):
         """Initialize the entity."""
         self.coordinator = coordinator
         self.description = description
-        if (
-            description.key.startswith("grid")
-            or description.key.startswith("vebus")
-            or description.key.startswith("battery")
-            or description.key.startswith("pvinverter")
-            or description.key.startswith("settings")
-            or description.key.startswith("system")
-        ) is False:
-            self._attr_name = f"{description.name}"
-        else:
+        if description.key.startswith(TRANSLATED_ENTITY_TYPES):
             self._attr_translation_key = description.key
+        else:
+            self._attr_name = f"{description.name}"
 
         self.data_key = str(self.description.slave) + "." + str(self.description.key)
 

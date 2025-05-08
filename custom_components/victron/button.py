@@ -18,7 +18,13 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .base import VictronWriteBaseEntityDescription
-from .const import CONF_ADVANCED_OPTIONS, DOMAIN, ButtonWriteType, register_info_dict
+from .const import (
+    CONF_ADVANCED_OPTIONS,
+    DOMAIN,
+    TRANSLATED_ENTITY_TYPES,
+    ButtonWriteType,
+    register_info_dict,
+)
 from .coordinator import victronEnergyDeviceUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -88,17 +94,10 @@ class VictronBinarySensor(CoordinatorEntity, ButtonEntity):
         """Initialize the sensor."""
         self.description: VictronEntityDescription = description
         self._attr_device_class = description.device_class
-        if (
-            description.key.startswith("grid")
-            or description.key.startswith("vebus")
-            or description.key.startswith("battery")
-            or description.key.startswith("pvinverter")
-            or description.key.startswith("settings")
-            or description.key.startswith("system")
-        ) is False:
-            self._attr_name = f"{description.name}"
-        else:
+        if description.key.startswith(TRANSLATED_ENTITY_TYPES):
             self._attr_translation_key = description.key
+        else:
+            self._attr_name = f"{description.name}"
 
         self._attr_unique_id = f"{self.description.slave}_{self.description.key}"
         if self.description.slave not in (100, 225):

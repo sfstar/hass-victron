@@ -32,6 +32,7 @@ from .base import VictronBaseEntityDescription
 from .const import (
     CONF_ADVANCED_OPTIONS,
     DOMAIN,
+    TRANSLATED_ENTITY_TYPES,
     BoolReadEntityType,
     ReadEntityType,
     TextReadEntityType,
@@ -152,17 +153,10 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         """Initialize the sensor."""
         self.description: VictronEntityDescription = description
         self._attr_device_class = description.device_class
-        if (
-            description.key.startswith("grid")
-            or description.key.startswith("vebus")
-            or description.key.startswith("battery")
-            or description.key.startswith("pvinverter")
-            or description.key.startswith("settings")
-            or description.key.startswith("system")
-        ) is False:
-            self._attr_name = f"{description.name}"
-        else:
+        if description.key.startswith(TRANSLATED_ENTITY_TYPES):
             self._attr_translation_key = description.key
+        else:
+            self._attr_name = f"{description.name}"
         self._attr_native_unit_of_measurement = description.native_unit_of_measurement
         self._attr_state_class = description.state_class
         self.entity_type = description.entity_type

@@ -73,6 +73,15 @@ INT32 = "int32"
 
 UINT16_MAX = 65535
 
+TRANSLATED_ENTITY_TYPES = (
+    "grid",
+    "vebus",
+    "battery",
+    "pvinverter",
+    "settings",
+    "system",
+)
+
 
 class EntityType:
     """Base entityType."""
