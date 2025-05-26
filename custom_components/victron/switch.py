@@ -135,7 +135,7 @@ class VictronSwitch(CoordinatorEntity, SwitchEntity):
             self.description.slave,
             self.description.key,
         )
-        return cast(bool, data)
+        return cast("bool", data)
 
     @property
     def available(self) -> bool:

@@ -70,7 +70,7 @@
             }
         }
     },
-    "__comment": "translations from https://github.com/victronenergy/gui-v2/tree/main/i18n",
+    "comment_info": "translations from https://github.com/victronenergy/gui-v2/tree/main/i18n",
     "device": {
         "battery": { "name": "Batterie" },
         "grid": { "name": "Netz" },
@@ -134,38 +134,38 @@
             "vebus_activein_activeinput": {
                 "name": "Aktiver AC-Eingang",
                 "state": {
-                    "AC_INPUT_1": "AC-Eingang 1",
-                    "AC_INPUT_2": "AC-Eingang 2",
-                    "DISCONNECTED": "Getrennt"
+                    "ac_input_1": "AC-Eingang 1",
+                    "ac_input_2": "AC-Eingang 2",
+                    "disconnected": "Getrennt"
                 }
             },
             "vebus_soc": { "name": "Ladezustand"},
             "vebus_state": {
                 "name": "Zustand",
                 "state": {
-                    "OFF": "Aus",
-                    "LOW_POWER": "Niedrige Leistung",
-                    "FAULT": "Störungszustand",
-                    "BULK": "Bulkladung",
-                    "ABSORPTION": "Absorptionsladung",
-                    "FLOAT": "Erhaltungsladung",
-                    "STORAGE": "Lagerungsmodus",
-                    "EQUALIZE": "Ausgleichsladung",
-                    "PASSTHRU": "Durchleitung",
-                    "INVERTING": "Inverting",
-                    "POWER_ASSIST": "Unterstützen",
-                    "POWER_SUPPLY": "Stromversorgungsmodus",
-                    "EXTERNAL_CONTROL": "Externe Steuerung"
+                    "off": "Aus",
+                    "low_power": "Niedrige Leistung",
+                    "fault": "Störungszustand",
+                    "bulk": "Bulkladung",
+                    "absorption": "Absorptionsladung",
+                    "float": "Erhaltungsladung",
+                    "storage": "Lagerungsmodus",
+                    "equalize": "Ausgleichsladung",
+                    "passthru": "Durchleitung",
+                    "inverting": "Inverting",
+                    "power_assist": "Unterstützen",
+                    "power_supply": "Stromversorgungsmodus",
+                    "external_control": "Externe Steuerung"
                 }
             },
             "vebus_error": { "name": "Fehler"},
             "vebus_mode": {
                 "name": "Modus",
                 "state": {
-                    "CHARGER": "Nur Ladegerät",
-                    "INVERTER": "Nur Wechselrichter",
-                    "ON": "Ein",
-                    "OFF": "Aus"
+                    "charger": "Nur Ladegerät",
+                    "inverter": "Nur Wechselrichter",
+                    "on": "Ein",
+                    "off": "Aus"
                 }
             },
             "vebus_alarm_hightemperature": { "name": "Alarmstatus: Temperatur"},
@@ -286,64 +286,64 @@
             "battery_state": {
                 "name": "Status",
                 "state": {
-                    "WAIT_START_INIT": "Initialisierung: Warte auf Startbeginn",
-                    "BEFORE_BOOT_INIT": "Initialisierung: Vor dem Startvorgang",
-                    "BEFORE_BOOT_DELAY_INIT": "Initialisierung: Verzögerung vor dem Startvorgang",
-                    "WAIT_BOOT_INIT": "Initialisierung: Warte auf Startvorgang",
-                    "INITIALIZING": "Initialisierung",
-                    "BATTERY_VOLTAGE_MEASURE_INIT": "Initialisierung: Spannungsmessung",
-                    "BATTERY_CALCULATE_VOLTAGE_INIT": "Initialisierung: Berechne Spannung",
-                    "WAIT_BUS_VOLTAGE_INIT": "Initialisierung: Warte auf Bus-Spannung",
-                    "WAIT_LYNX_SHUNT_INIT": "Initialisierung: Lynx Shunt",
-                    "RUNNING": "In Betrieb",
-                    "ERROR": "Fehler",
-                    "UNUSED": "Ungenutzt",
-                    "SHUTDOWN": "Heruntergefahren",
-                    "SLAVE_UPDATING": "Aktualisierung",
-                    "STANDBY": "Standby",
-                    "GOING_TO_RUN": "Wird ausgeführt werden",
-                    "PRE_CHARGING": "Vorabaufladung"
+                    "wait_start_init": "Initialisierung: Warte auf Startbeginn",
+                    "before_boot_init": "Initialisierung: Vor dem Startvorgang",
+                    "before_boot_delay_init": "Initialisierung: Verzögerung vor dem Startvorgang",
+                    "wait_boot_init": "Initialisierung: Warte auf Startvorgang",
+                    "initializing": "Initialisierung",
+                    "battery_voltage_measure_init": "Initialisierung: Spannungsmessung",
+                    "battery_calculate_voltage_init": "Initialisierung: Berechne Spannung",
+                    "wait_bus_voltage_init": "Initialisierung: Warte auf Bus-Spannung",
+                    "wait_lynx_shunt_init": "Initialisierung: Lynx Shunt",
+                    "running": "In Betrieb",
+                    "error": "Fehler",
+                    "unused": "Ungenutzt",
+                    "shutdown": "Heruntergefahren",
+                    "slave_updating": "Aktualisierung",
+                    "standby": "Standby",
+                    "going_to_run": "Wird ausgeführt werden",
+                    "pre_charging": "Vorabaufladung"
                 }
             },
             "battery_error": {
                 "name": "Fehler",
                 "state": {
-                    "NONE": "Kein Fehler",
-                    "BATTERY_INIT_ERROR": "Fehler Batterieinitialisierung",
-                    "NO_BATTERIES_CONNECTED": "Keine Batterien angeschlossen",
-                    "UNKNOWN_BATTERY_CONNECTED": "Batterie unbekannt",
-                    "DIFFERENT_BATTERY_TYPE": "Unterschiedliche Batterietypen",
-                    "NUMBER_OF_BATTERIES_INCORRECT": "Anz. d. Batterien falsch",
-                    "LYNX_SHUNT_NOT_FOUND": "Lynx Shunt nicht gefunden",
-                    "BATTERY_MEASURE_ERROR": "Fehler Batteriemessung",
-                    "INTERNAL_CALCULATION_ERROR": "Interner Berechnungsfehler",
-                    "BATTERIES_IN_SERIES_NOT_OK": "Anz. d. Batterien in Reihe falsch",
-                    "NUMBER_OF_BATTERIES_INCORRECT_DUPLICATE_1": "Anz. d. Batterien falsch - Duplikat",
-                    "HARDWARE_ERROR": "Hardwarefehler",
-                    "WATCHDOG_ERROR": "Watchdog-Fehler",
-                    "OVER_VOLTAGE": "Überspannung",
-                    "UNDER_VOLTAGE": "Unterspannung",
-                    "OVER_TEMPERATURE": "Übertemperatur",
-                    "UNDER_TEMPERATURE": "Untertemperatur",
-                    "HARDWARE_FAULT": "Hardwarestörung",
-                    "STANDBY_SHUTDOWN": "Standby/Abschaltung",
-                    "PRE_CHARGE_CHARGE_ERROR": "Vorladen: Ladefehler",
-                    "SAFETY_CONTACTOR_CHECK_ERROR": "Fehler Prüfung Sicherheitsschütz",
-                    "PRE_CHARGE_DISCHARGE_ERROR": "Vorladen: Entladefehler",
-                    "ADC_ERROR": "ADC-Fehler",
-                    "SLAVE_ERROR": "Slave-Fehler",
-                    "SLAVE_WARNING": "Slave-Warnung",
-                    "PRE_CHARGE_ERROR": "Fehler Vorladen",
-                    "SAFETY_CONTACTOR_ERROR": "Fehler Sicherheitsschütz",
-                    "OVER_CURRENT": "Überstrom",
-                    "SLAVE_UPDATE_FAILED": "Slave-Update fehlgeschlagen",
-                    "SLAVE_UPDATE_UNAVAILABLE": "Slave-Update nicht verfügbar",
-                    "CALIBRATION_DATA_LOST": "Kallibrierungsdaten verloren",
-                    "SETTINGS_INVALID": "Einstellungen ungültig",
-                    "BMS_CABLE": "BMS Kabelfehler",
-                    "REFERENCE_FAILURE": "Referenzspannungsfehler",
-                    "WRONG_SYSTEM_VOLTAGE": "Falsche Systemspannung",
-                    "PRE_CHARGE_TIMEOUT": "Vorladung Zeitüberschreitung"
+                    "none": "Kein Fehler",
+                    "battery_init_error": "Fehler Batterieinitialisierung",
+                    "no_batteries_connected": "Keine Batterien angeschlossen",
+                    "unknown_battery_connected": "Batterie unbekannt",
+                    "different_battery_type": "Unterschiedliche Batterietypen",
+                    "number_of_batteries_incorrect": "Anz. d. Batterien falsch",
+                    "lynx_shunt_not_found": "Lynx Shunt nicht gefunden",
+                    "battery_measure_error": "Fehler Batteriemessung",
+                    "internal_calculation_error": "Interner Berechnungsfehler",
+                    "batteries_in_series_not_ok": "Anz. d. Batterien in Reihe falsch",
+                    "number_of_batteries_incorrect_duplicate_1": "Anz. d. Batterien falsch - Duplikat",
+                    "hardware_error": "Hardwarefehler",
+                    "watchdog_error": "Watchdog-Fehler",
+                    "over_voltage": "Überspannung",
+                    "under_voltage": "Unterspannung",
+                    "over_temperature": "Übertemperatur",
+                    "under_temperature": "Untertemperatur",
+                    "hardware_fault": "Hardwarestörung",
+                    "standby_shutdown": "Standby/Abschaltung",
+                    "pre_charge_charge_error": "Vorladen: Ladefehler",
+                    "safety_contactor_check_error": "Fehler Prüfung Sicherheitsschütz",
+                    "pre_charge_discharge_error": "Vorladen: Entladefehler",
+                    "adc_error": "ADC-Fehler",
+                    "slave_error": "Slave-Fehler",
+                    "slave_warning": "Slave-Warnung",
+                    "pre_charge_error": "Fehler Vorladen",
+                    "safety_contactor_error": "Fehler Sicherheitsschütz",
+                    "over_current": "Überstrom",
+                    "slave_update_failed": "Slave-Update fehlgeschlagen",
+                    "slave_update_unavailable": "Slave-Update nicht verfügbar",
+                    "calibration_data_lost": "Kallibrierungsdaten verloren",
+                    "settings_invalid": "Einstellungen ungültig",
+                    "bms_cable": "BMS Kabelfehler",
+                    "reference_failure": "Referenzspannungsfehler",
+                    "wrong_system_voltage": "Falsche Systemspannung",
+                    "pre_charge_timeout": "Vorladung Zeitüberschreitung"
                 }
             },
             "battery_system_switch": { "name": "Systemschalter"},
@@ -376,9 +376,9 @@
             "pvinverter_position": {
                 "name": "Position",
                 "state": {
-                    "AC_INPUT_1": "AC-Eingang 1",
-                    "AC_OUTPUT": "AC-Ausgang",
-                    "AC_INPUT_2": "AC-Eingang 2"
+                    "ac_input_1": "AC-Eingang 1",
+                    "ac_output": "AC-Ausgang",
+                    "ac_input_2": "AC-Eingang 2"
                 }
             },
             "pvinverter_L1_voltage": { "name": "AC-Phase L1 Spannung"},
@@ -401,7 +401,7 @@
             "pvinverter_power_max_capacity": { "name": "Maximale Leistung"},
             "pvinverter_powerlimit": { "name": "Leistungsbegrenzung"},
 
-            "__comment: TODO - Missing Translations": "motordrive, charger, gps, tank, inverter, genset, temperature, pulsemeter, digitalinput, generator, meteo, evcharger, acloads, fuelcell, alternator, dcsource, dcload, dcsystem, multi",
+            "comment_info: TODO - Missing Translations": "motordrive, charger, gps, tank, inverter, genset, temperature, pulsemeter, digitalinput, generator, meteo, evcharger, acloads, fuelcell, alternator, dcsource, dcload, dcsystem, multi",
 
             "settings_ess_acpowersetpoint": { "name": "ESS: Sollwert Netz"},
             "settings_ess_maxchargepercentage": { "name": "ESS: Maximale Ladung"},
@@ -417,29 +417,29 @@
             "settings_ess_batterylife_state": {
                 "name": "ESS: BatteryLife Status",
                 "state": {
-                    "BL_DISABLED_DUPLICATE_1": "BatteryLife Deaktiviert - Duplikat 1",
-                    "RESTARTING": "Neustart",
-                    "SELF_CONSUMPTION": "Eigenverbrauch",
-                    "SELF_CONSUMPTION_DUPLICATE_1": "Eigenverbrauch - Duplikat 1",
-                    "SELF_CONSUMPTION_DUPLICATE_2": "Eigenverbrauch - Duplikat 2",
-                    "DISCHARGE_DISABLED": "Entladen Deaktiviert",
-                    "FORCE_CHARGE": "Ladung erzwungen",
-                    "SUSTAIN": "Erhaltung",
-                    "LOW_SOC_RECHARGE": "Niedriger SOC - Aufladen",
-                    "KEEP_BATTERIES_CHARGED": "Batterien im gelad. Zustand halten",
-                    "BL_DISABLED": "BatteryLife Deaktiviert",
-                    "BL_DISABLED_LOW_SOC": "BatteryLife Deaktiviert: Niedriger SOC",
-                    "BL_DISABLED_LOC_SOC_RECHARGE": "BatteryLife Deaktiviert: Niedriger SOC - Aufladen"
+                    "bl_disabled_duplicate_1": "BatteryLife Deaktiviert - Duplikat 1",
+                    "restarting": "Neustart",
+                    "self_consumption": "Eigenverbrauch",
+                    "self_consumption_duplicate_1": "Eigenverbrauch - Duplikat 1",
+                    "self_consumption_duplicate_2": "Eigenverbrauch - Duplikat 2",
+                    "discharge_disabled": "Entladen Deaktiviert",
+                    "force_charge": "Ladung erzwungen",
+                    "sustain": "Erhaltung",
+                    "low_soc_recharge": "Niedriger SOC - Aufladen",
+                    "keep_batteries_charged": "Batterien im gelad. Zustand halten",
+                    "bl_disabled": "BatteryLife Deaktiviert",
+                    "bl_disabled_low_soc": "BatteryLife Deaktiviert: Niedriger SOC",
+                    "bl_disabled_loc_soc_recharge": "BatteryLife Deaktiviert: Niedriger SOC - Aufladen"
                 }
             },
             "settings_ess_batterylife_minimumsoc": { "name": "ESS: SOC Mindestwert (außer bei Netzausfall)"},
             "settings_ess_mode": {
                 "name": "ESS: Modus",
                 "state": {
-                    "SELF_CONSUMPTION_WITH_BATTERY_LIFE": "Optimiert für die Batterielebensdauer",
-                    "SELF_CONSUMPTION": "Optimiert ohne BatteryLife",
-                    "KEEP_CHARGED": "Batterien im gelad. Zustand halten",
-                    "EXTERNAL_CONTROL": "Externe Steuerung"
+                    "self_consumption_with_battery_life": "Optimiert für die Batterielebensdauer",
+                    "self_consumption": "Optimiert ohne BatteryLife",
+                    "keep_charged": "Batterien im gelad. Zustand halten",
+                    "external_control": "Externe Steuerung"
                 }
             },
             "settings_ess_batterylife_soclimit": { "name": "ESS: BatteryLife SOC Limit"},
@@ -468,11 +468,11 @@
             "system_input_source": {
                 "name": "System: Eingang/Quelle",
                 "state": {
-                    "UNKNOWN": "Unbekannt",
-                    "GRID": "Netz",
-                    "GENERATOR": "Generator",
-                    "SHORE": "Land",
-                    "NOT_CONNECTED": "Nicht verbunden"
+                    "unknown": "Unbekannt",
+                    "grid": "Netz",
+                    "generator": "Generator",
+                    "shore": "Land",
+                    "not_connected": "Nicht verbunden"
                 }
             },
             "system_battery_voltage": { "name": "System: Batteriespannung"},
@@ -482,9 +482,9 @@
             "system_battery_state": {
                 "name": "System: Batteriezustand",
                 "state": {
-                    "IDLE": "Idle",
-                    "CHARGING": "Aufladen",
-                    "DISCHARGING": "Entladen"
+                    "idle": "Idle",
+                    "charging": "Aufladen",
+                    "discharging": "Entladen"
                 }
             },
             "system_battery_amphours": { "name": "System: Batteriekapazität"},
@@ -618,37 +618,37 @@
             "vebus_mode": {
                 "name": "Modus",
                 "state": {
-                    "CHARGER": "Nur Ladegerät",
-                    "INVERTER": "Nur Wechselrichter",
-                    "ON": "Ein",
-                    "OFF": "Aus"
+                    "charger": "Nur Ladegerät",
+                    "inverter": "Nur Wechselrichter",
+                    "on": "Ein",
+                    "off": "Aus"
                 }
             },
             "settings_ess_batterylife_state": {
                 "name": "ESS: BatteryLife Status",
                 "state": {
-                    "BL_DISABLED_DUPLICATE_1": "BatteryLife Deaktiviert - Duplikat 1",
-                    "RESTARTING": "Neustart",
-                    "SELF_CONSUMPTION": "Eigenverbrauch",
-                    "SELF_CONSUMPTION_DUPLICATE_1": "Eigenverbrauch - Duplikat 1",
-                    "SELF_CONSUMPTION_DUPLICATE_2": "Eigenverbrauch - Duplikat 2",
-                    "DISCHARGE_DISABLED": "Entladen Deaktiviert",
-                    "FORCE_CHARGE": "Ladung erzwungen",
-                    "SUSTAIN": "Erhaltung",
-                    "LOW_SOC_RECHARGE": "Niedriger SOC - Aufladen",
-                    "KEEP_BATTERIES_CHARGED": "Batterien im gelad. Zustand halten",
-                    "BL_DISABLED": "BatteryLife Deaktiviert",
-                    "BL_DISABLED_LOW_SOC": "BatteryLife Deaktiviert: Niedriger SOC",
-                    "BL_DISABLED_LOC_SOC_RECHARGE": "BatteryLife Deaktiviert: Niedriger SOC - Aufladen"
+                    "bl_disabled_duplicate_1": "BatteryLife Deaktiviert - Duplikat 1",
+                    "restarting": "Neustart",
+                    "self_consumption": "Eigenverbrauch",
+                    "self_consumption_duplicate_1": "Eigenverbrauch - Duplikat 1",
+                    "self_consumption_duplicate_2": "Eigenverbrauch - Duplikat 2",
+                    "discharge_disabled": "Entladen Deaktiviert",
+                    "force_charge": "Ladung erzwungen",
+                    "sustain": "Erhaltung",
+                    "low_soc_recharge": "Niedriger SOC - Aufladen",
+                    "keep_batteries_charged": "Batterien im gelad. Zustand halten",
+                    "bl_disabled": "BatteryLife Deaktiviert",
+                    "bl_disabled_low_soc": "BatteryLife Deaktiviert: Niedriger SOC",
+                    "bl_disabled_loc_soc_recharge": "BatteryLife Deaktiviert: Niedriger SOC - Aufladen"
                 }
             },
             "settings_ess_mode": {
                 "name": "ESS: Modus",
                 "state": {
-                    "SELF_CONSUMPTION_WITH_BATTERY_LIFE": "Optimiert für die Batterielebensdauer",
-                    "SELF_CONSUMPTION": "Optimiert ohne BatteryLife",
-                    "KEEP_CHARGED": "Batterien im gelad. Zustand halten",
-                    "EXTERNAL_CONTROL": "Externe Steuerung"
+                    "self_consumption_with_battery_life": "Optimiert für die Batterielebensdauer",
+                    "self_consumption": "Optimiert ohne BatteryLife",
+                    "keep_charged": "Batterien im gelad. Zustand halten",
+                    "external_control": "Externe Steuerung"
                 }
             }
         },

@@ -116,7 +116,7 @@ class VictronBinarySensor(CoordinatorEntity, BinarySensorEntity):
             self.description.slave,
             self.description.key,
         )
-        return cast(bool, data)
+        return cast("bool", data)
 
     @property
     def available(self) -> bool:

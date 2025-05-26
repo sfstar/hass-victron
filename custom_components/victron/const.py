@@ -24,10 +24,10 @@ from homeassistant.const import (
 class DeviceType(Enum):
     """Enum for device types."""
 
-    GRID = 1
-    TANK = 2
-    MULTI = 3
-    VEBUS = 4
+    grid = 1
+    tank = 2
+    multi = 3
+    vebus = 4
 
 
 DOMAIN = "victron"
@@ -189,9 +189,9 @@ class RegisterInfo:
 class generic_alarm_ledger(Enum):
     """Generic alarm ledger."""
 
-    OK = 0
-    WARNING = 1
-    ALARM = 2
+    ok = 0
+    warning = 1
+    alarm = 2
 
 
 gavazi_grid_registers = {
@@ -253,58 +253,58 @@ gavazi_grid_registers = {
 class vebus_mode(Enum):
     """Vebus mode."""
 
-    CHARGER = 1
-    INVERTER = 2
-    ON = 3
-    OFF = 4
+    charger = 1
+    inverter = 2
+    on = 3
+    off = 4
 
 
 class generic_activeinput(Enum):
     """Generic active input."""
 
-    AC_INPUT_1 = 0
-    AC_INPUT_2 = 1
-    DISCONNECTED = 240
+    ac_input_1 = 0
+    ac_input_2 = 1
+    disconnected = 240
 
 
 class generic_charger_state(Enum):
     """Generic charger state."""
 
-    OFF = 0
-    LOW_POWER = 1
-    FAULT = 2
-    BULK = 3
-    ABSORPTION = 4
-    FLOAT = 5
-    STORAGE = 6
-    EQUALIZE = 7
-    PASSTHRU = 8
-    INVERTING = 9
-    POWER_ASSIST = 10
-    POWER_SUPPLY = 11
-    EXTERNAL_CONTROL = 252
+    off = 0
+    low_power = 1
+    fault = 2
+    bulk = 3
+    absorption = 4
+    float = 5
+    storage = 6
+    equalize = 7
+    passthru = 8
+    inverting = 9
+    power_assist = 10
+    power_supply = 11
+    external_control = 252
 
 
 class vebus_error(Enum):
     """Vebus error."""
 
-    OK = 0
-    EXTERNAL_PHASE_TRIGGERED_SWITCHOFF = 1
-    MK2_TYPE_MISMATCH = 2
-    DEVICE_COUNT_MISMATCH = 3
-    NO_OTHER_DEVICES = 4
-    AC_OVERVOLTAGE_OUT = 5
-    DDC_PROGRAM = 6
-    BMS_WITHOUT_ASSISTANT_CONNECTED = 7
-    TIME_SYNC_MISMATCH = 10
-    CANNOT_TRANSMIT = 14
-    DONGLE_ABSENT = 16
-    MASTER_FAILOVER = 17
-    AC_OVERVOLTAGE_SLAVE_OFF = 18
-    CANNOT_BE_SLAVE = 22
-    SWITCH_OVER_PROTECTION = 24
-    FIRMWARE_INCOMPATIBILTIY = 25
-    INTERNAL_ERROR = 26
+    ok = 0
+    external_phase_triggered_switchoff = 1
+    mk2_type_mismatch = 2
+    device_count_mismatch = 3
+    no_other_devices = 4
+    ac_overvoltage_out = 5
+    ddc_program = 6
+    bms_without_assistant_connected = 7
+    time_sync_mismatch = 10
+    cannot_transmit = 14
+    dongle_absent = 16
+    master_failover = 17
+    ac_overvoltage_slave_off = 18
+    cannot_be_slave = 22
+    switch_over_protection = 24
+    firmware_incompatibiltiy = 25
+    internal_error = 26
 
 
 vebus_registers = {
@@ -747,64 +747,64 @@ battery_registers = {
 class battery_state(Enum):
     """Battery state."""
 
-    WAIT_START_INIT = 0
-    BEFORE_BOOT_INIT = 1
-    BEFORE_BOOT_DELAY_INIT = 2
-    WAIT_BOOT_INIT = 3
-    INITIALIZING = 4
-    BATTERY_VOLTAGE_MEASURE_INIT = 5
-    BATTERY_CALCULATE_VOLTAGE_INIT = 6
-    WAIT_BUS_VOLTAGE_INIT = 7
-    WAIT_LYNX_SHUNT_INIT = 8
-    RUNNING = 9
-    ERROR = 10
-    UNUSED = 11
-    SHUTDOWN = 12
-    SLAVE_UPDATING = 13
-    STANDBY = 14
-    GOING_TO_RUN = 15
-    PRE_CHARGING = 16
+    wait_start_init = 0
+    before_boot_init = 1
+    before_boot_delay_init = 2
+    wait_boot_init = 3
+    initializing = 4
+    battery_voltage_measure_init = 5
+    battery_calculate_voltage_init = 6
+    wait_bus_voltage_init = 7
+    wait_lynx_shunt_init = 8
+    running = 9
+    error = 10
+    unused = 11
+    shutdown = 12
+    slave_updating = 13
+    standby = 14
+    going_to_run = 15
+    pre_charging = 16
 
 
 class battery_error(Enum):
     """Battery error."""
 
-    NONE = 0
-    BATTERY_INIT_ERROR = 1
-    NO_BATTERIES_CONNECTED = 2
-    UNKNOWN_BATTERY_CONNECTED = 3
-    DIFFERENT_BATTERY_TYPE = 4
-    NUMBER_OF_BATTERIES_INCORRECT = 5
-    LYNX_SHUNT_NOT_FOUND = 6
-    BATTERY_MEASURE_ERROR = 7
-    INTERNAL_CALCULATION_ERROR = 8
-    BATTERIES_IN_SERIES_NOT_OK = 9
-    NUMBER_OF_BATTERIES_INCORRECT_DUPLICATE_1 = 10
-    HARDWARE_ERROR = 11
-    WATCHDOG_ERROR = 12
-    OVER_VOLTAGE = 13
-    UNDER_VOLTAGE = 14
-    OVER_TEMPERATURE = 15
-    UNDER_TEMPERATURE = 16
-    HARDWARE_FAULT = 17
-    STANDBY_SHUTDOWN = 18
-    PRE_CHARGE_CHARGE_ERROR = 19
-    SAFETY_CONTACTOR_CHECK_ERROR = 20
-    PRE_CHARGE_DISCHARGE_ERROR = 21
-    ADC_ERROR = 22
-    SLAVE_ERROR = 23
-    SLAVE_WARNING = 24
-    PRE_CHARGE_ERROR = 25
-    SAFETY_CONTACTOR_ERROR = 26
-    OVER_CURRENT = 27
-    SLAVE_UPDATE_FAILED = 28
-    SLAVE_UPDATE_UNAVAILABLE = 29
-    CALIBRATION_DATA_LOST = 30
-    SETTINGS_INVALID = 31
-    BMS_CABLE = 32
-    REFERENCE_FAILURE = 33
-    WRONG_SYSTEM_VOLTAGE = 34
-    PRE_CHARGE_TIMEOUT = 35
+    none = 0
+    battery_init_error = 1
+    no_batteries_connected = 2
+    unknown_battery_connected = 3
+    different_battery_type = 4
+    number_of_batteries_incorrect = 5
+    lynx_shunt_not_found = 6
+    battery_measure_error = 7
+    internal_calculation_error = 8
+    batteries_in_series_not_ok = 9
+    number_of_batteries_incorrect_duplicate_1 = 10
+    hardware_error = 11
+    watchdog_error = 12
+    over_voltage = 13
+    under_voltage = 14
+    over_temperature = 15
+    under_temperature = 16
+    hardware_fault = 17
+    standby_shutdown = 18
+    pre_charge_charge_error = 19
+    safety_contactor_check_error = 20
+    pre_charge_discharge_error = 21
+    adc_error = 22
+    slave_error = 23
+    slave_warning = 24
+    pre_charge_error = 25
+    safety_contactor_error = 26
+    over_current = 27
+    slave_update_failed = 28
+    slave_update_unavailable = 29
+    calibration_data_lost = 30
+    settings_invalid = 31
+    bms_cable = 32
+    reference_failure = 33
+    wrong_system_voltage = 34
+    pre_charge_timeout = 35
 
 
 battery_detail_registers = {
@@ -872,63 +872,63 @@ battery_detail_registers = {
 class solarcharger_mode(Enum):
     """Solar charger mode."""
 
-    ON = 1
-    OFF = 4
+    on = 1
+    off = 4
 
 
 class solarcharger_state(Enum):
     """Solar charger state."""
 
-    OFF = 0
-    FAULT = 2
-    BULK = 3
-    ABSORPTION = 4
-    FLOAT = 5
-    STORAGE = 6
-    EQUALIZE = 7
-    OTHER_HUB_1 = 11
-    WAKE_UP = 245
-    EXTERNAL_CONTROL = 252
+    off = 0
+    fault = 2
+    bulk = 3
+    absorption = 4
+    float = 5
+    storage = 6
+    equalize = 7
+    other_hub_1 = 11
+    wake_up = 245
+    external_control = 252
 
 
 class solarcharger_equalization_pending(Enum):
     """Solar charger equalization pending."""
 
-    NO = 0
-    YES = 1
-    ERROR = 2
-    UNAVAILABLE = 3
+    no = 0
+    yes = 1
+    error = 2
+    unavailable = 3
 
 
 class generic_charger_errorcode(Enum):
     """Generic charger error code."""
 
-    NONE = 0
-    TEMPERATURE_HIGH = 1
-    VOLTAGE_HIGH = 2
-    TEMPERATURE_SENSOR_PLUS_MISWIRED = 3
-    TEMPERATURE_SENSOR_MIN_MISWIRED = 4
-    TEMPERATURE_SENSOR_DISCONNECTED = 5
-    VOLTAGE_SENSE_PLUS_MISWIRED = 6
-    VOLTAGE_SENSE_MIN_MISWIRED = 7
-    VOLTAGE_SENSE_DISCONNECTED = 8
-    VOLTAGE_WIRE_LOSSES_TOO_HIGH = 9
-    CHARGER_TEMPERATURE_TOO_HIGH = 17
-    CHARGER_OVER_CURRENT = 18
-    CHARGER_POLARITY_REVERSED = 19
-    BULK_TIME_LIMIT = 20
-    CHARGER_TEMPERATURE_SENSOR_MISWIRED = 22
-    CHARGER_TEMPERATURE_SENSOR_DISCONNECTED = 23
-    INPUT_CURRENT_TOO_HIGH = 34
+    none = 0
+    temperature_high = 1
+    voltage_high = 2
+    temperature_sensor_plus_miswired = 3
+    temperature_sensor_min_miswired = 4
+    temperature_sensor_disconnected = 5
+    voltage_sense_plus_miswired = 6
+    voltage_sense_min_miswired = 7
+    voltage_sense_disconnected = 8
+    voltage_wire_losses_too_high = 9
+    charger_temperature_too_high = 17
+    charger_over_current = 18
+    charger_polarity_reversed = 19
+    bulk_time_limit = 20
+    charger_temperature_sensor_miswired = 22
+    charger_temperature_sensor_disconnected = 23
+    input_current_too_high = 34
 
 
 class generic_mppoperationmode(Enum):
     """Generic MPP operation mode."""
 
-    OFF = 0
-    LIMITED = 1
-    ACTIVE = 2
-    UNAVAILABLE = 255
+    off = 0
+    limited = 1
+    active = 2
+    unavailable = 255
 
 
 solarcharger_registers = {
@@ -1077,9 +1077,9 @@ solarcharger_tracker_registers = {
 class generic_position(Enum):
     """Generic position."""
 
-    AC_INPUT_1 = 0
-    AC_OUTPUT = 1
-    AC_INPUT_2 = 2
+    ac_input_1 = 0
+    ac_output = 1
+    ac_input_2 = 2
 
 
 pvinverter_registers = {
@@ -1153,10 +1153,10 @@ motordrive_registers = {
 class charger_mode(Enum):
     """Charger mode."""
 
-    OFF = 0
-    ON = 1
-    ERROR = 2
-    UNAVAILABLE = 3
+    off = 0
+    on = 1
+    error = 2
+    unavailable = 3
 
 
 charger_registers = {
@@ -1279,28 +1279,28 @@ gps_registers = {
 class ess_batterylife_state(Enum):
     """ESS battery life state."""
 
-    BL_DISABLED_DUPLICATE_1 = 0
-    RESTARTING = 1
-    SELF_CONSUMPTION = 2
-    SELF_CONSUMPTION_DUPLICATE_1 = 3
-    SELF_CONSUMPTION_DUPLICATE_2 = 4
-    DISCHARGE_DISABLED = 5
-    FORCE_CHARGE = 6
-    SUSTAIN = 7
-    LOW_SOC_RECHARGE = 8
-    KEEP_BATTERIES_CHARGED = 9
-    BL_DISABLED = 10
-    BL_DISABLED_LOW_SOC = 11
-    BL_DISABLED_LOC_SOC_RECHARGE = 12
+    bl_disabled_duplicate_1 = 0
+    restarting = 1
+    self_consumption = 2
+    self_consumption_duplicate_1 = 3
+    self_consumption_duplicate_2 = 4
+    discharge_disabled = 5
+    force_charge = 6
+    sustain = 7
+    low_soc_recharge = 8
+    keep_batteries_charged = 9
+    bl_disabled = 10
+    bl_disabled_low_soc = 11
+    bl_disabled_loc_soc_recharge = 12
 
 
 class ess_mode(Enum):
     """ESS mode."""
 
-    SELF_CONSUMPTION_WITH_BATTERY_LIFE = 0
-    SELF_CONSUMPTION = 1
-    KEEP_CHARGED = 2
-    EXTERNAL_CONTROL = 3
+    self_consumption_with_battery_life = 0
+    self_consumption = 1
+    keep_charged = 2
+    external_control = 3
 
 
 settings_ess_registers = {
@@ -1322,29 +1322,29 @@ settings_ess_registers = {
 class tank_fluidtype(Enum):
     """Tank fluid type."""
 
-    FUEL = 0
-    FRESH_WATER = 1
-    WASTE_WATER = 2
-    LIVE_WELL = 3
-    OIL = 4
-    SEWAGE_WATER = 5
-    GASOLINE = 6
-    DIESEL = 7
-    LPG = 8
-    LNG = 9
-    HYDRAULIC_OIL = 10
-    RAW_WATER = 11
+    fuel = 0
+    fresh_water = 1
+    waste_water = 2
+    live_well = 3
+    oil = 4
+    sewage_water = 5
+    gasoline = 6
+    diesel = 7
+    lpg = 8
+    lng = 9
+    hydraulic_oil = 10
+    raw_water = 11
 
 
 class tank_status(Enum):
     """Tank status."""
 
-    OK = 0
-    DISCONNECTED = 1
-    SHORT_CIRCUITED = 2
-    REVERSE_POLARITY = 3
-    UNKNOWN = 4
-    ERROR = 5
+    ok = 0
+    disconnected = 1
+    short_circuited = 2
+    reverse_polarity = 3
+    unknown = 4
+    error = 5
 
 
 tank_registers = {
@@ -1426,9 +1426,9 @@ inverter_alarm_registers = {
 class inverter_mode(Enum):
     """Inverter mode."""
 
-    ON = 2
-    OFF = 4
-    ECO = 5
+    on = 2
+    off = 4
+    eco = 5
 
 
 inverter_info_registers = {
@@ -1534,119 +1534,119 @@ inverter_tracker_statistics_registers = {
 class genset_status(Enum):
     """Genset status."""
 
-    STANDBY = 0
-    STARTUP_1 = 1
-    STARTUP_2 = 2
-    STARTUP_3 = 3
-    STARTUP_4 = 4
-    STARTUP_5 = 5
-    STARTUP_6 = 6
-    STARTUP_7 = 7
-    RUNNING = 8
-    STOPPING = 9
-    ERROR = 10
+    standby = 0
+    startup_1 = 1
+    startup_2 = 2
+    startup_3 = 3
+    startup_4 = 4
+    startup_5 = 5
+    startup_6 = 6
+    startup_7 = 7
+    running = 8
+    stopping = 9
+    error = 10
 
 
 class genset_errorcode(Enum):
     """Genset error code."""
 
-    NONE = 0
-    AC_L1_VOLTAGE_TOO_LOW = 1
-    AC_L1_FREQUENCY_TOO_LOW = 2
-    AC_L1_CURRENT_TOO_LOW = 3
-    AC_L1_POWER_TOO_LOW = 4
-    EMERGENCY_STOP = 5
-    SERVO_CURRENT_TOO_LOW = 6
-    OIL_PRESSURE_TOO_LOW = 7
-    ENGINE_TEMPERATURE_TOO_LOW = 8
-    WINDING_TEMPERATURE_TOO_LOW = 9
-    EXHAUST_TEMPERATURE_TOO_LOW = 10
-    STARTER_CURRENT_TOO_LOW = 13
-    GLOW_CURRENT_TOO_LOW = 14
-    GLOW_CURRENT_TOO_LOW_DUPLICATE_1 = 15
-    FUEL_HOLDING_MAGNET_CURRENT_TOO_LOW = 16
-    STOP_SOLENOID_HOLD_COIL_CURRENT_TOO_LOW = 17
-    STOP_SOLENOID_PULL_COIL_CURRENT_TOO_LOW = 18
-    OPTIONAL_DC_OUT_CURRENT_TOO_LOW = 19
-    OUTPUT_5V_VOLTAGE_TOO_LOW = 20
-    BOOST_OUTPUT_CURRENT_TOO_LOW = 21
-    PANEL_SUPPLY_CURRENT_TOO_HIGH = 22
-    STARTER_BATTERY_VOLTAGE_TOO_LOW = 25
-    ROTATION_TOO_LOW_STARTUP_ABORTED = 26
-    ROTATION_TOO_LOW = 28
-    POWER_CONTACTER_CURRENT_TOO_LOW = 29
-    AC_L2_VOLTAGE_TOO_LOW = 30
-    AC_L2_FREQUENCY_TOO_LOW = 31
-    AC_L2_CURRENT_TOO_LOW = 32
-    AC_L2_POWER_TOO_LOW = 33
-    AC_L3_VOLTAGE_TOO_LOW = 34
-    AC_L3_FREQUENCY_TOO_LOW = 35
-    AC_L3_CURRENT_TOO_LOW = 36
-    AC_L3_POWER_TOO_LOW = 37
-    FUEL_TEMPERATURE_TOO_LOW = 62
-    FUEL_LEVEL_TOO_LOW = 63
-    AC_L1_VOLTAGE_TOO_HIGH = 65
-    AC_L1_FREQUENCY_TOO_HIGH = 66
-    AC_L1_CURRENT_TOO_HIGH = 67
-    AC_L1_POWER_TOO_HIGH = 68
-    SERVO_CURRENT_TOO_HIGH = 70
-    OIL_PRESSURE_TOO_HIGH = 71
-    ENGINE_TEMPERATURE_TOO_HIGH = 72
-    WINDING_TEMPERATURE_TOO_HIGH = 73
-    EXHAUST_TEMPERATURE_TOO_HIGH = 74  # NOTE modbustcp spec says it should be too low but that is already specified in the low grouping therefore assuming this state is used for HIGH temp
-    STARTER_CURRENT_TOO_HIGH = 77  # NOTE same as 74 applies here
-    GLOW_CURRENT_TOO_HIGH = 78
-    GLOW_CURRENT_TOO_HIGH_DUPLICATE_1 = 79
-    FUEL_HOLDING_MAGNET_CURRENT_TOO_HIGH = 80
-    STOP_SOLENOID_HOLD_COIL_CURRENT_TOO_HIGH = 81
-    STOP_SOLENOID_PULL_COIL_CURRENT_TOO_HIGH = 82
-    OPTIONAL_DC_OUT_CURRENT_TOO_HIGH = 83
-    OUTPUT_5V_TOO_HIGH = 84
-    BOOST_OUTPUT_CURRENT_TOO_HIGH = 85
-    STARTER_BATTERY_VOLTAGE_TOO_HIGH = 89
-    ROTATION_TOO_HIGH_STARTUP_ABORTED = 90
-    ROTATION_TOO_HIGH = 92
-    POWER_CONTACTER_CURRENT_TOO_HIGH = 93
-    AC_L2_VOLTAGE_TOO_HIGH = 94
-    AC_L2_FREQUENCY_TOO_HIGH = 95
-    AC_L2_CURRENT_TOO_HIGH = 96
-    AC_L2_POWER_TOO_HIGH = 97
-    AC_L3_VOLTAGE_TOO_HIGH = 98
-    AC_L3_FREQUENCY_TOO_HIGH = 99
-    AC_L3_CURRENT_TOO_HIGH = 100
-    AC_L3_POWER_TOO_HIGH = 101
-    FUEL_TEMPERATURE_TOO_HIGH = 126
-    FUEL_LEVEL_TOO_HIGH = 127
-    LOST_CONTROL_UNIT = 130
-    LOST_PANEL = 131
-    SERVICE_NEEDED = 132
-    LOST_THREE_PHASE_MODULE = 133
-    LOST_AGT_MODULE = 134
-    SYNCHRONIZATION_FAILURE = 135
-    INTAKE_AIRFILTER = 137
-    LOST_SYNC_MODULE = 139
-    LOAD_BALANCE_FAILED = 140
-    SYNC_MODE_DEACTIVATED = 141
-    ENGINE_CONTROLLER = 142
-    ROTATING_FIELD_WRONG = 148
-    FUEL_LEVEL_SENSOR_LOST = 149
-    INIT_FAILED = 150
-    WATCHDOG = 151
-    OUTAGE_WINDING = 152
-    OUTAGE_EXHAUST = 153
-    OUTAGE_CYCLE_HEAD = 154
-    INVERTER_OVER_TEMPERATURE = 155
-    INVERTER_OVERLOAD = 156
-    INVERTER_COMMMUNICATION_LOST = 157
-    INVERTER_SYNC_FAILED = 158
-    CAN_COMMUNICATION_LOST = 159
-    L1_OVERLOAD = 160
-    L2_OVERLOAD = 161
-    L3_OVERLOAD = 162
-    DC_OVERLOAD = 163
-    DC_OVERVOLTAGE = 164
-    EMERGENCY_STOP_DUPLICATE_1 = 165
-    NO_CONNECTION = 166
+    none = 0
+    ac_l1_voltage_too_low = 1
+    ac_l1_frequency_too_low = 2
+    ac_l1_current_too_low = 3
+    ac_l1_power_too_low = 4
+    emergency_stop = 5
+    servo_current_too_low = 6
+    oil_pressure_too_low = 7
+    engine_temperature_too_low = 8
+    winding_temperature_too_low = 9
+    exhaust_temperature_too_low = 10
+    starter_current_too_low = 13
+    glow_current_too_low = 14
+    glow_current_too_low_duplicate_1 = 15
+    fuel_holding_magnet_current_too_low = 16
+    stop_solenoid_hold_coil_current_too_low = 17
+    stop_solenoid_pull_coil_current_too_low = 18
+    optional_dc_out_current_too_low = 19
+    output_5v_voltage_too_low = 20
+    boost_output_current_too_low = 21
+    panel_supply_current_too_high = 22
+    starter_battery_voltage_too_low = 25
+    rotation_too_low_startup_aborted = 26
+    rotation_too_low = 28
+    power_contacter_current_too_low = 29
+    ac_l2_voltage_too_low = 30
+    ac_l2_frequency_too_low = 31
+    ac_l2_current_too_low = 32
+    ac_l2_power_too_low = 33
+    ac_l3_voltage_too_low = 34
+    ac_l3_frequency_too_low = 35
+    ac_l3_current_too_low = 36
+    ac_l3_power_too_low = 37
+    fuel_temperature_too_low = 62
+    fuel_level_too_low = 63
+    ac_l1_voltage_too_high = 65
+    ac_l1_frequency_too_high = 66
+    ac_l1_current_too_high = 67
+    ac_l1_power_too_high = 68
+    servo_current_too_high = 70
+    oil_pressure_too_high = 71
+    engine_temperature_too_high = 72
+    winding_temperature_too_high = 73
+    exhaust_temperature_too_high = 74  # NOTE modbustcp spec says it should be too low but that is already specified in the low grouping therefore assuming this state is used for HIGH temp
+    starter_current_too_high = 77  # NOTE same as 74 applies here
+    glow_current_too_high = 78
+    glow_current_too_high_duplicate_1 = 79
+    fuel_holding_magnet_current_too_high = 80
+    stop_solenoid_hold_coil_current_too_high = 81
+    stop_solenoid_pull_coil_current_too_high = 82
+    optional_dc_out_current_too_high = 83
+    output_5v_too_high = 84
+    boost_output_current_too_high = 85
+    starter_battery_voltage_too_high = 89
+    rotation_too_high_startup_aborted = 90
+    rotation_too_high = 92
+    power_contacter_current_too_high = 93
+    ac_l2_voltage_too_high = 94
+    ac_l2_frequency_too_high = 95
+    ac_l2_current_too_high = 96
+    ac_l2_power_too_high = 97
+    ac_l3_voltage_too_high = 98
+    ac_l3_frequency_too_high = 99
+    ac_l3_current_too_high = 100
+    ac_l3_power_too_high = 101
+    fuel_temperature_too_high = 126
+    fuel_level_too_high = 127
+    lost_control_unit = 130
+    lost_panel = 131
+    service_needed = 132
+    lost_three_phase_module = 133
+    lost_agt_module = 134
+    synchronization_failure = 135
+    intake_airfilter = 137
+    lost_sync_module = 139
+    load_balance_failed = 140
+    sync_mode_deactivated = 141
+    engine_controller = 142
+    rotating_field_wrong = 148
+    fuel_level_sensor_lost = 149
+    init_failed = 150
+    watchdog = 151
+    outage_winding = 152
+    outage_exhaust = 153
+    outage_cycle_head = 154
+    inverter_over_temperature = 155
+    inverter_overload = 156
+    inverter_commmunication_lost = 157
+    inverter_sync_failed = 158
+    can_communication_lost = 159
+    l1_overload = 160
+    l2_overload = 161
+    l3_overload = 162
+    dc_overload = 163
+    dc_overvoltage = 164
+    emergency_stop_duplicate_1 = 165
+    no_connection = 166
 
 
 genset_registers = {
@@ -1698,20 +1698,20 @@ genset_registers = {
 class temperature_type(Enum):
     """Temperature type."""
 
-    BATTERY = 0
-    FRIDGE = 1
-    GENERIC = 2
+    battery = 0
+    fridge = 1
+    generic = 2
 
 
 class temperature_status(Enum):
     """Temperature status."""
 
-    OK = 0
-    DISCONNECTED = 1
-    SHORT_CIRCUITED = 2
-    REVERSE_POLARITY = 3
-    UNKNOWN = 4
-    LOW_BATTERY = 5
+    ok = 0
+    disconnected = 1
+    short_circuited = 2
+    reverse_polarity = 3
+    unknown = 4
+    low_battery = 5
 
 
 temperature_registers = {
@@ -1745,30 +1745,30 @@ pulsemeter_registers = {
 class digitalinput_state(Enum):
     """Digital input state."""
 
-    LOW = 0
-    HIGH = 1
-    OFF = 2
-    ON = 3
-    NO = 4
-    YES = 5
-    OPEN = 6
-    CLOSED = 7
-    ALARM = 8
-    OK = 9
-    RUNNING = 10
-    STOPPED = 11
+    low = 0
+    high = 1
+    off = 2
+    on = 3
+    no = 4
+    yes = 5
+    open = 6
+    closed = 7
+    alarm = 8
+    ok = 9
+    running = 10
+    stopped = 11
 
 
 class digitalinput_type(Enum):
     """Digital input type."""
 
-    DOOR = 2
-    BILGE_PUMP = 3
-    BILGE_ALARM = 4
-    BURGLAR_ALARM = 5
-    SMOKE_ALARM = 6
-    FIRE_ALARM = 7
-    CO2_ALARM = 8
+    door = 2
+    bilge_pump = 3
+    bilge_alarm = 4
+    burglar_alarm = 5
+    smoke_alarm = 6
+    fire_alarm = 7
+    co2_alarm = 8
 
 
 digitalinput_registers = {
@@ -1792,33 +1792,33 @@ digitalinput_registers = {
 class generator_runningbyconditioncode(Enum):
     """Generator running by condition code."""
 
-    STOPPED = 0
-    MANUAL = 1
-    TEST_RUN = 2
-    LOSS_OF_COMMS = 3
-    SOC = 4
-    AC_LOAD = 5
-    BATTERY_CURRENT = 6
-    BATTERY_VOLTAGE = 7
-    INVERTER_TEMPERATURE = 8
-    INVERTER_OVERLOAD = 9
-    STOP_ON_AC1 = 10
+    stopped = 0
+    manual = 1
+    test_run = 2
+    loss_of_comms = 3
+    soc = 4
+    ac_load = 5
+    battery_current = 6
+    battery_voltage = 7
+    inverter_temperature = 8
+    inverter_overload = 9
+    stop_on_ac1 = 10
 
 
 class generator_state(Enum):
     """Generator state."""
 
-    STOPPED = 0
-    RUNNING = 1
-    ERROR = 10
+    stopped = 0
+    running = 1
+    error = 10
 
 
 class generator_error(Enum):
     """Generator error."""
 
-    NONE = 0
-    REMOTE_DISABLED = 1
-    REMOTE_FAULT = 2
+    none = 0
+    remote_disabled = 1
+    remote_fault = 2
 
 
 generator_registers = {
@@ -1869,29 +1869,29 @@ evcharger_productid_registers = {"evcharger_productid": RegisterInfo(3800, UINT1
 class evcharger_mode(Enum):
     """EV charger mode."""
 
-    MANUAL = 0
-    AUTO = 1
-    SCHEDULED = 2
+    manual = 0
+    auto = 1
+    scheduled = 2
 
 
 class evcharger_status(Enum):
     """EV charger status."""
 
-    DISCONNECTED = 0
-    CONNECTED = 1
-    CHARGING = 2
-    CHARGED = 3
-    WAITING_FOR_SUN = 4
-    WAITING_FOR_RFID = 5
-    WAITING_FOR_START = 6
-    LOW_SOC = 7
-    GROUND_FAULT = 8
-    WELDED_CONTACTS = 9
-    CP_INPUT_SHORTED = 10
-    RESIDUAL_CURRENT_DETECTED = 11
-    UNDER_VOLTAGE_DETECTED = 12
-    OVERVOLTAGE_DETECTED = 13
-    OVERHEATING_DETECTED = 14
+    disconnected = 0
+    connected = 1
+    charging = 2
+    charged = 3
+    waiting_for_sun = 4
+    waiting_for_rfid = 5
+    waiting_for_start = 6
+    low_soc = 7
+    ground_fault = 8
+    welded_contacts = 9
+    cp_input_shorted = 10
+    residual_current_detected = 11
+    under_voltage_detected = 12
+    overvoltage_detected = 13
+    overheating_detected = 14
 
 
 evcharger_registers = {
@@ -2005,50 +2005,50 @@ fuelcell_registers = {
 class alternator_state(Enum):
     """Alternator state."""
 
-    OFF = 0
-    FAULT = 2
-    BULK = 3
-    ABSORPTION = 4
-    FLOAT = 5
-    STORAGE = 6
-    EQUALIZE = 7
-    EXTERNAL_CONTROL = 252
+    off = 0
+    fault = 2
+    bulk = 3
+    absorption = 4
+    float = 5
+    storage = 6
+    equalize = 7
+    external_control = 252
 
 
 class alternator_errorcode(Enum):
     """Alternator error code."""
 
-    HIGH_BATTERY_TEMPERATURE = 12
-    HIGH_BATTERY_VOLTAGE = 13
-    LOW_BATTERY_VOLTAGE = 14
-    VBAT_EXCEEDS_CPB = 15
-    HIGH_ALTERNATOR_TEMPERATURE = 21
-    ALTERNATOR_OVERSPEED = 22
-    INTERNAL_ERROR = 24
-    HIGH_FIELD_FET_TEMPERATURE = 41
-    SENSOR_MISSING = 42
-    LOW_VALT = 43
-    HIGH_VOLTAGE_OFFSET = 44
-    VALT_EXCEEDS_CPB = 45
-    BATTERY_DISCONNECT_REQUEST = 51
-    BATTERY_DISCONNECT_REQUEST_DUPLICATE_1 = 52
-    BATTERY_INSTANCE_OUT_OF_RANGE = 53
-    TOO_MANY_BMSES = 54
-    AEBUS_FAULT = 55
-    TOO_MANY_VICTRON_DEVICES = 56
-    BATTERY_REQUESTED_DISCONNECTION = 58
-    BATTERY_REQUESTED_DISCONNECTION_DUPLICATE_1 = 59
-    BATTERY_REQUESTED_DISCONNECTION_DUPLICATE_2 = 60
-    BATTERY_REQUESTED_DISCONNECTION_DUPLICATE_3 = 61
-    BMS_LOST = 91
-    FORCED_IDLE = 92
-    DCDC_CONVERTER_FAIL = 201
-    DCDC_ERROR = 202
-    DCDC_ERROR_DUPLICATE_1 = 203
-    DCDC_ERROR_DUPLICATE_2 = 204
-    DCDC_ERROR_DUPLICATE_3 = 205
-    DCDC_ERROR_DUPLICATE_4 = 206
-    DCDC_ERROR_DUPLICATE_5 = 207
+    high_battery_temperature = 12
+    high_battery_voltage = 13
+    low_battery_voltage = 14
+    vbat_exceeds_cpb = 15
+    high_alternator_temperature = 21
+    alternator_overspeed = 22
+    internal_error = 24
+    high_field_fet_temperature = 41
+    sensor_missing = 42
+    low_valt = 43
+    high_voltage_offset = 44
+    valt_exceeds_cpb = 45
+    battery_disconnect_request = 51
+    battery_disconnect_request_duplicate_1 = 52
+    battery_instance_out_of_range = 53
+    too_many_bmses = 54
+    aebus_fault = 55
+    too_many_victron_devices = 56
+    battery_requested_disconnection = 58
+    battery_requested_disconnection_duplicate_1 = 59
+    battery_requested_disconnection_duplicate_2 = 60
+    battery_requested_disconnection_duplicate_3 = 61
+    bms_lost = 91
+    forced_idle = 92
+    dcdc_converter_fail = 201
+    dcdc_error = 202
+    dcdc_error_duplicate_1 = 203
+    dcdc_error_duplicate_2 = 204
+    dcdc_error_duplicate_3 = 205
+    dcdc_error_duplicate_4 = 206
+    dcdc_error_duplicate_5 = 207
 
 
 alternator_registers = {
@@ -2253,19 +2253,19 @@ dcsystem_registers = {
 class multi_mode(Enum):
     """Multi mode."""
 
-    CHARGER = 1
-    INVERTER = 2
-    ON = 3
-    OFF = 4
+    charger = 1
+    inverter = 2
+    on = 3
+    off = 4
 
 
 class multi_input_type(Enum):
     """Multi input type."""
 
-    UNUSED = 0
-    GRID = 1
-    GENSET = 2
-    SHORE = 3
+    unused = 0
+    grid = 1
+    genset = 2
+    shore = 3
 
 
 multi_registers = {
@@ -2530,11 +2530,11 @@ multi_registers = {
 class register_input_source(Enum):
     """Input source."""
 
-    UNKNOWN = 0
-    GRID = 1
-    GENERATOR = 2
-    SHORE = 3
-    NOT_CONNECTED = 240
+    unknown = 0
+    grid = 1
+    generator = 2
+    shore = 3
+    not_connected = 240
 
 
 system_registers = {
@@ -2574,9 +2574,9 @@ system_registers = {
 class system_battery_state(Enum):
     """Battery state."""
 
-    IDLE = 0
-    CHARGING = 1
-    DISCHARGING = 2
+    idle = 0
+    charging = 1
+    discharging = 2
 
 
 system_battery_registers = {
