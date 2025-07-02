@@ -11,9 +11,9 @@ If a breaking change were to be introduced expect the release notes to reflect t
 If you are missing a feature or experience any issues please report them in the issue tracker.
 
 ## Limitations
-The current state of this integration provides the following limitations regarding it's use:
+The current state of this integration provides the following limitations regarding its use:
 - Configuring the integration will be relatively slow if a discovery scan is required.
-- This integration wasn't tested with a three phase system. Although basic functionality should work minor bugs could have gone unnoticed
+- This integration wasn't tested with a three-phase system. Although basic functionality should work minor bugs could have gone unnoticed
 
 ## Important Note
 This integration was written an tested with the latest victron firmware running.
@@ -21,7 +21,7 @@ GX version: v3.10 (support validated from v2.92)
 Multiplus version: 492
 
 Victron continuously improves upon the modbus implementation by adding new registers.
-Therefore older firmware versions might not expose all registers this integration expects to be present.
+Therefore, older firmware versions might not expose all registers this integration expects to be present.
 This might (depending on your firmware and connected devices) cause odd behaviour where some but not all devices connected to your GX device will be correctly detected by this integration.
 
 The best solution for this issue is to upgrade to the latest firmware.
@@ -29,7 +29,7 @@ You can also open an issue to get your firmware version supported.
 This issue should contain the following information:
 - Connected devices
 - Firmware versions of the connected devices
-- Missing device type (grid, vebus, bms can etc)
+- Missing device type (grid, vebus, bms can etc.)
 - Missing unit id (among other 30, 100, 227, 228)
 
 Please note that it might take some time for older firmware versions to get full support (after a ticket is opened).
@@ -49,7 +49,7 @@ As of november 2022 the built-in home assistant modbus integration runs on a ver
 If you install this integration the built-in modbus integration will stop to work due to breaking changes between 2.x.x and 3.0.0
 
 ## Important announcement:
-Starting from homeassistant core version 2025.1.x the built-in modbus integration now uses pymodbus version 3.7.4.
+Starting from home assistant core version 2025.1.x the built-in modbus integration now uses pymodbus version 3.7.4.
 Version 0.4.0 (and up) of this integration will also use the 3.7.4 pymodbus version.
 
 Although core version >= 2023.2 and previous versions of this integration should be compatible it is recommended that all users update both core and this integration in the same patch round.
@@ -57,13 +57,14 @@ Since having multiple library version requirements might cause the built-in 3.1.
 This could cause issues if you are using specific configuration options of the built-in modbus integration that weren't working with pymodbus 3.0.2 and were fixed in 3.1.1
 
 ## Manual
-1. Clone the repository to your machine.
-2. Copy the contents of custom_components/ to your machine running home assistant.
-3. Restart home assistant
-4. goto "settings -> devices and services -> integration"
-5. click on "add integration"
-6. Search for "victron"
-7. Fill in the correct options and submit
+1. Clone the repository to your machine running home assistant: `git clone https://github.com/sfstar/hass-victron.git`
+2. Create the custom_components folder in your home assistant home folder if it doesn't exist: `mkdir homeassitant/custom_components`
+3. Copy the custom_components/victron folder (from step 1.) into the homeassistant/custom_components folder on your machine: `cp custom_components/victron homeassitant/custom_components`
+4. Restart home assistant
+5. Goto `Settings -> Devices and Services -> Integration`
+6. Click on `Add Integration`
+7. Search for `victron`
+8. Fill in the correct options and submit
 
 ## HACS
 
@@ -96,7 +97,7 @@ The integration provides end users with the following configuration options.
 
 ## Host
 The IP address of the victron GX device running the modbusTCP service.
-It's only configureable during setup and it's recommended to make the GX device static in your router
+It's only configurable during setup and it's recommended to make the GX device static in your router
 
 ## Port
 The port on which victron exposes the modbusTCP service.
@@ -115,9 +116,9 @@ Since you can't accidentally change any setting that might cause damage (i.e. to
 
 It is currently unknown and untested if the ModbusTCP server write registers are guard-railed. (Have protections/limits in place that prevent damage)
 Therefore, this integration offers users the ability to set "soft" guard rails by requiring current and voltage settings and limits to be specified by the end user.
-Although this make the integration safer, one should always double check if the provided write entities aren't capable of going to high / low for your system.
+Although this make the integration safer, one should always double-check if the provided write entities aren't capable of going to high / low for your system.
 
-Currently the options are tailored to the US / EU base settings and lifepo4 battery voltages.
+Currently, the options are tailored to the US / EU base settings and lifepo4 battery voltages.
 If you use another grid specification or battery type you can submit an issue to have them included.
 
 ### AC Current
@@ -135,10 +136,10 @@ The voltage profile to use in order to calculate the voltage boundaries (i.e. 4s
 
 ### AC Voltage
 The AC voltage for a single phase in your region (currently supported is US: 120v and EU: 230v)
-This setting is used in combination with AC current to automatically calcultate the max wattage for applicable wattage settings.
+This setting is used in combination with AC current to automatically calculate the max wattage for applicable wattage settings.
 
 # Resources
-The following links can be helpfull resources:
+The following links can be helpful resources:
 - [setting up modbusTCP on the gx device](https://www.victronenergy.com/live/ccgx:modbustcp_faq)
 - [Great UI card for the gx device data](https://github.com/flyrmyr/system-flow-card)
 ![image](https://user-images.githubusercontent.com/6717280/236457703-5c9219bd-ad88-487e-80b9-28d51859175e.png)
