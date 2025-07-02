@@ -26,6 +26,7 @@ from .const import (
     STRING,
     UINT16,
     UINT32,
+    UINT64,
     RegisterInfo,
     register_info_dict,
 )
@@ -137,6 +138,10 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             elif value.dataType == INT32:
                 decoded_data[full_key] = self.decode_scaling(
                     decoder.decode_32bit_int(), value.scale, value.unit
+                )
+            elif value.dataType == UINT64:
+                decoded_data[full_key] = self.decode_scaling(
+                    decoder.decode_64bit_uint(), value.scale, value.unit
                 )
             elif isinstance(value.dataType, STRING):
                 decoded_data[full_key] = (
