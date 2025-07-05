@@ -69,5 +69,601 @@
                 }
             }
         }
+    },
+    "comment_info": "translations from https://github.com/victronenergy/gui-v2/tree/main/i18n",
+    "device": {
+        "battery": { "name": "Batterie" },
+        "grid": { "name": "Netz" },
+        "pvinverter": { "name": "PV-Wechselrichter" },
+        "settings": { "name": "Einstellungen" },
+        "vebus": { "name": "VE.Bus" }
+    },
+    "entity": {
+        "sensor": {
+            "grid_L1_power": { "name": "AC-Phase L1 Leistung" },
+            "grid_L2_power": { "name": "AC-Phase L2 Leistung" },
+            "grid_L3_power": { "name": "AC-Phase L3 Leistung"},
+            "grid_L1_energy_forward": { "name": "Energie L1 eingespeist"},
+            "grid_L2_energy_forward": { "name": "Energie L2 eingespeist"},
+            "grid_L3_energy_forward": { "name": "Energie L3 eingespeist"},
+            "grid_L1_energy_reverse": { "name": "Energie L1 bezogen"},
+            "grid_L2_energy_reverse": { "name": "Energie L2 bezogen"},
+            "grid_L3_energy_reverse": { "name": "Energie L3 bezogen"},
+            "grid_serial": { "name": "Seriennummer"},
+            "grid_L1_voltage": { "name": "AC-Phase L1 Spannung"},
+            "grid_L1_current": { "name": "AC-Phase L1 Stromstärke"},
+            "grid_L2_voltage": { "name": "AC-Phase L2 Spannung"},
+            "grid_L2_current": { "name": "AC-Phase L2 Stromstärke"},
+            "grid_L3_voltage": { "name": "AC-Phase L3 Spannung"},
+            "grid_L3_current": { "name": "AC-Phase L3 Stromstärke"},
+            "grid_L1_energy_forward_total": { "name": "Energie L1 Gesamt eingespeist"},
+            "grid_L2_energy_forward_total": { "name": "Energie L2 Gesamt eingespeist"},
+            "grid_L3_energy_forward_total": { "name": "Energie L3 Gesamt eingespeist"},
+            "grid_L1_energy_reverse_total": { "name": "Energie L1 Gesamt bezogen"},
+            "grid_L2_energy_reverse_total": { "name": "Energie L2 Gesamt bezogen"},
+            "grid_L3_energy_reverse_total": { "name": "Energie L3 Gesamt bezogen"},
+            "grid_energy_forward_total": { "name": "Energie Gesamt eingespeist"},
+            "grid_energy_reverse_total": { "name": "Energie Gesamt bezogen"},
+
+            "vebus_activein_L1_voltage": { "name": "AC-Eingang L1: Spannung"},
+            "vebus_activein_L2_voltage": { "name": "AC-Eingang L2: Spannung"},
+            "vebus_activein_L3_voltage": { "name": "AC-Eingang L3: Spannung"},
+            "vebus_activein_L1_current": { "name": "AC-Eingang L1: Stromstärke"},
+            "vebus_activein_L2_current": { "name": "AC-Eingang L2: Stromstärke"},
+            "vebus_activein_L3_current": { "name": "AC-Eingang L3: Stromstärke"},
+            "vebus_activein_L1_frequency": { "name": "AC-Eingang L1: Frequenz"},
+            "vebus_activein_L2_frequency": { "name": "AC-Eingang L2: Frequenz"},
+            "vebus_activein_L3_frequency": { "name": "AC-Eingang L3: Frequenz"},
+            "vebus_activein_L1_power": { "name": "AC-Eingang L1: Leistung"},
+            "vebus_activein_L2_power": { "name": "AC-Eingang L2: Leistung"},
+            "vebus_activein_L3_power": { "name": "AC-Eingang L3: Leistung"},
+            "vebus_out_L1_voltage": { "name": "AC-Ausgang L1: Spannung"},
+            "vebus_out_L2_voltage": { "name": "AC-Ausgang L2: Spannung"},
+            "vebus_out_L3_voltage": { "name": "AC-Ausgang L3: Spannung"},
+            "vebus_out_L1_current": { "name": "AC-Ausgang L1: Stromstärke"},
+            "vebus_out_L2_current": { "name": "AC-Ausgang L2: Stromstärke"},
+            "vebus_out_L3_current": { "name": "AC-Ausgang L3: Stromstärke"},
+            "vebus_out_L1_frequency": { "name": "AC-Ausgang L1: Frequenz"},
+            "vebus_activein_currentlimit": { "name": "Netzstrombegrenzung"},
+            "vebus_out_L1_power": { "name": "AC-Ausgang L1: Leistung"},
+            "vebus_out_L2_power": { "name": "AC-Ausgang L2: Leistung"},
+            "vebus_out_L3_power": { "name": "AC-Ausgang L3: Leistung"},
+            "vebus_battery_voltage": { "name": "Batteriespannung"},
+            "vebus_battery_current": { "name": "Batteriestrom"},
+            "vebus_numberofphases": { "name": "Summe aller Phasen"},
+            "vebus_activein_activeinput": {
+                "name": "Aktiver AC-Eingang",
+                "state": {
+                    "ac_input_1": "AC-Eingang 1",
+                    "ac_input_2": "AC-Eingang 2",
+                    "disconnected": "Getrennt"
+                }
+            },
+            "vebus_soc": { "name": "Ladezustand"},
+            "vebus_state": {
+                "name": "Zustand",
+                "state": {
+                    "off": "Aus",
+                    "low_power": "Niedrige Leistung",
+                    "fault": "Störungszustand",
+                    "bulk": "Bulkladung",
+                    "absorption": "Absorptionsladung",
+                    "float": "Erhaltungsladung",
+                    "storage": "Lagerungsmodus",
+                    "equalize": "Ausgleichsladung",
+                    "passthru": "Durchleitung",
+                    "inverting": "Inverting",
+                    "power_assist": "Unterstützen",
+                    "power_supply": "Stromversorgungsmodus",
+                    "external_control": "Externe Steuerung"
+                }
+            },
+            "vebus_error": { "name": "Fehler"},
+            "vebus_mode": {
+                "name": "Modus",
+                "state": {
+                    "charger": "Nur Ladegerät",
+                    "inverter": "Nur Wechselrichter",
+                    "on": "Ein",
+                    "off": "Aus"
+                }
+            },
+            "vebus_alarm_hightemperature": { "name": "Alarmstatus: Temperatur"},
+            "vebus_alarm_lowbattery": { "name": "Alarmstatus: Batteriespannug niedrig"},
+            "vebus_alarm_overload": { "name": "Alarmstatus: Überlastung"},
+            "vebus_L1_acpowersetpoint": { "name": "Sollwert Netz L1"},
+            "vebus_disablecharge": { "name": "Ladegerät deaktiviert"},
+            "vebus_disablefeedin": { "name": "Netzeinspeiung deaktiviert"},
+            "vebus_L2_acpowersetpoint": { "name": "Sollwert Netz L2"},
+            "vebus_L3_acpowersetpoint": { "name": "Sollwert Netz L3"},
+            "vebus_alarm_temperaturesensor": { "name": "Alarmstatus: Temperatursensor"},
+            "vebus_alarm_voltagesensor": { "name": "Alarmstatus: Spannungssensor"},
+            "vebus_alarm_L1_higtemperature": { "name": "Alarmstatus: L1 Temperatur"},
+            "vebus_alarm_L1_lowbattery": { "name": "Alarmstatus: L1 Batteriespannug niedrig"},
+            "vebus_alarm_L1_overload": { "name": "Alarmstatus: L1 Überlastung"},
+            "vebus_alarm_L1_ripple": { "name": "Alarmstatus: L1 Restwelligkeit"},
+            "vebus_alarm_L2_higtemperature": { "name": "Alarmstatus: L2 Temperatur"},
+            "vebus_alarm_L2_lowbattery": { "name": "Alarmstatus: L2 Batteriespannug niedrig"},
+            "vebus_alarm_L2_overload": { "name": "Alarmstatus: L2 Überlastung"},
+            "vebus_alarm_L2_ripple": { "name": "Alarmstatus: L2 Restwelligkeit"},
+            "vebus_alarm_L3_higtemperature": { "name": "Alarmstatus: L3 Temperatur"},
+            "vebus_alarm_L3_lowbattery": { "name": "Alarmstatus: L3 Batteriespannug niedrig"},
+            "vebus_alarm_L3_overload": { "name": "Alarmstatus: L3 Überlastung"},
+            "vebus_alarm_L3_ripple": { "name": "Alarmstatus: L3 Restwelligkeit"},
+            "vebus_pvinverter_disable": { "name": "PV-Wechselrichter deaktiviert"},
+            "vebus_bms_allowtocharge": { "name": "BMS: Laden erlaubt"},
+            "vebus_bms_allowtodischarge": { "name": "BMS: Entladen erlaubt"},
+            "vebus_bms_bmsexpected": { "name": "BMS: Erwartet"},
+            "vebus_bms_error": { "name": "BMS: Fehler"},
+            "vebus_battery_temperature": { "name": "Batterietemperatur"},
+            "vebus_systemreset": { "name": "System zurücksetzen"},
+            "vebus_alarm_phaserotation": { "name": "Alarmstatus: Phasendrehung"},
+            "vebus_alarm_gridlost": { "name": "Alarmstatus: Netzverbindung"},
+            "vebus_donotfeedinovervoltage": { "name": "Überspannung nicht einspeisen"},
+            "vebus_L1_maxfeedinpower": { "name": "Maximale Einspeisung L1"},
+            "vebus_L2_maxfeedinpower": { "name": "Maximale Einspeisung L2"},
+            "vebus_L3_maxfeedinpower": { "name": "Maximale Einspeisung L3"},
+            "vebus_state_ignoreacin1": { "name": "AC-Eingang 1 ignorieren"},
+            "vebus_state_ignoreacin2": { "name": "AC-Eingang 2 ignorieren"},
+            "vebus_targetpowerismaxfeedin": { "name": "Ziel-Leistung = Max. Einspeisung"},
+            "vebus_fixsolaroffsetto100mv": { "name": "Solar-Offset = 100mV"},
+            "vebus_sustain": { "name": "Erhaltung"},
+            "vebus_acin1toacout": { "name": "AC-Eingang 1 zu AC-Ausgang"},
+            "vebus_acin1toinverter": { "name": "AC-Eingang 1 zu PV-Wechselrichter"},
+            "vebus_acin2toacout": { "name": "AC-Eingang 2 zu AC-Ausgang"},
+            "vebus_acin2toinverter": { "name": "AC-Eingang 2 zu PV-Wechselrichter"},
+            "vebus_acouttoacin1": { "name": "AC-Ausgang zu AC-Eingang 1"},
+            "vebus_acouttoacin2": { "name": "AC-Ausgang zu AC-Eingang 2"},
+            "vebus_invertertoacin1": { "name": "PV-Wechselrichter zu AC-Eingang 1"},
+            "vebus_invertertoacin2": { "name": "PV-Wechselrichter zu AC-Eingang 2"},
+            "vebus_invertertoacout": { "name": "PV-Wechselrichter zu AC-Ausgang"},
+            "vebus_outtoinverter": { "name": "AC-Ausgang zu PV-Wechselrichter"},
+
+            "battery_voltage": { "name": "Batteriespannung"},
+            "battery_starter_voltage": { "name": "Starterspannung"},
+            "battery_current": { "name": "Batteriestrom"},
+            "battery_temperature": { "name": "Batterietemperatur"},
+            "battery_midvoltage": { "name": "Mittlere Batteriespannung"},
+            "battery_midvoltagedeviation": { "name": "Mittelpunktabweichung Batteriespannung"},
+            "battery_consumedamphours": { "name": "Verbrauchte Amperestunden"},
+            "battery_soc": { "name": "SOC Batterie"},
+            "battery_alarm": { "name": "Alarm"},
+            "battery_alarm_lowvoltage": { "name": "Alarmstatus: Batteriespannug niedrig"},
+            "battery_alarm_highvoltage": { "name": "Alarmstatus: Hohe Zellspannung"},
+            "battery_alarm_lowstartervoltage": { "name": "Alarmstatus: Starterspannung niedrig"},
+            "battery_alarm_highstartervoltage": { "name": "Alarmstatus: Starterspannung hoch"},
+            "battery_alarm_lowsoc": { "name": "Alarmstatus: Niedriger SOC"},
+            "battery_alarm_lowtemperature": { "name": "Alarmstatus: Temperatur niedrig"},
+            "battery_alarm_hightemperature": { "name": "Alarmstatus: Temperatur hoch"},
+            "battery_alarm_midvoltage": { "name": "Alarmstatus: Mittelpunktspannung"},
+            "battery_alarm_lowfusedvoltage": { "name": "Alarmstatus: Niedrigste Sicherungs-Spannung"},
+            "battery_alarm_highfusedvoltage": { "name": "Alarmstatus: Höchste Sicherungs-Spannung"},
+            "battery_alarm_fuseblown": { "name": "Alarmstatus: Sicherung durchgebrannt"},
+            "battery_alarm_highinternaltemperature": { "name": "Alarmstatus: Innentemperatur hoch"},
+            "battery_relay": { "name": "Relais"},
+            "battery_history_deepestdischarge": { "name": "Verlauf: Tiefste Entladung"},
+            "battery_history_lastdischarge": { "name": "Verlauf: Letzte Entladung"},
+            "battery_history_averagedischarge": { "name": "Verlauf: Durchnittliche Entladung"},
+            "battery_history_chargecycles": { "name": "Verlauf: Ladezyklen insgesamt"},
+            "battery_history_fulldischarges": { "name": "Verlauf: Anzahl der vollständigen Entladungen"},
+            "battery_history_totalahdrawn": { "name": "Verlauf: Gesamte bezogene Ah"},
+            "battery_history_minimumvoltage": { "name": "Verlauf: Niedrigste Spannung"},
+            "battery_history_maximumvoltage": { "name": "Verlauf: Höchste Spannung"},
+            "battery_history_timesincelastfullcharge": { "name": "Verlauf: Zeit seit letzter vollständiger Aufladung"},
+            "battery_history_automaticsyncs": { "name": "Verlauf: Anzahl Synchronisierungen"},
+            "battery_history_lowvoltagealarms": { "name": "Verlauf: Alarme niedriger Zellspannung"},
+            "battery_history_highvoltagealarms": { "name": "Verlauf: Alarme hoher Zellspannung"},
+            "battery_history_lowstartervoltagealarms": { "name": "Verlauf: Alarme niedriger Starterbatteriespannung"},
+            "battery_history_highstartervoltagealarms": { "name": "Verlauf: Alarme hoher Starterbatteriespannung"},
+            "battery_history_minimumstartervoltage": { "name": "Verlauf: Mindestspannung der Starterbatterie"},
+            "battery_history_maximumstartervoltage": { "name": "Verlauf: Maximale Spannung der Starterbatterie"},
+            "battery_history_lowfusedvoltagealarms": { "name": "Verlauf: Alarme niedriger Sicherungs-Spannung"},
+            "battery_history_highfusedvoltagealarms": { "name": "Verlauf: Alarme hoher Sicherungs-Spannung"},
+            "battery_history_minimumfusedvoltage": { "name": "Verlauf: Niedrigste Sicherungs-Spannung"},
+            "battery_history_maximumfusedvoltage": { "name": "Verlauf: Höchste Sicherungs-Spannung"},
+            "battery_history_dischargedenergy": { "name": "Verlauf: Entladene Energie"},
+            "battery_history_chargedenergy": { "name": "Verlauf: Geladene Energie"},
+            "battery_timetogo": { "name": "Restlaufzeit"},
+            "battery_soh": { "name": "Alterungszustand"},
+            "battery_info_maxchargevoltage": { "name": "Maximale Ladespannung"},
+            "battery_info_batterylowvoltage": { "name": "Niedrige Batteriespannung"},
+            "battery_info_maxchargecurrent": { "name": "Maximaler Ladestrom"},
+            "battery_info_maxdischargecurrent": { "name": "Maximaler Entladestrom"},
+            "battery_capacity": { "name": "Verfügbare Kapazität"},
+            "battery_diagnostics_lasterror_1_time": { "name": "Zeitpunkt Letzter Fehler"},
+            "battery_diagnostics_lasterror_2_time": { "name": "Zeitpunkt Vorletzter Fehler"},
+            "battery_diagnostics_lasterror_3_time": { "name": "Zeitpunkt Drittletzter Fehler"},
+            "battery_diagnostics_lasterror_4_time": { "name": "Zeitpunkt Viertletzter Fehler"},
+            "battery_system_mincelltemperature": { "name": "Minimale Zellentemperatur"},
+            "battery_system_maxcelltemperature": { "name": "Maximale Zellentemperatur"},
+            "battery_alarm_higchargecurrent": { "name": "Alarmstatus: Hoher Ladestrom"},
+            "battery_alarm_highdischargecurrent": { "name": "Alarmstatus: Hoher Entladestrom"},
+            "battery_alarm_cellimbalance": { "name": "Alarmstatus: Zellenungleichgewicht"},
+            "battery_alarm_internalfailure": { "name": "Alarmstatus: Interner Fehler"},
+            "battery_alarm_highchargetemperature": { "name": "Alarmstatus: Hohe Ladetemperatur"},
+            "battery_alarm_lowchargetemperature": { "name": "Alarmstatus: Niedrige Ladetemperatur"},
+            "battery_alarm_lowcellvoltage": { "name": "Alarmstatus: Niedrige Zellspannung"},
+            "battery_state": {
+                "name": "Status",
+                "state": {
+                    "wait_start_init": "Initialisierung: Warte auf Startbeginn",
+                    "before_boot_init": "Initialisierung: Vor dem Startvorgang",
+                    "before_boot_delay_init": "Initialisierung: Verzögerung vor dem Startvorgang",
+                    "wait_boot_init": "Initialisierung: Warte auf Startvorgang",
+                    "initializing": "Initialisierung",
+                    "battery_voltage_measure_init": "Initialisierung: Spannungsmessung",
+                    "battery_calculate_voltage_init": "Initialisierung: Berechne Spannung",
+                    "wait_bus_voltage_init": "Initialisierung: Warte auf Bus-Spannung",
+                    "wait_lynx_shunt_init": "Initialisierung: Lynx Shunt",
+                    "running": "In Betrieb",
+                    "error": "Fehler",
+                    "unused": "Ungenutzt",
+                    "shutdown": "Heruntergefahren",
+                    "slave_updating": "Aktualisierung",
+                    "standby": "Standby",
+                    "going_to_run": "Wird ausgeführt werden",
+                    "pre_charging": "Vorabaufladung"
+                }
+            },
+            "battery_error": {
+                "name": "Fehler",
+                "state": {
+                    "none": "Kein Fehler",
+                    "battery_init_error": "Fehler Batterieinitialisierung",
+                    "no_batteries_connected": "Keine Batterien angeschlossen",
+                    "unknown_battery_connected": "Batterie unbekannt",
+                    "different_battery_type": "Unterschiedliche Batterietypen",
+                    "number_of_batteries_incorrect": "Anz. d. Batterien falsch",
+                    "lynx_shunt_not_found": "Lynx Shunt nicht gefunden",
+                    "battery_measure_error": "Fehler Batteriemessung",
+                    "internal_calculation_error": "Interner Berechnungsfehler",
+                    "batteries_in_series_not_ok": "Anz. d. Batterien in Reihe falsch",
+                    "number_of_batteries_incorrect_duplicate_1": "Anz. d. Batterien falsch - Duplikat",
+                    "hardware_error": "Hardwarefehler",
+                    "watchdog_error": "Watchdog-Fehler",
+                    "over_voltage": "Überspannung",
+                    "under_voltage": "Unterspannung",
+                    "over_temperature": "Übertemperatur",
+                    "under_temperature": "Untertemperatur",
+                    "hardware_fault": "Hardwarestörung",
+                    "standby_shutdown": "Standby/Abschaltung",
+                    "pre_charge_charge_error": "Vorladen: Ladefehler",
+                    "safety_contactor_check_error": "Fehler Prüfung Sicherheitsschütz",
+                    "pre_charge_discharge_error": "Vorladen: Entladefehler",
+                    "adc_error": "ADC-Fehler",
+                    "slave_error": "Slave-Fehler",
+                    "slave_warning": "Slave-Warnung",
+                    "pre_charge_error": "Fehler Vorladen",
+                    "safety_contactor_error": "Fehler Sicherheitsschütz",
+                    "over_current": "Überstrom",
+                    "slave_update_failed": "Slave-Update fehlgeschlagen",
+                    "slave_update_unavailable": "Slave-Update nicht verfügbar",
+                    "calibration_data_lost": "Kallibrierungsdaten verloren",
+                    "settings_invalid": "Einstellungen ungültig",
+                    "bms_cable": "BMS Kabelfehler",
+                    "reference_failure": "Referenzspannungsfehler",
+                    "wrong_system_voltage": "Falsche Systemspannung",
+                    "pre_charge_timeout": "Vorladung Zeitüberschreitung"
+                }
+            },
+            "battery_system_switch": { "name": "Systemschalter"},
+            "battery_balancing": { "name": "Ausgleich läuft"},
+            "battery_system_numberofbatteries": { "name": "Anzahl von Batterien"},
+            "battery_system_batteriesparallel": { "name": "Batterien parallel"},
+            "battery_system_batteriesseries": { "name": "Batterien in Serie"},
+            "battery_system_numberofcellsperbattery": { "name": "Zellen pro Batterie"},
+            "battery_system_mincellvoltage": { "name": "Niedrigste Zellenspannung"},
+            "battery_system_maxcellvoltage": { "name": "Höchste Zellenspannung"},
+            "battery_diagnostics_shutdownsdueerror": { "name": "Abschaltungen aufgrund von Fehlern"},
+            "battery_diagnostics_lasterror_1": { "name": "Letzter Fehler"},
+            "battery_diagnostics_lasterror_2": { "name": "Vorletzter Fehler"},
+            "battery_diagnostics_lasterror_3": { "name": "Drittletzter Fehler"},
+            "battery_diagnostics_lasterror_4": { "name": "Viertletzter Fehler"},
+            "battery_io_allowtocharge": { "name": "Laden zulassen"},
+            "battery_io_allowtodischarge": { "name": "Entladen zulassen"},
+            "battery_io_externalrelay": { "name": "Externes Relais"},
+            "battery_history_minimumcellvoltage": { "name": "Verlauf: Mindestzellenspannung"},
+            "battery_history_maximumcellvoltage": { "name": "Verlauf: Höchstzellenspannung"},
+            "battery_system_numberofmodulesoffline": { "name": "Batteriemodule offline"},
+            "battery_system_numberofmodulesonline": { "name": "Batteriemodule online"},
+            "battery_system_numberofmodulesblockingcharge": { "name": "Anzahl der Module, die die Ladung blockieren"},
+            "battery_system_numberofmodulesblockingdischarge": { "name": "Anzahl der Module, die die Entladung blockieren"},
+            "battery_system_minvoltagecellid": { "name": "Niedrigste Zellenspannung ID"},
+            "battery_system_maxvoltagecellid": { "name": "Höchste Zellenspannung ID"},
+            "battery_system_mintemperaturecellid": { "name": "Minimale Zellentemperatur ID"},
+            "battery_system_maxtemperaturecellid": { "name": "Maximale Zellentemperatur ID"},
+
+            "pvinverter_position": {
+                "name": "Position",
+                "state": {
+                    "ac_input_1": "AC-Eingang 1",
+                    "ac_output": "AC-Ausgang",
+                    "ac_input_2": "AC-Eingang 2"
+                }
+            },
+            "pvinverter_L1_voltage": { "name": "AC-Phase L1 Spannung"},
+            "pvinverter_L1_current": { "name": "AC-Phase L1 Stromstärke"},
+            "pvinverter_L1_power": { "name": "AC-Phase L1 Leistung"},
+            "pvinverter_L1_energy_forward": { "name": "Energie L1 erzeugt"},
+            "pvinverter_L2_voltage": { "name": "AC-Phase L2 Spannung"},
+            "pvinverter_L2_current": { "name": "AC-Phase L2 Stromstärke"},
+            "pvinverter_L2_power": { "name": "AC-Phase L2 Leistung"},
+            "pvinverter_L2_energy_forward": { "name": "Energie L2 erzeugt"},
+            "pvinverter_L3_voltage": { "name": "AC-Phase L3 Spannung"},
+            "pvinverter_L3_current": { "name": "AC-Phase L3 Stromstärke"},
+            "pvinverter_L3_power": { "name": "AC-Phase L3 Leistung"},
+            "pvinverter_L3_energy_forward": { "name": "Energie L3 erzeugt"},
+            "pvinverter_serial": { "name": "Seriennummer"},
+            "pvinverter_L1_energy_forward_total": { "name": "Energie L1 Gesamt erzeugt"},
+            "pvinverter_L2_energy_forward_total": { "name": "Energie L2 Gesamt erzeugt"},
+            "pvinverter_L3_energy_forward_total": { "name": "Energie L3 Gesamt erzeugt"},
+            "pvinverter_power_total": { "name": "AC Gesamt Leistung"},
+            "pvinverter_power_max_capacity": { "name": "Maximale Leistung"},
+            "pvinverter_powerlimit": { "name": "Leistungsbegrenzung"},
+
+            "comment_info: TODO - Missing Translations": "motordrive, charger, gps, tank, inverter, genset, temperature, pulsemeter, digitalinput, generator, meteo, evcharger, acloads, fuelcell, alternator, dcsource, dcload, dcsystem, multi",
+
+            "settings_ess_acpowersetpoint": { "name": "ESS: Sollwert Netz"},
+            "settings_ess_maxchargepercentage": { "name": "ESS: Maximale Ladung"},
+            "settings_ess_maxdischargepercentage": { "name": "ESS: Maximale Entladung"},
+            "settings_ess_acpowersetpoint2": { "name": "ESS: Sollwert Netz 2"},
+            "settings_ess_maxdischargepower": { "name": "ESS: Maximaler Entladestrom"},
+            "settings_ess_maxchargecurrent": { "name": "ESS: Maximaler Ladestrom"},
+            "settings_ess_maxfeedinpower": { "name": "ESS: Maximale Einspeisung"},
+            "settings_ess_overvoltagefeedin": { "name": "ESS: DC-gekoppelte PV - Überschusseinspeisung"},
+            "settings_ess_preventfeedback": { "name": "ESS: AC-gekoppelte PV - Überschusseinspeisung"},
+            "settings_ess_feedinpowerlimit": { "name": "ESS: Einspeisebegrenzung aktiv"},
+            "settings_systemsetup_maxchargevoltage": { "name": "ESS: Maximale Ladespannung"},
+            "settings_ess_batterylife_state": {
+                "name": "ESS: BatteryLife Status",
+                "state": {
+                    "bl_disabled_duplicate_1": "BatteryLife Deaktiviert - Duplikat 1",
+                    "restarting": "Neustart",
+                    "self_consumption": "Eigenverbrauch",
+                    "self_consumption_duplicate_1": "Eigenverbrauch - Duplikat 1",
+                    "self_consumption_duplicate_2": "Eigenverbrauch - Duplikat 2",
+                    "discharge_disabled": "Entladen Deaktiviert",
+                    "force_charge": "Ladung erzwungen",
+                    "sustain": "Erhaltung",
+                    "low_soc_recharge": "Niedriger SOC - Aufladen",
+                    "keep_batteries_charged": "Batterien im gelad. Zustand halten",
+                    "bl_disabled": "BatteryLife Deaktiviert",
+                    "bl_disabled_low_soc": "BatteryLife Deaktiviert: Niedriger SOC",
+                    "bl_disabled_loc_soc_recharge": "BatteryLife Deaktiviert: Niedriger SOC - Aufladen"
+                }
+            },
+            "settings_ess_batterylife_minimumsoc": { "name": "ESS: SOC Mindestwert (außer bei Netzausfall)"},
+            "settings_ess_mode": {
+                "name": "ESS: Modus",
+                "state": {
+                    "self_consumption_with_battery_life": "Optimiert für die Batterielebensdauer",
+                    "self_consumption": "Optimiert ohne BatteryLife",
+                    "keep_charged": "Batterien im gelad. Zustand halten",
+                    "external_control": "Externe Steuerung"
+                }
+            },
+            "settings_ess_batterylife_soclimit": { "name": "ESS: BatteryLife SOC Limit"},
+
+            "system_serial": { "name": "System: Seriennummer"},
+            "system_relay_0": { "name": "System: Relais 1 Ein"},
+            "system_relay_1": { "name": "System: Relais 2 Ein"},
+            "system_pvonoutput_L1": { "name": "System: PV auf AC-Ausgang L1"},
+            "system_pvonoutput_L2": { "name": "System: PV auf AC-Ausgang L2"},
+            "system_pvonoutput_L3": { "name": "System: PV auf AC-Ausgang L3"},
+            "system_pvongrid_L1": { "name": "System: PV auf Netz L1"},
+            "system_pvongrid_L2": { "name": "System: PV auf Netz L2"},
+            "system_pvongrid_L3": { "name": "System: PV auf Netz L3"},
+            "system_pvongenset_L1": { "name": "System: PV auf Genset L1"},
+            "system_pvongenset_L2": { "name": "System: PV auf Genset L2"},
+            "system_pvongenset_L3": { "name": "System: PV auf Genset L3"},
+            "system_consumption_L1": { "name": "System: Verbrauch L1"},
+            "system_consumption_L2": { "name": "System: Verbrauch L2"},
+            "system_consumption_L3": { "name": "System: Verbrauch L3"},
+            "system_grid_L1": { "name": "System: Netz L1"},
+            "system_grid_L2": { "name": "System: Netz L2"},
+            "system_grid_L3": { "name": "System: Netz L3"},
+            "system_genset_L1": { "name": "System: Genset L1"},
+            "system_genset_L2": { "name": "System: Genset L2"},
+            "system_genset_L3": { "name": "System: Genset L3"},
+            "system_input_source": {
+                "name": "System: Eingang/Quelle",
+                "state": {
+                    "unknown": "Unbekannt",
+                    "grid": "Netz",
+                    "generator": "Generator",
+                    "shore": "Land",
+                    "not_connected": "Nicht verbunden"
+                }
+            },
+            "system_battery_voltage": { "name": "System: Batteriespannung"},
+            "system_battery_current": { "name": "System: Batteriestrom"},
+            "system_battery_power": { "name": "System: Batterieleistung"},
+            "system_battery_soc": { "name": "System: Batterie-SOC"},
+            "system_battery_state": {
+                "name": "System: Batteriezustand",
+                "state": {
+                    "idle": "Idle",
+                    "charging": "Aufladen",
+                    "discharging": "Entladen"
+                }
+            },
+            "system_battery_amphours": { "name": "System: Batteriekapazität"},
+            "system_battery_time_to_go": { "name": "System: Batterie Restlaufzeit"},
+            "system_dc_pv_power": { "name": "System: DC PV-Leistung"},
+            "system_dc_pv_current": { "name": "System: DC PV-Stromstärke"},
+            "system_charger_power": { "name": "System: Leistung Ladegerät"},
+            "system_system_power": { "name": "System: Leistung System"},
+            "system_bus_charge_current": { "name": "System: Bus Ladestrom"},
+            "system_bus_charge_power": { "name": "System: Bus Ladeleistung"}
+
+        },
+        "binary_sensor": {
+            "vebus_bms_allowtocharge": {
+                "name": "BMS: Laden erlaubt",
+                "state": {
+                    "on": "An",
+                    "off": "Aus"
+                }
+            },
+            "vebus_bms_allowtodischarge": {
+                "name": "BMS: Entladen erlaubt",
+                "state": {
+                    "on": "An",
+                    "off": "Aus"
+                }
+            },
+            "vebus_bms_bmsexpected": {
+                "name": "BMS: Erwartet",
+                "state": {
+                    "on": "An",
+                    "off": "Aus"
+                }
+            },
+            "vebus_bms_error": {
+                "name": "BMS: Fehler",
+                "state": {
+                    "on": "An",
+                    "off": "Aus"
+                }
+            },
+            "vebus_state_ignoreacin1": {
+                "name": "AC-Eingang 1 ignorieren",
+                "state": {
+                    "on": "An",
+                    "off": "Aus"
+                }
+            },
+            "vebus_state_ignoreacin2": {
+                "name": "AC-Eingang 2 ignorieren",
+                "state": {
+                    "on": "An",
+                    "off": "Aus"
+                }
+            },
+            "vebus_sustain": {
+                "name": "Erhaltung",
+                "state": {
+                    "on": "An",
+                    "off": "Aus"
+                }
+            },
+
+            "battery_system_switch": {
+                "name": "Systemschalter",
+                "state": {
+                    "on": "An",
+                    "off": "Aus"
+                }
+            },
+            "battery_balancing": {
+                "name": "Ausgleich läuft",
+                "state": {
+                    "on": "An",
+                    "off": "Aus"
+                }
+            },
+            "battery_io_allowtocharge": {
+                "name": "Laden zulassen",
+                "state": {
+                    "on": "An",
+                    "off": "Aus"
+                }
+            },
+            "battery_io_allowtodischarge": {
+                "name": "Entladen zulassen",
+                "state": {
+                    "on": "An",
+                    "off": "Aus"
+                }
+            },
+            "battery_io_externalrelay": {
+                "name": "Externes Relais",
+                "state": {
+                    "on": "An",
+                    "off": "Aus"
+                }
+            },
+            "settings_ess_feedinpowerlimit": {
+                "name": "ESS: Einspeisebegrenzung aktiv",
+                "state": {
+                    "on": "An",
+                    "off": "Aus"
+                }
+            }
+        },
+        "button": {
+            "vebus_systemreset": { "name": "System zurücksetzen"}
+        },
+        "number": {
+            "vebus_activein_currentlimit": { "name": "Netzstrombegrenzung"},
+            "vebus_soc": { "name": "Ladezustand"},
+            "vebus_L1_acpowersetpoint": { "name": "Sollwert Netz L1"},
+            "vebus_L2_acpowersetpoint": { "name": "Sollwert Netz L2"},
+            "vebus_L3_acpowersetpoint": { "name": "Sollwert Netz L3"},
+            "vebus_L1_maxfeedinpower": { "name": "Maximale Einspeisung L1"},
+            "vebus_L2_maxfeedinpower": { "name": "Maximale Einspeisung L2"},
+            "vebus_L3_maxfeedinpower": { "name": "Maximale Einspeisung L3"},
+            "pvinverter_powerlimit": { "name": "Leistungsbegrenzung"},
+            "settings_ess_acpowersetpoint": { "name": "ESS: Sollwert Netz"},
+            "settings_ess_maxchargepercentage": { "name": "ESS: Maximale Ladung"},
+            "settings_ess_maxdischargepercentage": { "name": "ESS: Maximale Entladung"},
+            "settings_ess_acpowersetpoint2": { "name": "ESS: Sollwert Netz 2"},
+            "settings_ess_maxdischargepower": { "name": "ESS: Maximaler Entladestrom"},
+            "settings_ess_maxchargecurrent": { "name": "ESS: Maximaler Ladestrom"},
+            "settings_ess_maxfeedinpower": { "name": "ESS: Maximale Einspeisung"},
+            "settings_systemsetup_maxchargevoltage": { "name": "ESS: Maximale Ladespannung"},
+            "settings_ess_batterylife_minimumsoc": { "name": "ESS: SOC Mindestwert (außer bei Netzausfall"}
+        },
+        "select": {
+            "vebus_mode": {
+                "name": "Modus",
+                "state": {
+                    "charger": "Nur Ladegerät",
+                    "inverter": "Nur Wechselrichter",
+                    "on": "Ein",
+                    "off": "Aus"
+                }
+            },
+            "settings_ess_batterylife_state": {
+                "name": "ESS: BatteryLife Status",
+                "state": {
+                    "bl_disabled_duplicate_1": "BatteryLife Deaktiviert - Duplikat 1",
+                    "restarting": "Neustart",
+                    "self_consumption": "Eigenverbrauch",
+                    "self_consumption_duplicate_1": "Eigenverbrauch - Duplikat 1",
+                    "self_consumption_duplicate_2": "Eigenverbrauch - Duplikat 2",
+                    "discharge_disabled": "Entladen Deaktiviert",
+                    "force_charge": "Ladung erzwungen",
+                    "sustain": "Erhaltung",
+                    "low_soc_recharge": "Niedriger SOC - Aufladen",
+                    "keep_batteries_charged": "Batterien im gelad. Zustand halten",
+                    "bl_disabled": "BatteryLife Deaktiviert",
+                    "bl_disabled_low_soc": "BatteryLife Deaktiviert: Niedriger SOC",
+                    "bl_disabled_loc_soc_recharge": "BatteryLife Deaktiviert: Niedriger SOC - Aufladen"
+                }
+            },
+            "settings_ess_mode": {
+                "name": "ESS: Modus",
+                "state": {
+                    "self_consumption_with_battery_life": "Optimiert für die Batterielebensdauer",
+                    "self_consumption": "Optimiert ohne BatteryLife",
+                    "keep_charged": "Batterien im gelad. Zustand halten",
+                    "external_control": "Externe Steuerung"
+                }
+            }
+        },
+        "switch": {
+            "vebus_disablecharge": { "name": "Ladegerät deaktiviert"},
+            "vebus_disablefeedin": { "name": "Netzeinspeiung deaktiviert"},
+            "vebus_pvinverter_disable": { "name": "PV-Wechselrichter deaktiviert"},
+            "vebus_donotfeedinovervoltage": { "name": "Überspannung nicht einspeisen"},
+            "vebus_targetpowerismaxfeedin": { "name": "Ziel-Leistung = Max. Einspeisung"},
+            "vebus_fixsolaroffsetto100mv": { "name": "Solar-Offset = 100mV"},
+            "battery_relay": { "name": "Relais"},
+            "settings_ess_overvoltagefeedin": { "name": "ESS: DC-gekoppelte PV - Überschusseinspeisung"},
+            "settings_ess_preventfeedback": { "name": "ESS: AC-gekoppelte PV - Überschusseinspeisung"},
+            "system_relay_0": { "name": "System: Relais 1 Ein"},
+            "system_relay_1": { "name": "System: Relais 2 Ein"}
+        }
     }
 }

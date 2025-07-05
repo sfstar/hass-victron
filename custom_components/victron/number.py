@@ -33,6 +33,7 @@ from .const import (
     CONF_NUMBER_OF_PHASES,
     CONF_USE_SLIDERS,
     DOMAIN,
+    TRANSLATED_ENTITY_TYPES,
     UINT16_MAX,
     SliderWriteType,
     register_info_dict,
@@ -209,6 +210,8 @@ class VictronEntityDescription(
 class VictronNumber(NumberEntity):
     """Victron number."""
 
+    _attr_has_entity_name = True
+
     description: VictronEntityDescription
 
     def __init__(
@@ -219,7 +222,10 @@ class VictronNumber(NumberEntity):
         """Initialize the entity."""
         self.coordinator = coordinator
         self.description = description
-        self._attr_name = f"{description.name}"
+        if description.key.startswith(TRANSLATED_ENTITY_TYPES):
+            self._attr_translation_key = description.key
+        else:
+            self._attr_name = f"{description.name}"
 
         self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
