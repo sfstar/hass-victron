@@ -4,6 +4,6 @@
     "zip_release": true,
     "filename": "victron.zip",
     "hide_default_branch": false,
-    "homeassistant": "2025.1",
+    "homeassistant": "2025.2",
     "hacs": "1.28.4"
   }

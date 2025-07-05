@@ -4,6 +4,8 @@ from collections import OrderedDict
 import logging
 import threading
 
+from packaging import version
+import pymodbus
 from pymodbus.client import ModbusTcpClient
 
 from homeassistant.exceptions import HomeAssistantError
@@ -37,8 +39,12 @@ class VictronHub:
 
     def convert_string_from_register(self, segment, string_encoding="ascii"):
         """Convert from registers to the appropriate data type."""
+        if version.parse("3.8.0") <= version.parse(pymodbus.__version__) <= version.parse("3.8.4"):
+            return self._client.convert_from_registers(
+                segment, self._client.DATATYPE.STRING
+            ).split("\x00")[0]
         return self._client.convert_from_registers(
-            segment, self._client.DATATYPE.STRING, string_encoding="ascii"
+            segment, self._client.DATATYPE.STRING, string_encoding=string_encoding
         ).split("\x00")[0]
 
     def convert_number_from_register(self, segment, dataType):
