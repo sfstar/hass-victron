@@ -7,8 +7,6 @@ from datetime import timedelta
 import logging
 
 import pymodbus
-from pymodbus.constants import Endian
-from pymodbus.payload import BinaryPayloadDecoder
 
 if "3.7.0" <= pymodbus.__version__ <= "3.7.4":
     from pymodbus.pdu.register_read_message import ReadHoldingRegistersResponse
@@ -112,42 +110,36 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
     def parse_register_data(
         self,
         buffer: ReadHoldingRegistersResponse,
-        registerInfo: OrderedDict(str, RegisterInfo),
+        registerInfo: OrderedDict[str, RegisterInfo],
         unit: int,
     ) -> dict:
-        """Parse the register data."""
-        decoder = BinaryPayloadDecoder.fromRegisters(
-            buffer.registers, byteorder=Endian.BIG
-        )
+        """Parse the register data using convert_from_registers."""
         decoded_data = OrderedDict()
+        registers = buffer.registers
+        offset = 0
+
         for key, value in registerInfo.items():
-            full_key = str(unit) + "." + key
-            if value.dataType == UINT16:
-                decoded_data[full_key] = self.decode_scaling(
-                    decoder.decode_16bit_uint(), value.scale, value.unit
-                )
-            elif value.dataType == INT16:
-                decoded_data[full_key] = self.decode_scaling(
-                    decoder.decode_16bit_int(), value.scale, value.unit
-                )
-            elif value.dataType == UINT32:
-                decoded_data[full_key] = self.decode_scaling(
-                    decoder.decode_32bit_uint(), value.scale, value.unit
-                )
-            elif value.dataType == INT32:
-                decoded_data[full_key] = self.decode_scaling(
-                    decoder.decode_32bit_int(), value.scale, value.unit
-                )
+            full_key = f"{unit}.{key}"
+            count = 0
+            if value.dataType in (INT16, UINT16):
+                count = 1
+            elif value.dataType in (INT32, UINT32):
+                count = 2
             elif isinstance(value.dataType, STRING):
-                decoded_data[full_key] = (
-                    decoder.decode_string(value.dataType.readLength)
-                    .split(b"\x00")[0]
-                    .decode()
-                )
+                count = value.dataType.length
+            segment = registers[offset : offset + count]
+
+            if isinstance(value.dataType, STRING):
+                raw = self.api.convert_string_from_register(segment)
+                decoded_data[full_key] = raw
             else:
-                raise DecodeDataTypeUnsupported(
-                    f"Not supported dataType: {value.dataType}"
+                raw = self.api.convert_number_from_register(segment, value.dataType)
+                # _LOGGER.warning("trying to decode %s with value %s", key, raw)
+                decoded_data[full_key] = self.decode_scaling(
+                    raw, value.scale, value.unit
                 )
+            offset += count
+
         return decoded_data
 
     def decode_scaling(self, number, scale, unit):
