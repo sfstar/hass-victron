@@ -7,10 +7,6 @@ from datetime import timedelta
 import logging
 
 import pymodbus
-from pymodbus.constants import Endian
-
-# this import needs to be able to be completely removed if the preparation for 3.9.0 is done
-from pymodbus.payload import BinaryPayloadDecoder
 
 if "3.7.0" <= pymodbus.__version__ <= "3.7.4":
     from pymodbus.pdu.register_read_message import ReadHoldingRegistersResponse
@@ -138,7 +134,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                 decoded_data[full_key] = raw
             else:
                 raw = self.api.convert_number_from_register(segment, value.dataType)
-                _LOGGER.warning("trying to decode %s with value %s", key, raw)
+                # _LOGGER.warning("trying to decode %s with value %s", key, raw)
                 decoded_data[full_key] = self.decode_scaling(
                     raw, value.scale, value.unit
                 )
