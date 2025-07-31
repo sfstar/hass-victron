@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from datetime import timedelta
 from enum import Enum
 import logging
+from typing import Any
 
 from homeassistant.components.select import (
     DOMAIN as SELECT_DOMAIN,
@@ -21,7 +22,7 @@ from homeassistant.util import utcnow
 
 from .base import VictronWriteBaseEntityDescription
 from .const import CONF_ADVANCED_OPTIONS, DOMAIN, SelectWriteType, register_info_dict
-from .coordinator import victronEnergyDeviceUpdateCoordinator
+from .coordinator import VictronEnergyDeviceUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,7 +33,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up victron select devices."""
-    victron_coordinator: victronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][
+    victron_coordinator: VictronEnergyDeviceUpdateCoordinator = hass.data[DOMAIN][
         config_entry.entry_id
     ]
     _LOGGER.debug("attempting to setup select entities")
@@ -43,9 +44,9 @@ async def async_setup_entry(
         for slave, registerLedger in register_set.items():
             for name in registerLedger:
                 for register_name, registerInfo in register_info_dict[name].items():
-                    if isinstance(registerInfo.entityType, SelectWriteType):
+                    if isinstance(registerInfo.entity_type, SelectWriteType):
                         _LOGGER.debug(
-                            "unit == %s registerLedger == %s registerInfo",
+                            "unit == %s registerLedger == %s register_info",
                             slave,
                             registerLedger,
                         )
@@ -54,33 +55,34 @@ async def async_setup_entry(
                             key=register_name,
                             name=register_name.replace("_", " "),
                             slave=slave,
-                            options=registerInfo.entityType.options,
+                            options=registerInfo.entity_type.options,
                             address=registerInfo.register,
                         )
 
                         descriptions.append(description)
                         _LOGGER.debug("composed description == %s", description)
 
-    entities = []
-    entity = {}
+    _entities = []
+    _entity: dict = {}
     for description in descriptions:
-        entity = description
-        entities.append(VictronSelect(hass, victron_coordinator, entity))
+        _entity = description
+        _entities.append(VictronSelect(hass, victron_coordinator, _entity))
     _LOGGER.debug("adding selects")
-    _LOGGER.debug(entities)
-    async_add_entities(entities)
+    _LOGGER.debug(_entities)
+    async_add_entities(_entities)
 
 
-@dataclass
+@dataclass(frozen=True)
 class VictronEntityDescription(
-    SelectEntityDescription, VictronWriteBaseEntityDescription
+    SelectEntityDescription,  # type: ignore[misc]
+    VictronWriteBaseEntityDescription,
 ):
     """Describes victron sensor entity."""
 
-    options: Enum = None
+    options: type[Enum] = Enum
 
 
-class VictronSelect(CoordinatorEntity, SelectEntity):
+class VictronSelect(CoordinatorEntity, SelectEntity):  # type: ignore[misc]
     """Representation of a Victron switch."""
 
     description: VictronEntityDescription
@@ -88,13 +90,12 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
     def __init__(
         self,
         hass: HomeAssistant,
-        coordinator: victronEnergyDeviceUpdateCoordinator,
+        coordinator: VictronEnergyDeviceUpdateCoordinator,
         description: VictronEntityDescription,
     ) -> None:
         """Initialize the select."""
         self._attr_native_value = None
         _LOGGER.debug("select init")
-        self.coordinator = coordinator
         self.description: VictronEntityDescription = description
         # this needs to be changed to allow multiple of the same type
         self._attr_name = f"{description.name}"
@@ -113,7 +114,7 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
         """Get the latest data and updates the states."""
         _LOGGER.debug("select_async_update")
         try:
-            self._attr_native_value = self.description.value_fn(
+            self._attr_native_value = self.description.value_fn(  # type: ignore[call-arg]
                 self.coordinator.processed_data(),
                 self.description.slave,
                 self.description.key,
@@ -125,7 +126,7 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
 
         # Cancel the currently scheduled event if there is any
         if self._unsub_update:
-            self._unsub_update()
+            self._unsub_update()  # type: ignore[unreachable]
             self._unsub_update = None
 
         # Schedule the next update at exactly the next whole hour sharp
@@ -136,10 +137,10 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
         )
 
     @property
-    def current_option(self) -> str:
+    def current_option(self) -> Any:
         """Return the currently selected option."""
         return self.description.options(
-            self.description.value_fn(
+            self.description.value_fn(  # type: ignore[call-arg]
                 self.coordinator.processed_data(),
                 self.description.slave,
                 self.description.key,
@@ -163,7 +164,7 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
 
     # TODO extract these type of property definitions to base class
     @property
-    def available(self) -> bool:
+    def available(self) -> Any:
         """Return True if entity available."""
         full_key = str(self.description.slave) + "." + self.description.key
         return self.coordinator.processed_data()["availability"][full_key]
@@ -172,8 +173,8 @@ class VictronSelect(CoordinatorEntity, SelectEntity):
     def device_info(self) -> entity.DeviceInfo:
         """Return the device info."""
         return entity.DeviceInfo(
-            identifiers={(DOMAIN, self.unique_id.split("_")[0])},
-            name=self.unique_id.split("_")[1],
-            model=self.unique_id.split("_")[0],
+            identifiers={(DOMAIN, self.unique_id.split("_", maxsplit=1)[0])},
+            name=self.unique_id.split("_", maxsplit=1)[1],
+            model=self.unique_id.split("_", maxsplit=1)[0],
             manufacturer="victron",
         )

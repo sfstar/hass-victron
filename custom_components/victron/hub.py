@@ -3,6 +3,7 @@
 from collections import OrderedDict
 import logging
 import threading
+from typing import Any
 
 from packaging import version
 import pymodbus
@@ -33,13 +34,19 @@ class VictronHub:
         self._client = ModbusTcpClient(host=self.host, port=self.port)
         self._lock = threading.Lock()
 
-    def is_still_connected(self):
+    def is_still_connected(self) -> Any:
         """Check if the connection is still open."""
         return self._client.is_socket_open()
 
-    def convert_string_from_register(self, segment, string_encoding="ascii"):
+    def convert_string_from_register(
+        self, segment: list[int], string_encoding: str = "ascii"
+    ) -> Any:
         """Convert from registers to the appropriate data type."""
-        if version.parse("3.8.0") <= version.parse(pymodbus.__version__) <= version.parse("3.8.4"):
+        if (
+            version.parse("3.8.0")
+            <= version.parse(pymodbus.__version__)
+            <= version.parse("3.8.4")
+        ):
             return self._client.convert_from_registers(
                 segment, self._client.DATATYPE.STRING
             ).split("\x00")[0]
@@ -47,68 +54,72 @@ class VictronHub:
             segment, self._client.DATATYPE.STRING, string_encoding=string_encoding
         ).split("\x00")[0]
 
-    def convert_number_from_register(self, segment, dataType):
+    def convert_number_from_register(self, segment: list[int], data_type: Any) -> Any:
         """Convert from registers to the appropriate data type."""
-        if dataType == UINT16:
+        raw: Any | None = None
+        if data_type == UINT16:
             raw = self._client.convert_from_registers(
                 segment, data_type=self._client.DATATYPE.UINT16
             )
-        elif dataType == INT16:
+        elif data_type == INT16:
             raw = self._client.convert_from_registers(
                 segment, data_type=self._client.DATATYPE.INT16
             )
-        elif dataType == UINT32:
+        elif data_type == UINT32:
             raw = self._client.convert_from_registers(
                 segment, data_type=self._client.DATATYPE.UINT32
             )
-        elif dataType == INT32:
+        elif data_type == INT32:
             raw = self._client.convert_from_registers(
                 segment, data_type=self._client.DATATYPE.INT32
             )
         return raw
 
-    def connect(self):
+    def connect(self) -> Any:
         """Connect to the Modbus TCP server."""
         return self._client.connect()
 
-    def disconnect(self):
+    def disconnect(self) -> Any:
         """Disconnect from the Modbus TCP server."""
         if self._client.is_socket_open():
             return self._client.close()
         return None
 
-    def write_register(self, unit, address, value):
+    def write_register(self, unit: Any, address: int, value: int) -> Any:
         """Write a register."""
         slave = int(unit) if unit else 1
         return self._client.write_register(address=address, value=value, slave=slave)
 
-    def read_holding_registers(self, unit, address, count):
+    def read_holding_registers(self, unit: Any, address: int, count: int) -> Any:
         """Read holding registers."""
         slave = int(unit) if unit else 1
         return self._client.read_holding_registers(
             address=address, count=count, slave=slave
         )
 
-    def calculate_register_count(self, registerInfoDict: OrderedDict):
+    @staticmethod
+    def calculate_register_count(register_info_dict_: OrderedDict | dict) -> Any:
         """Calculate the number of registers to read."""
-        first_key = next(iter(registerInfoDict))
-        last_key = next(reversed(registerInfoDict))
+        first_key = next(iter(register_info_dict_))
+        last_key = next(reversed(register_info_dict_))
         end_correction = 1
-        if registerInfoDict[last_key].dataType in (INT32, UINT32):
+        if register_info_dict_[last_key].data_type in (INT32, UINT32):
             end_correction = 2
-        elif isinstance(registerInfoDict[last_key].dataType, STRING):
-            end_correction = registerInfoDict[last_key].dataType.length
+        elif isinstance(register_info_dict_[last_key].data_type, STRING):
+            end_correction = register_info_dict_[last_key].data_type.length
 
         return (
-            registerInfoDict[last_key].register - registerInfoDict[first_key].register
+            register_info_dict_[last_key].register
+            - register_info_dict_[first_key].register
         ) + end_correction
 
-    def get_first_register_id(self, registerInfoDict: OrderedDict):
+    @staticmethod
+    def get_first_register_id(register_info_dict_: OrderedDict | dict) -> Any:
         """Return first register id."""
-        first_register = next(iter(registerInfoDict))
-        return registerInfoDict[first_register].register
+        first_register = next(iter(register_info_dict_))
+        return register_info_dict_[first_register].register
 
-    def determine_present_devices(self):
+    def determine_present_devices(self) -> Any:
         """Determine which devices are present."""
         valid_devices = {}
 

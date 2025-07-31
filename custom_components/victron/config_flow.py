@@ -8,7 +8,7 @@ from typing import Any
 import voluptuous as vol
 
 from homeassistant import config_entries
-from homeassistant.config_entries import ConfigEntry
+from homeassistant.config_entries import ConfigEntry, ConfigFlowResult
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
@@ -65,6 +65,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     #     your_validate_func, data["username"], data["password"]
     # )
 
+    discovered_devices: Any | None = None
     _LOGGER.debug("host = %s", data[CONF_HOST])
     _LOGGER.debug("port = %s", data[CONF_PORT])
     hub = VictronHub(data[CONF_HOST], data[CONF_PORT])
@@ -79,35 +80,33 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
     return {"title": DOMAIN, "data": discovered_devices}
 
 
-async def scan_connected_devices(hub: VictronHub) -> list:
+async def scan_connected_devices(hub: VictronHub) -> Any:
     """Scan for connected devices."""
     return hub.determine_present_devices()
 
 
-class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg,misc]
     """Handle a config flow for victron."""
 
     _LOGGER = logging.getLogger(__name__)
     VERSION = 1
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the config flow."""
         self.advanced_options = None
         self.interval = None
-        self.port = None
-        self.host = None
+        self.port: int | None = None
+        self.host: str | None = None
 
     @staticmethod
-    @callback
+    @callback  # type: ignore[misc]
     def async_get_options_flow(
         config_entry: ConfigEntry,
     ) -> VictronOptionFlowHandler:
         """Get the options flow for this handler."""
         return VictronOptionFlowHandler(config_entry)
 
-    async def async_step_user(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> Any:
         """Handle the initial step."""
         if user_input is None:
             return self.async_show_form(
@@ -119,7 +118,7 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             self.port = user_input[CONF_PORT]
             self.interval = user_input[CONF_INTERVAL]
             self.advanced_options = user_input[CONF_ADVANCED_OPTIONS]
-            return await self.async_step_advanced()
+            return await self.async_step_advanced(user_input)
 
         errors = {}
         already_configured = False
@@ -134,6 +133,7 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             errors["base"] = f"already_configured: {e!s}"
             already_configured = True
 
+        info: dict = {}
         if not already_configured:
             try:
                 info = await validate_input(self.hass, user_input)
@@ -157,9 +157,10 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
         )
 
-    async def async_step_advanced(self, user_input=None):
+    async def async_step_advanced(self, user_input: Any) -> ConfigFlowResult:
         """Handle write support and limit settings if requested."""
-        errors = {}
+        errors: dict = {}
+        info: dict = {}
 
         if user_input is not None:
             if self.host is not None:
@@ -240,7 +241,9 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             ),
         )
 
-    async def async_step_reconfigure(self, user_input: dict[str, Any] | None = None):
+    async def async_step_reconfigure(
+        self, user_input: dict[str, Any] | None = None
+    ) -> Any:
         """Add reconfigure step to allow to reconfigure a config entry."""
         config_entry = self.hass.config_entries.async_get_entry(
             self.context["entry_id"]
@@ -283,16 +286,16 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
 
-class parsedEntry:
+class ParsedEntry:
     """Parsed entry."""
 
-    def __init__(self, decoderInfo: RegisterInfo, value):
+    def __init__(self, decoder_info: RegisterInfo, value: Any) -> None:
         """Initialize the parsed entry."""
-        self.decoderInfo = decoderInfo
+        self.decoder_info = decoder_info
         self.value = value
 
 
-class VictronOptionFlowHandler(config_entries.OptionsFlow):
+class VictronOptionFlowHandler(config_entries.OptionsFlow):  # type: ignore[misc]
     """Handle options."""
 
     logger = logging.getLogger(__name__)
@@ -302,7 +305,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
         self.config_entry = config_entry
         self.area = None
 
-    async def async_step_advanced(self, user_input=None):
+    async def async_step_advanced(self, user_input: Any) -> Any:
         """Handle write support and limit settings if requested."""
         config = dict(self.config_entry.options)
         user_input.pop(CONF_RESCAN, None)
@@ -311,7 +314,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
         combined_config = {**dict_priority[2], **dict_priority[1]}
         return self.async_create_entry(title="", data=combined_config)
 
-    async def async_step_init_read(self, user_input=None):
+    async def async_step_init_read(self, user_input: Any) -> Any:
         """Handle write support and limit settings if requested."""
         config = dict(self.config_entry.options)
         # combine dictionaries with priority given to user_input
@@ -330,12 +333,12 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
                 self.config_entry, options=combined_config, title=""
             )
             _LOGGER.debug("returning step init because advanced options were selected")
-            errors = {}
+            errors: dict = {}
             # move to dedicated function (the write show form) to allow for re-use
             return self.init_write_form(errors)
         return self.async_create_entry(title="", data=combined_config)
 
-    async def async_step_init_write(self, user_input=None):
+    async def async_step_init_write(self, user_input: Any) -> Any:
         """Handle write support and limit settings if requested."""
         config = dict(self.config_entry.options)
         # remove temp options =
@@ -355,7 +358,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
                 self.config_entry, options=combined_config, title=""
             )
             _LOGGER.debug("returning step init because advanced options were selected")
-            errors = {}
+            errors: dict = {}
             # move to dedicated function (the write show form) to allow for re-use
             return self.init_read_form(errors)
 
@@ -366,6 +369,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
     ) -> FlowResult:
         """Handle a flow initiated by the user."""
         errors = {}
+        info = {}
 
         config = dict(self.config_entry.options)
 
@@ -394,15 +398,13 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
 
             return self.async_create_entry(title="", data=config)
 
-        if config[CONF_ADVANCED_OPTIONS]:
-            _LOGGER.debug("advanced options is set")
+        # if config[CONF_ADVANCED_OPTIONS]:
+        #     _LOGGER.debug("advanced options is set")
+        #
+        #     return self.init_write_form(errors)
+        return self.init_read_form(errors)
 
-            return self.init_write_form(errors)
-        if user_input is None:
-            return self.init_read_form(errors)
-        return None
-
-    def init_read_form(self, errors: dict):
+    def init_read_form(self, errors: dict) -> Any:
         """Handle read support and limit settings if requested."""
         return self.async_show_form(
             step_id="init_read",
@@ -418,7 +420,7 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
             ),
         )
 
-    def init_write_form(self, errors: dict):
+    def init_write_form(self, errors: dict) -> Any:
         """Handle write support and limit settings if requested."""
         config = dict(self.config_entry.options)
         system_ac_voltage_default = self.config_entry.options.get(
@@ -500,18 +502,18 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
         )
 
     @staticmethod
-    def get_dict_key(dict, val):
+    def get_dict_key(dic: dict, val: Any) -> Any:
         """Get the key from a dictionary."""
-        for key, value in dict.items():
+        for key, value in dic.items():
             if val == value:
                 return key
 
         return "key doesn't exist"
 
 
-class CannotConnect(HomeAssistantError):
+class CannotConnect(HomeAssistantError):  # type: ignore[misc]
     """Error to indicate we cannot connect."""
 
 
-class InvalidAuth(HomeAssistantError):
+class InvalidAuth(HomeAssistantError):  # type: ignore[misc]
     """Error to indicate there is invalid auth."""
