@@ -20,6 +20,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
+from .config_flow import VictronHub
 from .const import (
     DOMAIN,
     INT16,
@@ -30,12 +31,11 @@ from .const import (
     RegisterInfo,
     register_info_dict,
 )
-from .hub import VictronHub
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class VictronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):  # type: ignore[misc]
+class VictronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
     """Gather data for the energy device."""
 
     api: VictronHub
@@ -64,7 +64,7 @@ class VictronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):  # type: igno
 
     async def _async_update_data(self) -> dict:
         """Fetch all device and sensor data from api."""
-        self.data: dict | None
+        self.data: dict[str, Any]
         # Get the latest data from victron
         self.logger.debug("Fetching victron data")
         self.logger.debug(self.decode_info)
@@ -176,7 +176,7 @@ class VictronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):  # type: igno
 
     def processed_data(self) -> dict[Any, Any]:
         """Return the processed data."""
-        return self.data  # type:ignore[return-value]
+        return self.data
 
     async def fetch_registers(self, unit: Any, register_data: Any) -> Any:
         """Fetch the registers."""

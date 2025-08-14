@@ -15,16 +15,15 @@ from homeassistant.components.number import (
 )
 from homeassistant.const import (
     PERCENTAGE,
+    EntityCategory,
     UnitOfElectricCurrent,
     UnitOfElectricPotential,
     UnitOfPower,
 )
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers import entity
-from homeassistant.helpers.entity import EntityCategory
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .base import VictronWriteBaseEntityDescription
 from .const import (
     CONF_AC_CURRENT_LIMIT,
     CONF_AC_SYSTEM_VOLTAGE,
@@ -39,6 +38,7 @@ from .const import (
     register_info_dict,
 )
 from .coordinator import VictronEnergyDeviceUpdateCoordinator
+from .entity import VictronWriteBaseEntityDescription
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -106,7 +106,7 @@ async def async_setup_entry(
 
 
 def determine_min_value(
-    unit: Any, config_entry: config_entries.ConfigEntry, power_type: Any, negative: bool
+    unit: Any, config_entry: Any, power_type: Any, negative: bool
 ) -> Any:
     """Determine the minimum value for a number entity."""
     if unit == PERCENTAGE:
@@ -145,9 +145,7 @@ def determine_min_value(
     return 0
 
 
-def determine_max_value(
-    unit: Any, config_entry: config_entries.ConfigEntry, power_type: Any
-) -> Any:
+def determine_max_value(unit: Any, config_entry: Any, power_type: Any) -> Any:
     """Determine the maximum value for a number entity."""
     if unit == PERCENTAGE:
         return 100
@@ -196,7 +194,7 @@ class VictronNumberStep:
 
 @dataclass(frozen=True)
 class VictronEntityDescription(
-    NumberEntityDescription,  # type: ignore[misc]
+    NumberEntityDescription,
     VictronWriteBaseEntityDescription,
     VictronNumberMixin,
     VictronNumberStep,
@@ -207,7 +205,7 @@ class VictronEntityDescription(
     key: str = ""
 
 
-class VictronNumber(NumberEntity):  # type: ignore[misc]
+class VictronNumber(NumberEntity):
     """Victron number."""
 
     description: VictronEntityDescription
@@ -224,7 +222,7 @@ class VictronNumber(NumberEntity):  # type: ignore[misc]
 
         self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
-        self._attr_native_value = self.description.value_fn(  # type: ignore[call-arg]
+        self._attr_native_value = self.description.value_fn(
             self.coordinator.processed_data(),
             self.description.slave,
             self.description.key,
@@ -262,7 +260,7 @@ class VictronNumber(NumberEntity):  # type: ignore[misc]
             slave=self.description.slave,
             key=self.description.key,
         )
-        if value > round(
+        if value and value > round(
             UINT16_MAX / 2
         ):  # Half of the UINT16 is reserved for positive and half for negative values
             value = value - UINT16_MAX
@@ -275,7 +273,10 @@ class VictronNumber(NumberEntity):  # type: ignore[misc]
             self.description.mode != NumberMode.SLIDER
         ):  # allow users to skip stepping in case of box mode
             return None
-        if self.description.native_step > 0:
+        if (
+            self.description.native_step is not None
+            and self.description.native_step > 0.0
+        ):
             return self.description.native_step
         _max = self.native_max_value
         _min = self.native_min_value
@@ -304,9 +305,9 @@ class VictronNumber(NumberEntity):  # type: ignore[misc]
         return self.coordinator.processed_data()["availability"][full_key]
 
     @property
-    def device_info(self) -> entity.DeviceInfo:
+    def device_info(self) -> DeviceInfo:
         """Return the device info."""
-        return entity.DeviceInfo(
+        return DeviceInfo(
             identifiers={(DOMAIN, self.unique_id.split("_", maxsplit=1)[0])},
             name=self.unique_id.split("_", maxsplit=1)[1],
             model=self.unique_id.split("_", maxsplit=1)[0],

@@ -16,6 +16,12 @@
                     "port": "Port",
                     "interval": "update interval in (s)",
                     "advanced": "Enables write support and allows setting write limits"
+                },
+                "data_description": {
+                    "host": "The hostname or IP address of your Victron GX device.",
+                    "port": "The port of your Victron GX device.",
+                    "interval": "Polling interval.",
+                    "advanced": "Advanced configuration."
                 }
             },
             "advanced": {

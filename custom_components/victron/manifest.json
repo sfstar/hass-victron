@@ -1,20 +1,16 @@
 {
   "domain": "victron",
-  "name": "victron",
+  "name": "Victron GX modbusTCP",
   "codeowners": [
     "@sfstar"
   ],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/sfstar/hass-victron",
+  "documentation": "https://www.home-assistant.io/integrations/victron",
   "homekit": {},
-  "integration_type": "hub",
   "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/sfstar/hass-victron/issues",
-  "requirements": [
-    "pymodbus>=3.8.0"
-  ],
+  "quality_scale": "?",
+  "requirements": ["pymodbus==3.11.1"],
   "ssdp": [],
-  "version": "v0.0.0",
   "zeroconf": []
 }

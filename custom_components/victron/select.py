@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import timedelta
-from enum import Enum
 import logging
 from typing import Any
 
@@ -15,14 +14,15 @@ from homeassistant.components.select import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HassJob, HomeAssistant
-from homeassistant.helpers import entity, event
+from homeassistant.helpers import event
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.util import utcnow
+from homeassistant.util.dt import utcnow
 
-from .base import VictronWriteBaseEntityDescription
 from .const import CONF_ADVANCED_OPTIONS, DOMAIN, SelectWriteType, register_info_dict
 from .coordinator import VictronEnergyDeviceUpdateCoordinator
+from .entity import VictronWriteBaseEntityDescription
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -62,11 +62,10 @@ async def async_setup_entry(
                         descriptions.append(description)
                         _LOGGER.debug("composed description == %s", description)
 
-    _entities = []
-    _entity: dict = {}
-    for description in descriptions:
-        _entity = description
-        _entities.append(VictronSelect(hass, victron_coordinator, _entity))
+    _entities = [
+        VictronSelect(hass, victron_coordinator, description)
+        for description in descriptions
+    ]
     _LOGGER.debug("adding selects")
     _LOGGER.debug(_entities)
     async_add_entities(_entities)
@@ -74,15 +73,15 @@ async def async_setup_entry(
 
 @dataclass(frozen=True)
 class VictronEntityDescription(
-    SelectEntityDescription,  # type: ignore[misc]
+    SelectEntityDescription,
     VictronWriteBaseEntityDescription,
 ):
     """Describes victron sensor entity."""
 
-    options: type[Enum] = Enum
+    options: Any
 
 
-class VictronSelect(CoordinatorEntity, SelectEntity):  # type: ignore[misc]
+class VictronSelect(CoordinatorEntity, SelectEntity):
     """Representation of a Victron switch."""
 
     description: VictronEntityDescription
@@ -126,7 +125,7 @@ class VictronSelect(CoordinatorEntity, SelectEntity):  # type: ignore[misc]
 
         # Cancel the currently scheduled event if there is any
         if self._unsub_update:
-            self._unsub_update()  # type: ignore[unreachable]
+            self._unsub_update()
             self._unsub_update = None
 
         # Schedule the next update at exactly the next whole hour sharp
@@ -170,9 +169,9 @@ class VictronSelect(CoordinatorEntity, SelectEntity):  # type: ignore[misc]
         return self.coordinator.processed_data()["availability"][full_key]
 
     @property
-    def device_info(self) -> entity.DeviceInfo:
+    def device_info(self) -> DeviceInfo:
         """Return the device info."""
-        return entity.DeviceInfo(
+        return DeviceInfo(
             identifiers={(DOMAIN, self.unique_id.split("_", maxsplit=1)[0])},
             name=self.unique_id.split("_", maxsplit=1)[1],
             model=self.unique_id.split("_", maxsplit=1)[0],

@@ -14,13 +14,14 @@ from homeassistant.components.button import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HassJob, HomeAssistant
-from homeassistant.helpers import entity
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .base import VictronWriteBaseEntityDescription
 from .const import CONF_ADVANCED_OPTIONS, DOMAIN, ButtonWriteType, register_info_dict
 from .coordinator import VictronEnergyDeviceUpdateCoordinator
+from .entity import VictronWriteBaseEntityDescription
+from .select import VictronSelect
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -60,24 +61,23 @@ async def async_setup_entry(
                     _LOGGER.debug("composed description == %s", description)
                     descriptions.append(description)
 
-    _entities = []
-    _entity: dict = {}
-    for description in descriptions:
-        _entity = description
-        _entities.append(VictronBinarySensor(victron_coordinator, _entity))
+    _entities = [
+        VictronSelect(hass, victron_coordinator, description)
+        for description in descriptions
+    ]
 
     async_add_entities(_entities, True)
 
 
 @dataclass(frozen=True)
 class VictronEntityDescription(
-    ButtonEntityDescription,  # type: ignore[misc]
+    ButtonEntityDescription,
     VictronWriteBaseEntityDescription,
 ):
     """Describes victron sensor entity."""
 
 
-class VictronBinarySensor(CoordinatorEntity, ButtonEntity):  # type: ignore[misc]
+class VictronBinarySensor(CoordinatorEntity, ButtonEntity):
     """A button implementation for Victron energy device."""
 
     def __init__(
@@ -114,9 +114,9 @@ class VictronBinarySensor(CoordinatorEntity, ButtonEntity):  # type: ignore[misc
         return self.coordinator.processed_data()["availability"][full_key]
 
     @property
-    def device_info(self) -> entity.DeviceInfo:
+    def device_info(self) -> DeviceInfo:
         """Return the device info."""
-        return entity.DeviceInfo(
+        return DeviceInfo(
             identifiers={(DOMAIN, self.unique_id.split("_", maxsplit=1)[0])},
             name=self.unique_id.split("_", maxsplit=1)[1],
             model=self.unique_id.split("_", maxsplit=1)[0],

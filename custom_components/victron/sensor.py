@@ -25,11 +25,10 @@ from homeassistant.const import (
     UnitOfVolume,
 )
 from homeassistant.core import HassJob, HomeAssistant, callback
-from homeassistant.helpers import entity
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .base import VictronBaseEntityDescription
 from .const import (
     CONF_ADVANCED_OPTIONS,
     DOMAIN,
@@ -39,6 +38,8 @@ from .const import (
     register_info_dict,
 )
 from .coordinator import VictronEnergyDeviceUpdateCoordinator
+from .entity import VictronBaseEntityDescription
+from .select import VictronSelect
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -74,6 +75,7 @@ async def async_setup_entry(
 
                 description = VictronEntityDescription(
                     key=register_name,
+                    translation_key=register_name,
                     name=register_name.replace("_", " "),
                     native_unit_of_measurement=registerInfo.unit,
                     state_class=registerInfo.determine_stateclass(),
@@ -89,11 +91,10 @@ async def async_setup_entry(
 
                 descriptions.append(description)
 
-    _entities = []
-    _entity: dict = {}
-    for description in descriptions:
-        _entity = description
-        _entities.append(VictronSensor(victron_coordinator, _entity))
+    _entities = [
+        VictronSelect(hass, victron_coordinator, description)
+        for description in descriptions
+    ]
 
     # Add an entity for each sensor type
     async_add_entities(_entities, True)
@@ -134,13 +135,13 @@ def determine_victron_device_class(name: Any, unit: Any) -> Any:
 
 
 @dataclass(frozen=True)
-class VictronEntityDescription(SensorEntityDescription, VictronBaseEntityDescription):  # type: ignore[misc]
+class VictronEntityDescription(SensorEntityDescription, VictronBaseEntityDescription):
     """Describes victron sensor entity."""
 
     entity_type: ReadEntityType | None = None
 
 
-class VictronSensor(CoordinatorEntity, SensorEntity):  # type: ignore[misc]
+class VictronSensor(CoordinatorEntity, SensorEntity):
     """Representation of a Victron energy sensor."""
 
     def __init__(
@@ -169,7 +170,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):  # type: ignore[misc]
 
         super().__init__(coordinator)
 
-    @callback  # type: ignore[misc]
+    @callback
     def _handle_coordinator_update(self) -> None:
         """Get the latest data and updates the states."""
         try:
@@ -209,9 +210,9 @@ class VictronSensor(CoordinatorEntity, SensorEntity):  # type: ignore[misc]
         return self.coordinator.processed_data()["availability"][full_key]
 
     @property
-    def device_info(self) -> entity.DeviceInfo:
+    def device_info(self) -> DeviceInfo:
         """Return the device info."""
-        return entity.DeviceInfo(
+        return DeviceInfo(
             identifiers={(DOMAIN, self.unique_id.split("_", maxsplit=1)[0])},
             name=self.unique_id.split("_", maxsplit=1)[1],
             model=self.unique_id.split("_", maxsplit=1)[0],

@@ -1,14 +1,24 @@
-"""Config flow for victron integration."""
+"""Config flow for the Victron GX modbusTCP integration."""
 
 from __future__ import annotations
 
+from collections import OrderedDict
 import logging
+import threading
 from typing import Any
 
+from packaging import version
+import pymodbus
+from pymodbus.client import ModbusTcpClient
 import voluptuous as vol
 
-from homeassistant import config_entries
-from homeassistant.config_entries import ConfigEntry, ConfigFlowResult
+from homeassistant.config_entries import (
+    ConfigEntry,
+    ConfigFlow,
+    ConfigFlowResult,
+    OptionsFlow,
+)
+from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
@@ -25,18 +35,22 @@ from .const import (
     CONF_ADVANCED_OPTIONS,
     CONF_DC_CURRENT_LIMIT,
     CONF_DC_SYSTEM_VOLTAGE,
-    CONF_HOST,
     CONF_INTERVAL,
     CONF_NUMBER_OF_PHASES,
-    CONF_PORT,
     CONF_USE_SLIDERS,
     DC_VOLTAGES,
     DOMAIN,
+    INT16,
+    INT32,
     PHASE_CONFIGURATIONS,
     SCAN_REGISTERS,
+    STRING,
+    UINT16,
+    UINT32,
     RegisterInfo,
+    register_info_dict,
+    valid_unit_ids,
 )
-from .hub import VictronHub
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -51,20 +65,185 @@ STEP_USER_DATA_SCHEMA = vol.Schema(
     }
 )
 
+STEP_USER_DATA_ADVANCED_SCHEMA = vol.Schema(
+    {
+        vol.Required(
+            CONF_AC_SYSTEM_VOLTAGE, default=str(AC_VOLTAGES["US (120)"])
+        ): SelectSelector(
+            SelectSelectorConfig(
+                options=[
+                    SelectOptionDict(value=str(value), label=key)
+                    for key, value in AC_VOLTAGES.items()
+                ]
+            ),
+        ),
+        vol.Required(
+            CONF_NUMBER_OF_PHASES,
+            default=str(PHASE_CONFIGURATIONS["single phase"]),
+        ): SelectSelector(
+            SelectSelectorConfig(
+                options=[
+                    SelectOptionDict(value=str(value), label=key)
+                    for key, value in PHASE_CONFIGURATIONS.items()
+                ]
+            ),
+        ),
+        vol.Required(CONF_AC_CURRENT_LIMIT, default=0): vol.All(
+            vol.Coerce(int, "must be a number")
+        ),
+        vol.Required(
+            CONF_DC_SYSTEM_VOLTAGE, default=str(DC_VOLTAGES["lifepo4_12v"])
+        ): SelectSelector(
+            SelectSelectorConfig(
+                options=[
+                    SelectOptionDict(value=str(value), label=key)
+                    for key, value in DC_VOLTAGES.items()
+                ]
+            ),
+        ),
+        vol.Required(CONF_DC_CURRENT_LIMIT, default=0): vol.All(
+            vol.Coerce(int, "must be a number")
+        ),
+        vol.Optional(CONF_USE_SLIDERS, default=True): bool,
+    }
+)
+
+
+class VictronHub:
+    """Victron Hub."""
+
+    def __init__(self, host: str, port: int) -> None:
+        """Initialize."""
+        self.host = host
+        self.port = port
+        self._client = ModbusTcpClient(host=self.host, port=self.port)
+        self._lock = threading.Lock()
+
+    def is_still_connected(self) -> Any:
+        """Check if the connection is still open."""
+        return self._client.is_socket_open()
+
+    def convert_string_from_register(
+        self, segment: list[int], string_encoding: str = "ascii"
+    ) -> Any:
+        """Convert from registers to the appropriate data type."""
+        if (
+            version.parse("3.8.0")
+            <= version.parse(pymodbus.__version__)
+            <= version.parse("3.8.4")
+        ):
+            return self._client.convert_from_registers(
+                segment, self._client.DATATYPE.STRING
+            ).split("\x00")[0]
+        return self._client.convert_from_registers(
+            segment, self._client.DATATYPE.STRING, string_encoding=string_encoding
+        ).split("\x00")[0]
+
+    def convert_number_from_register(self, segment: list[int], data_type: Any) -> Any:
+        """Convert from registers to the appropriate data type."""
+        raw: Any | None = None
+        if data_type == UINT16:
+            raw = self._client.convert_from_registers(
+                segment, data_type=self._client.DATATYPE.UINT16
+            )
+        elif data_type == INT16:
+            raw = self._client.convert_from_registers(
+                segment, data_type=self._client.DATATYPE.INT16
+            )
+        elif data_type == UINT32:
+            raw = self._client.convert_from_registers(
+                segment, data_type=self._client.DATATYPE.UINT32
+            )
+        elif data_type == INT32:
+            raw = self._client.convert_from_registers(
+                segment, data_type=self._client.DATATYPE.INT32
+            )
+        return raw
+
+    def connect(self) -> Any:
+        """Connect to the Modbus TCP server."""
+        if self._client.is_socket_open():
+            return True
+        return self._client.connect()
+
+    def disconnect(self) -> Any:
+        """Disconnect from the Modbus TCP server."""
+        if self._client.is_socket_open():
+            return self._client.close()
+        return None
+
+    def write_register(self, unit: Any, address: int, value: int) -> Any:
+        """Write a register."""
+        return self._client.write_register(address=address, value=value)
+
+    def read_holding_registers(self, unit: Any, address: int, count: int) -> Any:
+        """Read holding registers."""
+        return self._client.read_holding_registers(
+            address=address, count=count
+        )
+
+    @staticmethod
+    def calculate_register_count(register_info_dict_: OrderedDict | dict) -> Any:
+        """Calculate the number of registers to read."""
+        first_key = next(iter(register_info_dict_))
+        last_key = next(reversed(register_info_dict_))
+        end_correction = 1
+        if register_info_dict_[last_key].data_type in (INT32, UINT32):
+            end_correction = 2
+        elif isinstance(register_info_dict_[last_key].data_type, STRING):
+            end_correction = register_info_dict_[last_key].data_type.length
+
+        return (
+            register_info_dict_[last_key].register
+            - register_info_dict_[first_key].register
+        ) + end_correction
+
+    @staticmethod
+    def get_first_register_id(register_info_dict_: OrderedDict | dict) -> Any:
+        """Return first register id."""
+        first_register = next(iter(register_info_dict_))
+        return register_info_dict_[first_register].register
+
+    def determine_present_devices(self) -> Any:
+        """Determine which devices are present."""
+        valid_devices = {}
+
+        for unit in valid_unit_ids:
+            working_registers = []
+            for key, register_definition in register_info_dict.items():
+                # VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
+                if unit == 100 and not key.startswith(("settings", "system")):
+                    continue
+
+                try:
+                    address = self.get_first_register_id(register_definition)
+                    count = self.calculate_register_count(register_definition)
+                    result = self.read_holding_registers(unit, address, count)
+                    if result.isError():
+                        _LOGGER.debug(
+                            "result is error for unit: %s address: %s count: %s",
+                            unit,
+                            address,
+                            count,
+                        )
+                    else:
+                        working_registers.append(key)
+                except HomeAssistantError as e:
+                    _LOGGER.error(e)
+
+            if len(working_registers) > 0:
+                valid_devices[unit] = working_registers
+            else:
+                _LOGGER.debug("no registers found for unit: %s", unit)
+
+        return valid_devices
+
 
 async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str, Any]:
     """Validate the user input allows us to connect.
 
     Data has the keys from STEP_USER_DATA_SCHEMA with values provided by the user.
     """
-    # TODO validate the data can be used to set up a connection.
-
-    # If your PyPI package is not built with async, pass your methods
-    # to the executor:
-    # await hass.async_add_executor_job(
-    #     your_validate_func, data["username"], data["password"]
-    # )
-
     discovered_devices: Any | None = None
     _LOGGER.debug("host = %s", data[CONF_HOST])
     _LOGGER.debug("port = %s", data[CONF_PORT])
@@ -72,7 +251,7 @@ async def validate_input(hass: HomeAssistant, data: dict[str, Any]) -> dict[str,
 
     try:
         hub.connect()
-        _LOGGER.debug("connection was succesfull")
+        _LOGGER.debug("connection was successful")
         discovered_devices = await scan_connected_devices(hub=hub)
         _LOGGER.debug("successfully discovered devices")
     except HomeAssistantError:
@@ -85,7 +264,7 @@ async def scan_connected_devices(hub: VictronHub) -> Any:
     return hub.determine_present_devices()
 
 
-class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: ignore[call-arg,misc]
+class VictronFlowHandler(ConfigFlow, domain=DOMAIN):
     """Handle a config flow for victron."""
 
     _LOGGER = logging.getLogger(__name__)
@@ -93,13 +272,13 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: ign
 
     def __init__(self) -> None:
         """Initialize the config flow."""
-        self.advanced_options = None
-        self.interval = None
+        self.advanced_options: bool | None = None
+        self.interval: int | None = None
         self.port: int | None = None
         self.host: str | None = None
 
     @staticmethod
-    @callback  # type: ignore[misc]
+    @callback
     def async_get_options_flow(
         config_entry: ConfigEntry,
     ) -> VictronOptionFlowHandler:
@@ -146,12 +325,13 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: ign
                 errors["base"] = "unknown"
 
             # data property can't be changed in options flow if user wants to refresh
-            options = user_input
-            return self.async_create_entry(
-                title=info["title"],
-                data={SCAN_REGISTERS: info["data"]},
-                options=options,
-            )
+            else:
+                options = user_input
+                return self.async_create_entry(
+                    title=info["title"],
+                    data={SCAN_REGISTERS: info["data"]},
+                    options=options,
+                )
 
         return self.async_show_form(
             step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors
@@ -163,82 +343,36 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):  # type: ign
         info: dict = {}
 
         if user_input is not None:
-            if self.host is not None:
-                options = user_input
-                options[CONF_HOST] = self.host
-                options[CONF_PORT] = self.port
-                options[CONF_INTERVAL] = self.interval
-                options[CONF_ADVANCED_OPTIONS] = bool(self.advanced_options)
-                options[CONF_NUMBER_OF_PHASES] = int(user_input[CONF_NUMBER_OF_PHASES])
-                options[CONF_USE_SLIDERS] = bool(user_input[CONF_USE_SLIDERS])
-                options[CONF_AC_SYSTEM_VOLTAGE] = int(
-                    user_input[CONF_AC_SYSTEM_VOLTAGE]
-                )
-                options[CONF_DC_SYSTEM_VOLTAGE] = int(
-                    user_input[CONF_DC_SYSTEM_VOLTAGE]
-                )
+            options = user_input
+            options[CONF_HOST] = self.host
+            options[CONF_PORT] = self.port
+            options[CONF_INTERVAL] = self.interval
+            options[CONF_ADVANCED_OPTIONS] = bool(self.advanced_options)
+            options[CONF_NUMBER_OF_PHASES] = int(user_input[CONF_NUMBER_OF_PHASES])
+            options[CONF_USE_SLIDERS] = bool(user_input[CONF_USE_SLIDERS])
+            options[CONF_AC_SYSTEM_VOLTAGE] = int(user_input[CONF_AC_SYSTEM_VOLTAGE])
+            options[CONF_DC_SYSTEM_VOLTAGE] = int(user_input[CONF_DC_SYSTEM_VOLTAGE])
 
-                try:
-                    info = await validate_input(self.hass, user_input)
-                except CannotConnect:
-                    errors["base"] = "cannot_connect"
-                except InvalidAuth:
-                    errors["base"] = "invalid_auth"
-                except HomeAssistantError:
-                    _LOGGER.exception("Unexpected exception")
-                    errors["base"] = "unknown"
-                _LOGGER.debug("setting up extra entry")
-                return self.async_create_entry(
-                    title=info["title"],
-                    data={SCAN_REGISTERS: info["data"]},
-                    options=options,
-                )
+            try:
+                info = await validate_input(self.hass, options)
+            except CannotConnect:
+                errors["base"] = "cannot_connect"
+            except InvalidAuth:
+                errors["base"] = "invalid_auth"
+            except HomeAssistantError:
+                _LOGGER.exception("Unexpected exception")
+                errors["base"] = "unknown"
+            _LOGGER.debug("setting up extra entry")
+            return self.async_create_entry(
+                title=info["title"],
+                data={SCAN_REGISTERS: info["data"]},
+                options=options,
+            )
 
         return self.async_show_form(
             step_id="advanced",
             errors=errors,
-            data_schema=vol.Schema(
-                {
-                    vol.Required(
-                        CONF_AC_SYSTEM_VOLTAGE, default=str(AC_VOLTAGES["US (120)"])
-                    ): SelectSelector(
-                        SelectSelectorConfig(
-                            options=[
-                                SelectOptionDict(value=str(value), label=key)
-                                for key, value in AC_VOLTAGES.items()
-                            ]
-                        ),
-                    ),
-                    vol.Required(
-                        CONF_NUMBER_OF_PHASES,
-                        default=str(PHASE_CONFIGURATIONS["single phase"]),
-                    ): SelectSelector(
-                        SelectSelectorConfig(
-                            options=[
-                                SelectOptionDict(value=str(value), label=key)
-                                for key, value in PHASE_CONFIGURATIONS.items()
-                            ]
-                        ),
-                    ),
-                    vol.Required(CONF_AC_CURRENT_LIMIT, default=0): vol.All(
-                        vol.Coerce(int, "must be a number")
-                    ),
-                    vol.Required(
-                        CONF_DC_SYSTEM_VOLTAGE, default=str(DC_VOLTAGES["lifepo4_12v"])
-                    ): SelectSelector(
-                        SelectSelectorConfig(
-                            options=[
-                                SelectOptionDict(value=str(value), label=key)
-                                for key, value in DC_VOLTAGES.items()
-                            ]
-                        ),
-                    ),
-                    vol.Required(CONF_DC_CURRENT_LIMIT, default=0): vol.All(
-                        vol.Coerce(int, "must be a number")
-                    ),
-                    vol.Optional(CONF_USE_SLIDERS, default=True): bool,
-                }
-            ),
+            data_schema=STEP_USER_DATA_ADVANCED_SCHEMA,
         )
 
     async def async_step_reconfigure(
@@ -295,7 +429,7 @@ class ParsedEntry:
         self.value = value
 
 
-class VictronOptionFlowHandler(config_entries.OptionsFlow):  # type: ignore[misc]
+class VictronOptionFlowHandler(OptionsFlow):  # type: ignore[misc]
     """Handle options."""
 
     logger = logging.getLogger(__name__)
@@ -303,7 +437,6 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):  # type: ignore[misc
     def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize options flow."""
         self.config_entry = config_entry
-        self.area = None
 
     async def async_step_advanced(self, user_input: Any) -> Any:
         """Handle write support and limit settings if requested."""
@@ -398,10 +531,6 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):  # type: ignore[misc
 
             return self.async_create_entry(title="", data=config)
 
-        # if config[CONF_ADVANCED_OPTIONS]:
-        #     _LOGGER.debug("advanced options is set")
-        #
-        #     return self.init_write_form(errors)
         return self.init_read_form(errors)
 
     def init_read_form(self, errors: dict) -> Any:
@@ -511,9 +640,9 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):  # type: ignore[misc
         return "key doesn't exist"
 
 
-class CannotConnect(HomeAssistantError):  # type: ignore[misc]
+class CannotConnect(HomeAssistantError):
     """Error to indicate we cannot connect."""
 
 
-class InvalidAuth(HomeAssistantError):  # type: ignore[misc]
+class InvalidAuth(HomeAssistantError):
     """Error to indicate there is invalid auth."""

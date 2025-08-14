@@ -1,8 +1,6 @@
-"""The victron integration."""
+"""The Victron GX modbusTCP integration."""
 
 from __future__ import annotations
-
-from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
@@ -10,25 +8,15 @@ from homeassistant.core import HomeAssistant
 
 from .const import CONF_HOST, CONF_INTERVAL, CONF_PORT, DOMAIN, SCAN_REGISTERS
 from .coordinator import VictronEnergyDeviceUpdateCoordinator as Coordinator
-
-PLATFORMS: list[Platform] = [
-    Platform.SENSOR,
-    Platform.SWITCH,
-    Platform.NUMBER,
-    Platform.SELECT,
-    Platform.BINARY_SENSOR,
-    Platform.BUTTON,
-]
+# For your initial PR, limit it to 1 platform.
+# There will be also: SWITCH, NUMBER, SELECT, BINARY_SENSOR, BUTTON
+_PLATFORMS: list[Platform] = [Platform.SENSOR]
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Set up victron from a config entry."""
 
     hass.data.setdefault(DOMAIN, {})
-    # TODO 1. Create API instance
-    # TODO 2. Validate the API connection (and authentication)
-    # TODO 3. Store an API object for your platforms to access
-    # hass.data[DOMAIN][entry.entry_id] = MyApi(...)
 
     coordinator_ = Coordinator(
         hass,
@@ -37,11 +25,6 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
         config_entry.data[SCAN_REGISTERS],
         config_entry.options[CONF_INTERVAL],
     )
-    # try:
-    #     await coordinator.async_config_entry_first_refresh()
-    # except ConfigEntryNotReady:
-    #     await coordinator.api.close()
-    #     raise
 
     # Finalize
     hass.data.setdefault(DOMAIN, {})
@@ -49,15 +32,16 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> b
 
     await coordinator_.async_config_entry_first_refresh()
     config_entry.async_on_unload(config_entry.add_update_listener(update_listener))
-    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
+    config_entry.runtime_data = coordinator_
+    await hass.config_entries.async_forward_entry_setups(config_entry, _PLATFORMS)
 
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> Any:
+async def async_unload_entry(hass: HomeAssistant, config_entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     if unload_ok := await hass.config_entries.async_unload_platforms(
-        config_entry, PLATFORMS
+        config_entry, _PLATFORMS
     ):
         hass.data[DOMAIN].pop(config_entry.entry_id)
 

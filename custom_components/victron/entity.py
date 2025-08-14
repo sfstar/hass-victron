@@ -9,7 +9,7 @@ from homeassistant.helpers.typing import StateType
 
 
 @dataclass(frozen=True)
-class VictronBaseEntityDescription(EntityDescription):  # type: ignore[misc]
+class VictronBaseEntityDescription(EntityDescription):
     """An extension of EntityDescription for Victron components."""
 
     @staticmethod

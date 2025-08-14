@@ -1,4 +1,4 @@
-"""Constants for the victron integration."""
+"""Constants for the Victron GX modbusTCP integration."""
 
 from enum import Enum
 from typing import Any
