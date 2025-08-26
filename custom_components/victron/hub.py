@@ -13,9 +13,11 @@ from homeassistant.exceptions import HomeAssistantError
 from .const import (
     INT16,
     INT32,
+    INT64,
     STRING,
     UINT16,
     UINT32,
+    UINT64,
     register_info_dict,
     valid_unit_ids,
 )
@@ -39,7 +41,11 @@ class VictronHub:
 
     def convert_string_from_register(self, segment, string_encoding="ascii"):
         """Convert from registers to the appropriate data type."""
-        if version.parse("3.8.0") <= version.parse(pymodbus.__version__) <= version.parse("3.8.4"):
+        if (
+            version.parse("3.8.0")
+            <= version.parse(pymodbus.__version__)
+            <= version.parse("3.8.4")
+        ):
             return self._client.convert_from_registers(
                 segment, self._client.DATATYPE.STRING
             ).split("\x00")[0]
@@ -85,6 +91,7 @@ class VictronHub:
     def read_holding_registers(self, unit, address, count):
         """Read holding registers."""
         slave = int(unit) if unit else 1
+        _LOGGER.info("Reading unit %s address %s count %s", unit, address, count)
         return self._client.read_holding_registers(
             address=address, count=count, slave=slave
         )
@@ -96,6 +103,8 @@ class VictronHub:
         end_correction = 1
         if registerInfoDict[last_key].dataType in (INT32, UINT32):
             end_correction = 2
+        elif registerInfoDict[last_key].dataType in (INT64, UINT64):
+            end_correction = 4
         elif isinstance(registerInfoDict[last_key].dataType, STRING):
             end_correction = registerInfoDict[last_key].dataType.length
 
@@ -112,9 +121,12 @@ class VictronHub:
         """Determine which devices are present."""
         valid_devices = {}
 
+        _LOGGER.debug("Determining present devices")
+
         for unit in valid_unit_ids:
             working_registers = []
             for key, register_definition in register_info_dict.items():
+                _LOGGER.debug("Checking unit %s for register set %s", unit, key)
                 # VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
                 if unit == 100 and not key.startswith(("settings", "system")):
                     continue
