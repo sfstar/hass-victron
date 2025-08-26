@@ -1875,6 +1875,10 @@ genset_thirdparty_registers = {
     "genset_error_1": RegisterInfo(5016, STRING(16)),
     "genset_error_2": RegisterInfo(5032, STRING(16)),
     "genset_error_3": RegisterInfo(5048, STRING(16)),
+}
+
+# Note: this is split in two to prevent hitting the pymodbus 125 register read limit (8 * 16 registers = 128)
+genset_thirdparty_registers_2 = {
     "genset_error_4": RegisterInfo(5064, STRING(16)),
     "genset_error_5": RegisterInfo(5080, STRING(16)),
     "genset_error_6": RegisterInfo(5096, STRING(16)),
@@ -3007,6 +3011,8 @@ dcgenset_registers_thirdparty = {
     "dcgenset_error_1": RegisterInfo(5234, STRING(16)),
     "dcgenset_error_2": RegisterInfo(5250, STRING(16)),
     "dcgenset_error_3": RegisterInfo(5266, STRING(16)),
+}
+dcgenset_registers_thirdparty_2 = {
     "dcgenset_error_4": RegisterInfo(5282, STRING(16)),
     "dcgenset_error_5": RegisterInfo(5298, STRING(16)),
     "dcgenset_error_6": RegisterInfo(5314, STRING(16)),
@@ -3351,7 +3357,8 @@ register_info_dict = {
     "inverter_tracker_statistics_registers": inverter_tracker_statistics_registers,
     "genset_registers": genset_registers,
     "genset_registers_2": genset_registers_2,
-    #   "genset_thirdparty_registers": genset_thirdparty_registers,
+    "genset_thirdparty_registers": genset_thirdparty_registers,
+    "genset_thirdparty_registers_2": genset_thirdparty_registers_2,
     "temperature_registers": temperature_registers,
     "pulsemeter_registers": pulsemeter_registers,
     "digitalinput_registers": digitalinput_registers,
@@ -3380,7 +3387,8 @@ register_info_dict = {
     "acsystem_registers": acsystem_registers,
     "acsystem_registers_2": acsystem_registers_2,
     "dcgenset_registers": dcgenset_registers,
-    #    "dcgenset_registers_thirdparty": dcgenset_registers_thirdparty,
+    "dcgenset_registers_thirdparty": dcgenset_registers_thirdparty,
+    "dcgenset_registers_thirdparty_2": dcgenset_registers_thirdparty_2,
     "system_dynamic_ess_registers": system_dynamic_ess_registers,
     "settings_dynamic_ess_registers": settings_dynamic_ess_registers,
 }
