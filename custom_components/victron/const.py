@@ -3158,9 +3158,9 @@ system_registers = {
     ),
 }
 
-#system_internal_registers = {
+# system_internal_registers = {
 #    "system_system_time_in_utc": RegisterInfo(830, UINT64, UnitOfTime.SECONDS)
-#}
+# }
 
 
 class system_battery_state(Enum):
@@ -3351,7 +3351,7 @@ register_info_dict = {
     "inverter_tracker_statistics_registers": inverter_tracker_statistics_registers,
     "genset_registers": genset_registers,
     "genset_registers_2": genset_registers_2,
-    "genset_thirdparty_registers": genset_thirdparty_registers,
+    #   "genset_thirdparty_registers": genset_thirdparty_registers,
     "temperature_registers": temperature_registers,
     "pulsemeter_registers": pulsemeter_registers,
     "digitalinput_registers": digitalinput_registers,
@@ -3380,7 +3380,7 @@ register_info_dict = {
     "acsystem_registers": acsystem_registers,
     "acsystem_registers_2": acsystem_registers_2,
     "dcgenset_registers": dcgenset_registers,
-    "dcgenset_registers_thirdparty": dcgenset_registers_thirdparty,
+    #    "dcgenset_registers_thirdparty": dcgenset_registers_thirdparty,
     "system_dynamic_ess_registers": system_dynamic_ess_registers,
     "settings_dynamic_ess_registers": settings_dynamic_ess_registers,
 }

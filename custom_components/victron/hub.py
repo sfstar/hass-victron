@@ -91,6 +91,7 @@ class VictronHub:
     def read_holding_registers(self, unit, address, count):
         """Read holding registers."""
         slave = int(unit) if unit else 1
+        _LOGGER.info("Reading unit %s address %s count %s", unit, address, count)
         return self._client.read_holding_registers(
             address=address, count=count, slave=slave
         )
