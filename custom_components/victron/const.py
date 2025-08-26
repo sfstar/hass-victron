@@ -2068,9 +2068,9 @@ evcharger_productid_registers = {"evcharger_productid": RegisterInfo(3800, UINT1
 class evcharger_mode(Enum):
     """EV charger mode."""
 
-    AC_INPUT_1 = 0
-    AC_OUTPUT = 1
-    AC_INPUT_2 = 2
+    MANUAL = 0
+    AUTO = 1
+    SCHEDULED = 2
 
 
 class evcharger_status(Enum):

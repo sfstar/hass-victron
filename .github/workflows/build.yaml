@@ -15,7 +15,7 @@ jobs:
 
       - name: Get version
         id: version
-        uses: home-assistant/actions/helpers/version@main
+        uses: home-assistant/actions/helpers/version@master
 
       - name: 🔢 Adjust version number
         run: |

@@ -191,7 +191,6 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
                             "The reported value %s for entity %s isn't a decobale value. Please report this error to the integrations maintainer",
                             data,
                             self._attr_name,
-                            exc_info=1,
                         )
                 else:
                     self._attr_native_value = data

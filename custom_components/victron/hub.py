@@ -4,14 +4,18 @@ from collections import OrderedDict
 import logging
 import threading
 
+from packaging import version
+import pymodbus
 from pymodbus.client import ModbusTcpClient
 
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import (
+    INT16,
     INT32,
     INT64,
     STRING,
+    UINT16,
     UINT32,
     UINT64,
     register_info_dict,
@@ -34,6 +38,36 @@ class VictronHub:
     def is_still_connected(self):
         """Check if the connection is still open."""
         return self._client.is_socket_open()
+
+    def convert_string_from_register(self, segment, string_encoding="ascii"):
+        """Convert from registers to the appropriate data type."""
+        if version.parse("3.8.0") <= version.parse(pymodbus.__version__) <= version.parse("3.8.4"):
+            return self._client.convert_from_registers(
+                segment, self._client.DATATYPE.STRING
+            ).split("\x00")[0]
+        return self._client.convert_from_registers(
+            segment, self._client.DATATYPE.STRING, string_encoding=string_encoding
+        ).split("\x00")[0]
+
+    def convert_number_from_register(self, segment, dataType):
+        """Convert from registers to the appropriate data type."""
+        if dataType == UINT16:
+            raw = self._client.convert_from_registers(
+                segment, data_type=self._client.DATATYPE.UINT16
+            )
+        elif dataType == INT16:
+            raw = self._client.convert_from_registers(
+                segment, data_type=self._client.DATATYPE.INT16
+            )
+        elif dataType == UINT32:
+            raw = self._client.convert_from_registers(
+                segment, data_type=self._client.DATATYPE.UINT32
+            )
+        elif dataType == INT32:
+            raw = self._client.convert_from_registers(
+                segment, data_type=self._client.DATATYPE.INT32
+            )
+        return raw
 
     def connect(self):
         """Connect to the Modbus TCP server."""
