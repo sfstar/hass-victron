@@ -3158,9 +3158,9 @@ system_registers = {
     ),
 }
 
-system_internal_registers = {
-    "system_system_time_in_utc": RegisterInfo(830, UINT64, UnitOfTime.SECONDS)
-}
+#system_internal_registers = {
+#    "system_system_time_in_utc": RegisterInfo(830, UINT64, UnitOfTime.SECONDS)
+#}
 
 
 class system_battery_state(Enum):
