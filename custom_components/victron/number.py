@@ -175,6 +175,8 @@ def determine_max_value(
         if powerType == "DC":
             return config_entry[CONF_DC_CURRENT_LIMIT]
         return None
+    if powerType == "uint16":
+        return UINT16_MAX
     return 0
 
 
