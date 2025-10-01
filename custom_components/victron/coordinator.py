@@ -21,9 +21,11 @@ from .const import (
     DOMAIN,
     INT16,
     INT32,
+    INT64,
     STRING,
     UINT16,
     UINT32,
+    UINT64,
     RegisterInfo,
     register_info_dict,
 )
@@ -125,6 +127,8 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
                 count = 1
             elif value.dataType in (INT32, UINT32):
                 count = 2
+            elif value.dataType in (INT64, UINT64):
+                count = 4
             elif isinstance(value.dataType, STRING):
                 count = value.dataType.length
             segment = registers[offset : offset + count]
