@@ -2166,6 +2166,16 @@ acload_registers = {
     "acload_frequency": RegisterInfo(3922, UINT16, UnitOfFrequency.HERTZ, 100),
 }
 
+acload_registers_1 = {
+    "acload_L1_power_int32": RegisterInfo(3924, INT32, UnitOfPower.WATT),
+    "acload_L2_power_int32": RegisterInfo(3926, INT32, UnitOfPower.WATT),
+    "acload_L3_power_int32": RegisterInfo(3928, INT32, UnitOfPower.WATT),
+    "acload_L1_powerfactor": RegisterInfo(3930, INT16, "", 1000),
+    "acload_L2_powerfactor": RegisterInfo(3931, INT16, "", 1000),
+    "acload_L3_powerfactor": RegisterInfo(3932, INT16, "", 1000),
+    "acload_total_powerfactor": RegisterInfo(3933, INT16, "", 1000),
+}
+
 fuelcell_registers = {
     "fuelcell_battery_voltage": RegisterInfo(
         4000, UINT16, UnitOfElectricPotential.VOLT, 100
@@ -2958,6 +2968,10 @@ acsystem_registers = {
     # RESERVED 4925 - 4929
 }
 
+acsystem_registers_1 = {
+    "acsystem_active_soclimit": RegisterInfo(4925, UINT16, PERCENTAGE, 1),
+}
+
 acsystem_registers_2 = {
     "acsystem_alarm_gridlost": RegisterInfo(
         4930, UINT16, entityType=TextReadEntityType(generic_alarm_ledger)
@@ -2965,7 +2979,21 @@ acsystem_registers_2 = {
     "acsystem_alarm_phaserotation": RegisterInfo(
         4931, UINT16, entityType=TextReadEntityType(generic_alarm_ledger)
     ),
+    # RESERVED 4932 - 4939
 }
+
+acsystem_registers_3 = {
+    "acsystem_input1_currentlimit": RegisterInfo(
+        4940, UINT16, UnitOfElectricCurrent.AMPERE, 10, SliderWriteType("AC", False)
+    ),
+    "acsystem_input2_currentlimit": RegisterInfo(
+        4941, UINT16, UnitOfElectricCurrent.AMPERE, 10, SliderWriteType("AC", False)
+    ),
+    "acsystem_gridmeter_currentlimit": RegisterInfo(
+        4942, UINT16, UnitOfElectricCurrent.AMPERE, 10, SliderWriteType("AC", False)
+    ),
+}
+
 
 dcgenset_registers = {
     "dcgenset_productid": RegisterInfo(5200, UINT16),
@@ -3117,9 +3145,9 @@ settings_dynamic_ess_registers = {
     "settings_dynamicess_schedule_starttime": RegisterInfo(
         5428, INT32, UnitOfTime.SECONDS, entityType=SliderWriteType(UnitOfTime.SECONDS)
     ),  # TODO refactor to support date and time picker and although negative is allowed this is specified as unix timestamp in the docs
-    # "settings_dynamicess_strategy": RegisterInfo(
-    #     5429, UINT16, entityType=SelectWriteType(dynamic_ess_strategy)
-    # ),
+    "settings_dynamicess_strategy": RegisterInfo(
+         5429, UINT16, entityType=SelectWriteType(dynamic_ess_strategy)
+    ),
 }
 
 class heatpump_state(Enum):
