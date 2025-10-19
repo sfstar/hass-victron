@@ -6,6 +6,9 @@ from homeassistant.components.sensor import SensorStateClass
 from homeassistant.const import (
     PERCENTAGE,
     REVOLUTIONS_PER_MINUTE,
+    CONCENTRATION_PARTS_PER_MILLION,
+    CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+    LIGHT_LUX,
     UnitOfElectricCurrent,
     UnitOfElectricPotential,
     UnitOfEnergy,
@@ -245,6 +248,13 @@ gavazi_grid_registers = {
     "grid_ac_L2_power": RegisterInfo(2640, INT32, UnitOfPower.WATT),
     "grid_ac_L3_power": RegisterInfo(2642, INT32, UnitOfPower.WATT),
     "grid_ac_frequency": RegisterInfo(2644, UINT16, UnitOfFrequency.HERTZ, 100),
+}
+
+gavazi_grid_registers_2 = {
+    "grid_L1_powerfactor": RegisterInfo(2645, INT16, "", 1000),
+    "grid_L2_powerfactor": RegisterInfo(2646, INT16, "", 1000),
+    "grid_L3_powerfactor": RegisterInfo(2647, INT16, "", 1000),
+    "grid_total_powerfactor": RegisterInfo(2648, INT16, "", 1000),
 }
 
 
@@ -805,6 +815,10 @@ battery_registers = {
     "battery_mode": RegisterInfo(327, UINT16, entityType=SelectWriteType(battery_mode)),
 }
 
+battery_registers_2 = {
+    "battery_consumedamphours_uint32": RegisterInfo(330, UINT32, AMPHOURS, -1),
+}
+
 
 class battery_state(Enum):
     """Battery state."""
@@ -1099,6 +1113,10 @@ solarcharger_registers = {
         dataType=UINT16,
         entityType=TextReadEntityType(generic_mppoperationmode),
     ),
+}
+
+solarcharger_registers_2 = {
+    "solarcharger_yield_power_uint32": RegisterInfo(792, UINT32, UnitOfPower.WATT),
 }
 
 solarcharger_tracker_voltage_registers = {
@@ -1409,6 +1427,18 @@ settings_cgwacs_registers = {
     "settings_overrides_setpoint_volatile": RegisterInfo(2716, INT32, UnitOfPower.WATT),
 }
 
+class without_gridmeter_options(Enum):
+    """Settings CGWACS run without grid meter options."""
+
+    EXTENRAL_METER = 0
+    INVERTER_CHARGER = 1
+
+settings_cgwacs_registers_2 = {
+    "settings_cgwacs_run_without_gridmeter": RegisterInfo(
+        2718, UINT16, "", 1, SelectWriteType(without_gridmeter_options)
+    )
+}
+
 
 gps_registers = {
     "gps_latitude": RegisterInfo(2800, INT32, "", 10000000),
@@ -1573,9 +1603,14 @@ inverter_alarm_registers = {
 class inverter_mode(Enum):
     """Inverter mode."""
 
-    ON = 2
+    CHARGER_ONLY = 1
+    INVERTER_ONLY = 2
+    ON = 3
     OFF = 4
-    ECO = 5
+    LOW_POWER = 5
+    PASSTHROUGH = 251
+    STANDBY = 252
+    HIBERNATE = 253
 
 
 inverter_info_registers = {
@@ -1870,6 +1905,16 @@ genset_registers_2 = {
     ),
 }
 
+genset_registers_4 = {
+    "genset_L1_power_int32": RegisterInfo(3230, INT32, UnitOfPower.WATT),
+    "genset_L2_power_int32": RegisterInfo(3232, INT32, UnitOfPower.WATT),
+    "genset_L3_power_int32": RegisterInfo(3234, INT32, UnitOfPower.WATT),
+    "genset_L1_powerfactor": RegisterInfo(3236, INT16, "", 1000),
+    "genset_L2_powerfactor": RegisterInfo(3237, INT16, "", 1000),
+    "genset_L3_powerfactor": RegisterInfo(3238, INT16, "", 1000),
+    "genset_total_powerfactor": RegisterInfo(3239, INT16, "", 1000),
+}
+
 genset_thirdparty_registers = {
     "genset_error_0": RegisterInfo(5000, STRING(16)),
     "genset_error_1": RegisterInfo(5016, STRING(16)),
@@ -1892,6 +1937,10 @@ class temperature_type(Enum):
     BATTERY = 0
     FRIDGE = 1
     GENERIC = 2
+    ROOM = 3
+    OUTDOOR = 4
+    WATERHEATER = 5
+    FREEZER = 6
 
 
 class temperature_status(Enum):
@@ -1925,6 +1974,14 @@ temperature_registers = {
         3307, UINT16, UnitOfElectricPotential.VOLT, 100
     ),
     "temperature_pressure": RegisterInfo(3308, UINT16, UnitOfPressure.HPA),
+}
+
+temperature_registers_2 = {
+    "temperature_co2": RegisterInfo(3309, UINT16, CONCENTRATION_PARTS_PER_MILLION, 1),
+    "temperature_lux": RegisterInfo(3310, UINT32, LIGHT_LUX, 1),
+    "temperature_nitrogen_oxides": RegisterInfo(3312, UINT16, "", 1),
+    "temperature_particulate_matter": RegisterInfo(3313, UINT16, CONCENTRATION_MICROGRAMS_PER_CUBIC_METER, 1),
+    "temperature_volatile_organic_compounds": RegisterInfo(3314, UINT16, "", 1),
 }
 
 pulsemeter_registers = {
