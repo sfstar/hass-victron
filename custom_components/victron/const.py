@@ -3045,6 +3045,8 @@ class dynamic_ess_strategy(Enum):
 
     TARGET_SOC = 0
     SELF_CONSUMPTION = 1
+    PRO_BATTERY = 2
+    PRO_GRID = 3
 
 
 system_dynamic_ess_registers = {
@@ -3120,6 +3122,24 @@ settings_dynamic_ess_registers = {
     # ),
 }
 
+class heatpump_state(Enum):
+    """Heatpump state."""
+
+    OFF = 0
+    ERROR = 1
+    STARTUP = 2
+    HEATING = 3
+    COOLING = 4
+
+heatpump_registers = {
+    "heatpump_productid": RegisterInfo(5500, UINT16),
+    "heatpump_state": RegisterInfo(
+        5501, UINT16, entityType=TextReadEntityType(heatpump_state)),
+    "heatpump_power": RegisterInfo(5502, UINT32, UnitOfPower.WATT),
+    "heatpump_energy_forward": RegisterInfo(5504, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100),
+    "heatpump_temperature": RegisterInfo(5506, INT16, UnitOfTemperature.CELSIUS, 10),
+    "heatpump_target_temperature": RegisterInfo(5507, INT16, UnitOfTemperature.CELSIUS, 10),
+}
 
 class register_input_source(Enum):
     """Input source."""
