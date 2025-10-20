@@ -622,7 +622,7 @@ class battery_mode(Enum):
 
 battery_registers = {
     "battery_power": RegisterInfo(
-        258, INT16, UnitOfPower.WATT, entityType=SliderWriteType("DC", True)
+        256, INT32, UnitOfPower.WATT, entityType=SliderWriteType("DC", True)
     ),
     "battery_voltage": RegisterInfo(259, UINT16, UnitOfElectricPotential.VOLT, 100),
     "battery_starter_voltage": RegisterInfo(
@@ -632,7 +632,7 @@ battery_registers = {
     "battery_temperature": RegisterInfo(262, INT16, UnitOfTemperature.CELSIUS, 10),
     "battery_midvoltage": RegisterInfo(263, UINT16, UnitOfElectricPotential.VOLT, 100),
     "battery_midvoltagedeviation": RegisterInfo(264, UINT16, PERCENTAGE, 100),
-    "battery_consumedamphours": RegisterInfo(265, UINT16, AMPHOURS, -10),
+    "battery_consumedamphours": RegisterInfo(330, UINT32, AMPHOURS, -1),
     "battery_soc": RegisterInfo(266, UINT16, PERCENTAGE, 10),
     "battery_alarm": RegisterInfo(
         register=267,
@@ -1090,9 +1090,9 @@ solarcharger_registers = {
         dataType=UINT16,
         entityType=TextReadEntityType(generic_charger_errorcode),
     ),
-    "solarcharger_yield_power": RegisterInfo(792, UINT32, UnitOfPower.WATT, 10),
+    "solarcharger_yield_power": RegisterInfo(792, UINT32, UnitOfPower.WATT, 1),
     "solarcharger_yield_user": RegisterInfo(
-        3728, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 10
+        3728, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 1
     ),
     "solarcharger_mppoperationmode": RegisterInfo(
         register=791,
@@ -1815,9 +1815,9 @@ genset_registers = {
     "genset_L1_current": RegisterInfo(3203, INT16, UnitOfElectricCurrent.AMPERE, 10),
     "genset_L2_current": RegisterInfo(3204, INT16, UnitOfElectricCurrent.AMPERE, 10),
     "genset_L3_current": RegisterInfo(3205, INT16, UnitOfElectricCurrent.AMPERE, 10),
-    "genset_L1_power": RegisterInfo(3206, INT16, UnitOfPower.WATT),
-    "genset_L2_power": RegisterInfo(3207, INT16, UnitOfPower.WATT),
-    "genset_L3_power": RegisterInfo(3208, INT16, UnitOfPower.WATT),
+    "genset_L1_power": RegisterInfo(3230, INT32, UnitOfPower.WATT),
+    "genset_L2_power": RegisterInfo(3232, INT32, UnitOfPower.WATT),
+    "genset_L3_power": RegisterInfo(3234, INT32, UnitOfPower.WATT),
     "genset_L1_frequency": RegisterInfo(3209, UINT16, UnitOfFrequency.HERTZ, 100),
     "genset_L2_frequency": RegisterInfo(
         3210, UINT16, UnitOfFrequency.HERTZ, 100
