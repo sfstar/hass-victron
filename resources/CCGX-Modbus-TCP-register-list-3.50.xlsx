@@ -29,7 +29,7 @@ com.victronenergy.system	Battery Power (System)	842	int16	1	-32768 to 32767	/Dc/
 com.victronenergy.system	Battery State of Charge (System)	843	uint16	1	0 to 100	/Dc/Battery/Soc	no	%	Best battery state of charge, determined from different measurements.
 com.victronenergy.system	Battery state (System)	844	uint16	1	0 to 65536	/Dc/Battery/State	no	0=idle;1=charging;2=discharging
 com.victronenergy.system	Battery Consumed Amphours (System)	845	uint16	-10	0 to -6553.6	/Dc/Battery/ConsumedAmphours	no	Ah
-com.victronenergy.system	Battery Time to Go (System)	846	uint16	0,01	0 to 6553600	/Dc/Battery/TimeToGo	no	s	Special value: 0 = charging
+com.victronenergy.system	Battery Time to Go (System)	846	uint16	0.01	0 to 6553600	/Dc/Battery/TimeToGo	no	s	Special value: 0 = charging
 com.victronenergy.system	PV - DC-coupled power	850	uint16	1	0 to 65536	/Dc/Pv/Power	no	W	Summation of output power of all connected Solar Chargers
 com.victronenergy.system	PV - DC-coupled current	851	int16	10	-3276.8 to 3276.7	/Dc/Pv/Current	no	A DC	Summation of output current of all connected Solar Chargers
 com.victronenergy.system	Charger power	855	uint16	1	0 to 65536	/Dc/Charger/Power	no	W
@@ -54,9 +54,9 @@ com.victronenergy.vebus	Input current phase 3	8	int16	10	-3276.8 to 3276.7	/Ac/A
 com.victronenergy.vebus	Input frequency 1	9	int16	100	-327.68 to 327.67	/Ac/ActiveIn/L1/F	no	Hz
 com.victronenergy.vebus	Input frequency 2	10	int16	100	-327.68 to 327.67	/Ac/ActiveIn/L2/F	no	Hz
 com.victronenergy.vebus	Input frequency 3	11	int16	100	-327.68 to 327.67	/Ac/ActiveIn/L3/F	no	Hz
-com.victronenergy.vebus	Input power 1	12	int16	0,1	-327680 to 327670	/Ac/ActiveIn/L1/P	no	VA or Watts	Sign meaning equal to Input current
-com.victronenergy.vebus	Input power 2	13	int16	0,1	-327680 to 327670	/Ac/ActiveIn/L2/P	no	VA or Watts	Sign meaning equal to Input current
-com.victronenergy.vebus	Input power 3	14	int16	0,1	-327680 to 327670	/Ac/ActiveIn/L3/P	no	VA or Watts	Sign meaning eaqual to Input current
+com.victronenergy.vebus	Input power 1	12	int16	0.1	-327680 to 327670	/Ac/ActiveIn/L1/P	no	VA or Watts	Sign meaning equal to Input current
+com.victronenergy.vebus	Input power 2	13	int16	0.1	-327680 to 327670	/Ac/ActiveIn/L2/P	no	VA or Watts	Sign meaning equal to Input current
+com.victronenergy.vebus	Input power 3	14	int16	0.1	-327680 to 327670	/Ac/ActiveIn/L3/P	no	VA or Watts	Sign meaning eaqual to Input current
 com.victronenergy.vebus	Output voltage phase 1	15	uint16	10	0 to 6553.5	/Ac/Out/L1/V	no	V AC
 com.victronenergy.vebus	Output voltage phase 2	16	uint16	10	0 to 6553.5	/Ac/Out/L2/V	no	V AC
 com.victronenergy.vebus	Output voltage phase 3	17	uint16	10	0 to 6553.5	/Ac/Out/L3/V	no	V AC
@@ -65,9 +65,9 @@ com.victronenergy.vebus	Output current phase 2	19	int16	10	-3276.8 to 3276.7	/Ac
 com.victronenergy.vebus	Output current phase 3	20	int16	10	-3276.8 to 3276.7	/Ac/Out/L3/I	no	A AC	Postive: current flowing from Multi to the load. Negative: current flowing from load to the Multi.
 com.victronenergy.vebus	Output frequency	21	int16	100	-327.68 to 327.67	/Ac/Out/L1/F	no	Hz
 com.victronenergy.vebus	Active input current limit	22	int16	10	-3276.8 to 3276.7	/Ac/ActiveIn/CurrentLimit	yes	A	See Venus-OS manual for limitations, for example when VE.Bus BMS or DMC is installed.
-com.victronenergy.vebus	Output power 1	23	int16	0,1	-327680 to 327670	/Ac/Out/L1/P	no	VA or Watts	Sign meaning equal to Output current
-com.victronenergy.vebus	Output power 2	24	int16	0,1	-327680 to 327670	/Ac/Out/L2/P	no	VA or Watts	Sign meaning equal to Output current
-com.victronenergy.vebus	Output power 3	25	int16	0,1	-327680 to 327670	/Ac/Out/L3/P	no	VA or Watts	Sign meaning equal to Output current
+com.victronenergy.vebus	Output power 1	23	int16	0.1	-327680 to 327670	/Ac/Out/L1/P	no	VA or Watts	Sign meaning equal to Output current
+com.victronenergy.vebus	Output power 2	24	int16	0.1	-327680 to 327670	/Ac/Out/L2/P	no	VA or Watts	Sign meaning equal to Output current
+com.victronenergy.vebus	Output power 3	25	int16	0.1	-327680 to 327670	/Ac/Out/L3/P	no	VA or Watts	Sign meaning equal to Output current
 com.victronenergy.vebus	Battery voltage	26	uint16	100	0 to 655.35	/Dc/0/Voltage	no	V DC
 com.victronenergy.vebus	Battery current	27	int16	10	-3276.8 to 3276.7	/Dc/0/Current	no	A DC	Positive: current flowing from the Multi to the dc system. Negative: the other way around.
 com.victronenergy.vebus	Phase count	28	uint16	1	0 to 65536	/Ac/NumberOfPhases	no	count
@@ -108,9 +108,9 @@ com.victronenergy.vebus	VE.Bus Reset	62	uint16	1	0 to 65535	/SystemReset	yes	1=V
 com.victronenergy.vebus	Phase rotation warning	63	uint16	1	0 to 65535	/Alarms/PhaseRotation	no	0=Ok;1=Warning
 com.victronenergy.vebus	Grid lost alarm	64	uint16	1	0 to 65535	/Alarms/GridLost	no	0=Ok;2=Alarm
 com.victronenergy.vebus	Feed DC overvoltage into grid	65	uint16	1	0 to 65535	/Hub4/DoNotFeedInOvervoltage	yes	0=Feed in overvoltage;1=Do not feed in overvoltage
-com.victronenergy.vebus	Maximum overvoltage feed-in power L1	66	uint16	0,01	0 to 6553500	/Hub4/L1/MaxFeedInPower	yes	W
-com.victronenergy.vebus	Maximum overvoltage feed-in power L2	67	uint16	0,01	0 to 6553500	/Hub4/L2/MaxFeedInPower	yes	W
-com.victronenergy.vebus	Maximum overvoltage feed-in power L3	68	uint16	0,01	0 to 6553500	/Hub4/L3/MaxFeedInPower	yes	W
+com.victronenergy.vebus	Maximum overvoltage feed-in power L1	66	uint16	0.01	0 to 6553500	/Hub4/L1/MaxFeedInPower	yes	W
+com.victronenergy.vebus	Maximum overvoltage feed-in power L2	67	uint16	0.01	0 to 6553500	/Hub4/L2/MaxFeedInPower	yes	W
+com.victronenergy.vebus	Maximum overvoltage feed-in power L3	68	uint16	0.01	0 to 6553500	/Hub4/L3/MaxFeedInPower	yes	W
 com.victronenergy.vebus	AC input 1 ignored	69	uint16	1	0 to 65535	/Ac/State/IgnoreAcIn1	no	0=AC input not ignored;1=AC input ignored
 com.victronenergy.vebus	AC input 2 ignored	70	uint16	1	0 to 65535	/Ac/State/IgnoreAcIn2	no	0=AC input not ignored;1=AC input ignored
 com.victronenergy.vebus	AcPowerSetpoint acts as feed-in limit	71	uint16	1	0 to 65535	/Hub4/TargetPowerIsMaxFeedIn	yes	0=AcPowerSetpoint interpreted normally; 1=AcPowerSetpoint is OvervoltageFeedIn limit	When set to 1, the Multi behaves as if DoNotFeedInOvervoltage is disabled and AcPowerSetpoint is the maximum allowed feed-in
@@ -171,7 +171,7 @@ com.victronenergy.battery	Full discharges	285	uint16	1	0 to 65535	/History/FullD
 com.victronenergy.battery	Total Ah drawn	286	uint16	-10	0 to -6553.6	/History/TotalAhDrawn	no	Ah	Not supported by CAN.Bus BMS batteries.
 com.victronenergy.battery	Minimum voltage	287	uint16	100	0 to 655.35	/History/MinimumVoltage	no	V DC	Not supported by CAN.Bus BMS batteries.
 com.victronenergy.battery	Maximum voltage	288	uint16	100	0 to 655.35	/History/MaximumVoltage	no	V DC	Not supported by CAN.Bus BMS batteries.
-com.victronenergy.battery	Time since last full charge	289	uint16	0,01	0 to 6553500	/History/TimeSinceLastFullCharge	no	seconds	Not supported by CAN.Bus BMS batteries.
+com.victronenergy.battery	Time since last full charge	289	uint16	0.01	0 to 6553500	/History/TimeSinceLastFullCharge	no	seconds	Not supported by CAN.Bus BMS batteries.
 com.victronenergy.battery	Automatic syncs	290	uint16	1	0 to 65535	/History/AutomaticSyncs	no	count	Not supported by CAN.Bus BMS batteries.
 com.victronenergy.battery	Low voltage alarms	291	uint16	1	0 to 65535	/History/LowVoltageAlarms	no	count	Not supported by CAN.Bus BMS batteries.
 com.victronenergy.battery	High voltage alarms	292	uint16	1	0 to 65535	/History/HighVoltageAlarms	no	count	Not supported by CAN.Bus BMS batteries.
@@ -185,7 +185,7 @@ com.victronenergy.battery	Minimum fused voltage	299	uint16	100	0 to 655.35	/Hist
 com.victronenergy.battery	Maximum fused voltage	300	uint16	100	0 to 655.35	/History/MaximumFusedVoltage	no	V DC	2014-12-13: Deprecated because over-engineered. Value is always 0.
 com.victronenergy.battery	Discharged Energy	301	uint16	10	0 to 6553.5	/History/DischargedEnergy	no	kWh	Not supported by CAN.Bus BMS batteries.
 com.victronenergy.battery	Charged Energy	302	uint16	10	0 to 6553.5	/History/ChargedEnergy	no	kWh	Not supported by CAN.Bus BMS batteries.
-com.victronenergy.battery	Time to go	303	uint16	0,01	0 to 6553500	/TimeToGo	no	seconds	Special value: 0 = charging. Not supported by CAN.Bus BMS batteries.
+com.victronenergy.battery	Time to go	303	uint16	0.01	0 to 6553500	/TimeToGo	no	seconds	Special value: 0 = charging. Not supported by CAN.Bus BMS batteries.
 com.victronenergy.battery	State of health	304	uint16	10	0 to 6553.5	/Soh	no	%	Not supported by Victron products. Supported by CAN.Bus batteries.
 com.victronenergy.battery	Max charge voltage	305	uint16	10	0 to 6553.5	/Info/MaxChargeVoltage	no	V DC	Not supported by Victron products. Supported by CAN.Bus batteries.
 com.victronenergy.battery	Min discharge voltage	306	uint16	10	0 to 6553.5	/Info/BatteryLowVoltage	no	V DC	Not supported by Victron products. Supported by CAN.Bus batteries.
@@ -384,10 +384,10 @@ com.victronenergy.grid	Total Power Factor	2648	int16	1000	-32.768 to 32.767	/Ac/
 com.victronenergy.settings	ESS control loop setpoint	2700	int16	1	-32768 to 32767	/Settings/Cgwacs/AcPowerSetPoint	yes	W	ESS Mode 2 - Setpoint for the ESS control-loop in the CCGX. The control-loop will increase/decrease the Multi charge/discharge power to get the grid reading to this setpoint
 com.victronenergy.settings	ESS max charge current (fractional)	2701	uint16	1	0 to 100	/Settings/Cgwacs/MaxChargePercentage	yes	%	ESS Mode 2 - Max charge current for ESS control-loop. The control-loop will use this value to limit the multi power setpoint. For DVCC, use 2705 instead.
 com.victronenergy.settings	ESS max discharge current (fractional)	2702	uint16	1	0 to 100	/Settings/Cgwacs/MaxDischargePercentage	yes	%	ESS Mode 2 - Max discharge current for ESS control-loop. The control-loop will use this value to limit the multi power setpoint. Currently a value < 50% will disable discharge completely. >=50% allows. Consider using 2704 instead.
-com.victronenergy.settings	ESS control loop setpoint	2703	int16	0,01	-3276800 to 3276700	/Settings/Cgwacs/AcPowerSetPoint	yes	W	ESS Mode 2 – Same as 2700, but with a different scale factor. Meant for values larger than +-32kW.
-com.victronenergy.settings	ESS max discharge current	2704	int16	0,1	-327680 to 327670	/Settings/Cgwacs/MaxDischargePower	yes	W	ESS Mode 2 – similar to 2702, but as an absolute value instead of a percentage.
+com.victronenergy.settings	ESS control loop setpoint	2703	int16	0.01	-3276800 to 3276700	/Settings/Cgwacs/AcPowerSetPoint	yes	W	ESS Mode 2 – Same as 2700, but with a different scale factor. Meant for values larger than +-32kW.
+com.victronenergy.settings	ESS max discharge current	2704	int16	0.1	-327680 to 327670	/Settings/Cgwacs/MaxDischargePower	yes	W	ESS Mode 2 – similar to 2702, but as an absolute value instead of a percentage.
 com.victronenergy.settings	DVCC system max charge current	2705	int16	1	-32768 to 32767	/Settings/SystemSetup/MaxChargeCurrent	yes	A DC	ESS Mode 2 with DVCC – Maximum system charge current. -1 Disables.
-com.victronenergy.settings	Maximum System Grid Feed In	2706	int16	0,01	-3276800 to 3276700	/Settings/Cgwacs/MaxFeedInPower	yes	W	-1: No limit, >=0: limited system feed-in. Applies to DC-coupled and AC-coupled feed-in.
+com.victronenergy.settings	Maximum System Grid Feed In	2706	int16	0.01	-3276800 to 3276700	/Settings/Cgwacs/MaxFeedInPower	yes	W	-1: No limit, >=0: limited system feed-in. Applies to DC-coupled and AC-coupled feed-in.
 com.victronenergy.settings	Feed excess DC-coupled PV into grid	2707	int16	1		/Settings/Cgwacs/OvervoltageFeedIn	yes	0=Don’t feed excess DC-tied PV into grid; 1=Feed excess DC-tied PV into the grid	Also known as Overvoltage Feed-in
 com.victronenergy.settings	Don’t feed excess AC-coupled PV into grid	2708	int16	1		/Settings/Cgwacs/PreventFeedback	yes	0=Feed excess AC-tied PV into grid; 1=Don’t feed excess AC-tied PV into the grid	Formerly  called Fronius Zero-Feedin
 com.victronenergy.hub4	Grid limiting status	2709	int16	1		/PvPowerLimiterActive	no	0=Feed-in limiting is inactive; 1=Feed-in limiting is active	Applies to both AC-coupled and DC-coupled limiting
@@ -418,7 +418,7 @@ com.victronenergy.tank	Tank remaining fluid	3005	uint32	10000	0 to 429496.7296	/
 com.victronenergy.tank	Tank status	3007	uint16	1	0 to 65535	/Status	no	0=OK;1=Open circuit;2=Short circuited;3=Reverse Polarity;4=Unknown
 com.victronenergy.inverter	Output current	3100	int16	10	-3276.8 to 3276.8	/Ac/Out/L1/I	no	A AC
 com.victronenergy.inverter	Output voltage	3101	uint16	10	0 to 6553.6	/Ac/Out/L1/V	no	V AC
-com.victronenergy.inverter	Output power	3102	int16	0,1	-327680 to 327670	/Ac/Out/L1/P	no	W AC
+com.victronenergy.inverter	Output power	3102	int16	0.1	-327680 to 327670	/Ac/Out/L1/P	no	W AC
 com.victronenergy.inverter	Battery voltage	3105	uint16	100	0 to 655.36	/Dc/0/Voltage	no	V DC
 com.victronenergy.inverter	Battery current	3106	int16	10	-3276.8 to 3276.7	/Dc/0/Current	no	A DC
 com.victronenergy.inverter	High temperature alarm	3110	uint16	1	0 to 65535	/Alarms/HighTemperature	no	0=No alarm;1=Warning;2=Alarm
@@ -485,7 +485,7 @@ com.victronenergy.genset	Error	3214	uint16	1	0 to 65535	/ErrorCode	no	0=No error
 com.victronenergy.genset	Auto start	3215	uint16	1	0 to 65535	/RemoteStartModeEnabled	no	0=Disabled;1=Enabled
 com.victronenergy.genset	Engine load	3216	uint16	1	0 to 65535	/Engine/Load	no	%
 com.victronenergy.genset	Engine speed	3217	uint16	1	0 to 65535	/Engine/Speed	no	RPM
-com.victronenergy.genset	Engine operating hours	3218	uint16	0,01	0 to 6553500	/Engine/OperatingHours	no	s
+com.victronenergy.genset	Engine operating hours	3218	uint16	0.01	0 to 6553500	/Engine/OperatingHours	no	s
 com.victronenergy.genset	Engine coolant temperature	3219	int16	10	-3276.8 to 3276.8	/Engine/CoolantTemperature	no	Degrees celsius
 com.victronenergy.genset	Engine winding temperature	3220	int16	10	-3276.8 to 3276.8	/Engine/WindingTemperature	no	Degrees celsius
 com.victronenergy.genset	Engine exhaust temperature	3221	int16	10	-3276.8 to 3276.8	/Engine/ExaustTemperature	no	Degrees celsius
@@ -554,7 +554,7 @@ com.victronenergy.evcharger	L1 Power	3818	uint16	1	0 to 65535	/Ac/L1/Power	no	W
 com.victronenergy.evcharger	L2 Power	3819	uint16	1	0 to 65535	/Ac/L2/Power	no	W
 com.victronenergy.evcharger	L3 Power	3820	uint16	1	0 to 65535	/Ac/L3/Power	no	W
 com.victronenergy.evcharger	Total power	3821	uint16	1	0 to 65535	/Ac/Power	no	W
-com.victronenergy.evcharger	Charging time	3822	uint16	0,01	0 to 6553500	/ChargingTime	no	seconds
+com.victronenergy.evcharger	Charging time	3822	uint16	0.01	0 to 6553500	/ChargingTime	no	seconds
 com.victronenergy.evcharger	Charge current	3823	uint16	1	0 to 65535	/Current	no	A
 com.victronenergy.evcharger	Status	3824	uint16	1	0 to 65535	/Status	no	0=Disconnected; 1=Connected; 2=Charging; 3=Charged; 4=Waiting for sun; 5=Waiting for RFID; 6=Waiting for start; 7=Low SOC; 8=Ground test error; 9=Welded contacts test error; 10=CP input test error (shorted); 11=Residual current detected; 12=Undervoltage detected; 13=Overvoltage detected; 14=Overheating detected; 15=Reserved; 16=Reserved; 17=Reserved; 18=Reserved; 19=Reserved; 20=Charging limit; 21=Start charging; 22=Switching to 3 phase; 23=Switching to 1 phase; 24=Stop charging
 com.victronenergy.evcharger	Set charge current (manual mode)	3825	uint16	1	0 to 65535	/SetCurrent	yes	A
@@ -839,7 +839,7 @@ com.victronenergy.dcgenset	8th Error string (for third party gensets)	5330	strin
 com.victronenergy.system	Dynamic ESS state	5400	uint16	1	0 to 65535	/DynamicEss/Active	no	0=Off;1=Active
 com.victronenergy.system	Allow grid feed-in	5401	uint16	1	0 to 65535	/DynamicEss/AllowGridFeedIn	no	0=Not allowed;1=Allowed
 com.victronenergy.system	Is Dynamic ESS available	5402	uint16	1	0 to 65535	/DynamicEss/Available	no	0=System is not capable of doing DynamicEss;1=System is capable of doing DynamicEss
-com.victronenergy.system	Calculated rate of charge/discharge	5403	uint16	0,1	0 to 655350	/DynamicEss/ChargeRate	no
+com.victronenergy.system	Calculated rate of charge/discharge	5403	uint16	0.1	0 to 655350	/DynamicEss/ChargeRate	no
 com.victronenergy.system	Error	5404	uint16	1	0 to 65535	/DynamicEss/ErrorCode	no	0=No error;1=No ESS;2=ESS mode;3=No matching schedule;4=SOC low;5=Battery capacity not configured
 com.victronenergy.system	Active restrictions	5405	uint16	1	0 to 65535	/DynamicEss/Restrictions	no	0=No restrictions between battery and the grid;1=Grid to battery energy flow is restricted;2=Battery to grid energy flow is restricted;3=No energy flow between battery and grid
 com.victronenergy.system	Used strategy for current time slot	5406	uint16	1	0 to 65535	/DynamicEss/Strategy	no	0=Target SOC;1=Self-consumption;2=Pro battery;3=Pro grid
