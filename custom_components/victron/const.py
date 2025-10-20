@@ -1090,9 +1090,9 @@ solarcharger_registers = {
         dataType=UINT16,
         entityType=TextReadEntityType(generic_charger_errorcode),
     ),
-    "solarcharger_yield_power": RegisterInfo(789, UINT16, UnitOfPower.WATT, 10),
+    "solarcharger_yield_power": RegisterInfo(792, UINT32, UnitOfPower.WATT, 10),
     "solarcharger_yield_user": RegisterInfo(
-        790, UINT16, UnitOfEnergy.KILO_WATT_HOUR, 10
+        3728, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 10
     ),
     "solarcharger_mppoperationmode": RegisterInfo(
         register=791,
