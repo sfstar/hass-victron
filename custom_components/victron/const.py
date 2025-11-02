@@ -3399,8 +3399,8 @@ system_registers = {
 system_firmware_registers = {
     "system_firmware_gx_major_version": RegisterInfo(834, UINT16),
     "system_firmware_gx_beta_release": RegisterInfo(835, UINT16),
-
 }
+
 
 class system_battery_state(Enum):
     """Battery state."""

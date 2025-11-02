@@ -86,7 +86,9 @@ class VictronHub:
     def write_register(self, unit, address, value):
         """Write a register."""
         slave = int(unit) if unit else 1
-        return self._client.write_register(address=address, value=value, device_id=slave)
+        return self._client.write_register(
+            address=address, value=value, device_id=slave
+        )
 
     def read_holding_registers(self, unit, address, count):
         """Read holding registers."""
