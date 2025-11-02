@@ -4,6 +4,9 @@ from enum import Enum
 
 from homeassistant.components.sensor import SensorStateClass
 from homeassistant.const import (
+    CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+    CONCENTRATION_PARTS_PER_MILLION,
+    LIGHT_LUX,
     PERCENTAGE,
     REVOLUTIONS_PER_MINUTE,
     UnitOfElectricCurrent,
@@ -245,6 +248,13 @@ gavazi_grid_registers = {
     "grid_ac_L2_power": RegisterInfo(2640, INT32, UnitOfPower.WATT),
     "grid_ac_L3_power": RegisterInfo(2642, INT32, UnitOfPower.WATT),
     "grid_ac_frequency": RegisterInfo(2644, UINT16, UnitOfFrequency.HERTZ, 100),
+}
+
+gavazi_grid_registers_2 = {
+    "grid_L1_powerfactor": RegisterInfo(2645, INT16, "", 1000),
+    "grid_L2_powerfactor": RegisterInfo(2646, INT16, "", 1000),
+    "grid_L3_powerfactor": RegisterInfo(2647, INT16, "", 1000),
+    "grid_total_powerfactor": RegisterInfo(2648, INT16, "", 1000),
 }
 
 
@@ -613,12 +623,123 @@ vebus_registers = {
 }
 
 
+class vebus_microgrid_mode(Enum):
+    """Vebus microgrid mode."""
+
+    GRID_FORMING = 0
+    GRID_FOLLOWING = 1
+    RESERVED = 2
+    HYBRID_DROOP_MODE = 3
+
+
+vebus_registers_2 = {
+    "vebus_microgrid_mode": RegisterInfo(
+        200, UINT16, entityType=TextReadEntityType(vebus_microgrid_mode)
+    ),
+    "vebus_microgrid_reference_frequency": RegisterInfo(
+        201,
+        INT16,
+        UnitOfFrequency.HERTZ,
+        100,
+        entityType=SliderWriteType(UnitOfFrequency.HERTZ),
+    ),
+    "vebus_microgrid_reference_power": RegisterInfo(
+        202, INT16, PERCENTAGE, 100, entityType=SliderWriteType(negative=True)
+    ),
+    "vebus_microgrid_minimum_active_power": RegisterInfo(
+        203, INT16, PERCENTAGE, 100, entityType=SliderWriteType(negative=True)
+    ),
+    "vebus_microgrid_maximum_active_power": RegisterInfo(
+        204, INT16, PERCENTAGE, 100, entityType=SliderWriteType(negative=True)
+    ),
+    "vebus_microgrid_frequency_droop": RegisterInfo(
+        205, UINT16, PERCENTAGE, 100, entityType=SliderWriteType(negative=False)
+    ),
+    "vebus_microgrid_reference_reactive_power": RegisterInfo(
+        206, INT16, PERCENTAGE, 100, entityType=SliderWriteType(negative=True)
+    ),
+    "vebus_microgrid_minimum_reactive_power": RegisterInfo(
+        207, INT16, PERCENTAGE, 100, entityType=SliderWriteType(negative=True)
+    ),
+    "vebus_microgrid_maximum_reactive_power": RegisterInfo(
+        208, INT16, PERCENTAGE, 100, entityType=SliderWriteType(negative=True)
+    ),
+    "vebus_microgrid_voltage_droop_slope": RegisterInfo(
+        209, UINT16, PERCENTAGE, 100, entityType=SliderWriteType(negative=False)
+    ),
+    "vebus_microgrid_reference_voltage": RegisterInfo(
+        210,
+        UINT16,
+        UnitOfElectricPotential.VOLT,
+        100,
+        entityType=SliderWriteType(negative=False),
+    ),
+    "vebus_microgrid_activate_droop_mode_parameters": RegisterInfo(
+        211, UINT16, "", 1, entityType=ButtonWriteType()
+    ),
+    # RESERVED 212
+    "vebus_microgrid_directdrive_minimum_frequency": RegisterInfo(
+        213, UINT16, UnitOfFrequency.HERTZ, 100
+    ),
+    "vebus_microgrid_directdrive_maximum_frequency": RegisterInfo(
+        214, UINT16, UnitOfFrequency.HERTZ, 100
+    ),
+    "vebus_microgrid_directdrive_power_setpoint": RegisterInfo(
+        215, INT16, PERCENTAGE, 100
+    ),
+    "vebus_microgrid_directdrive_reactive_power_setpoint": RegisterInfo(
+        216, INT16, PERCENTAGE, 100
+    ),
+    "vebus_microgrid_directdrive_range_minimum_voltage": RegisterInfo(
+        217, UINT16, UnitOfElectricPotential.VOLT, 100
+    ),
+    "vebus_microgrid_directdrive_range_maximum_voltage": RegisterInfo(
+        218, UINT16, UnitOfElectricPotential.VOLT, 100
+    ),
+    "vebus_microgrid_directdrive_activate_grid_following_parameters": RegisterInfo(
+        219, UINT16, "", 1, entityType=ButtonWriteType()
+    ),
+    "vebus_microgrid_directdrive_grid_forming_frequency_setpoint": RegisterInfo(
+        220, UINT16, UnitOfFrequency.HERTZ, 100
+    ),
+    "vebus_microgrid_directdrive_grid_forming_voltage_setpoint": RegisterInfo(
+        221, UINT16, UnitOfElectricPotential.VOLT, 100
+    ),
+    "vebus_microgrid_directdrive_activate_grid_forming_parameters": RegisterInfo(
+        222, UINT16, "", 1, entityType=ButtonWriteType()
+    ),
+    # RESERVED 223 - 229
+}
+
+
+class microgrid_error(Enum):
+    """Microgrid error."""
+
+    NO_ERROR = 0
+    DIFFERENT_FALLBAC_PARAMETER_VALUES_BETWEEN_PHASE_MASTERS = 1
+    HYBRID_DROOP_PARAMETER_WRITE_FAILED = 2
+
+
+vebus_registers_4 = {
+    "vebus_microgrid_heartbeat": RegisterInfo(
+        230, UINT16, 1, entityType=ButtonWriteType()
+    ),
+    "vebus_microgrid_error": RegisterInfo(
+        231, UINT16, TextReadEntityType(microgrid_error)
+    ),
+}
+
+
 class battery_mode(Enum):
     """Battery mode."""
 
     OPEN = 0
     STANDBY = 14
 
+
+battery_registers_0 = {
+    "battery_power_int32": RegisterInfo(256, INT32, UnitOfPower.WATT)
+}
 
 battery_registers = {
     "battery_power": RegisterInfo(
@@ -803,6 +924,10 @@ battery_registers = {
         entityType=TextReadEntityType(generic_alarm_ledger),
     ),
     "battery_mode": RegisterInfo(327, UINT16, entityType=SelectWriteType(battery_mode)),
+}
+
+battery_registers_2 = {
+    "battery_consumedamphours_uint32": RegisterInfo(330, UINT32, AMPHOURS, -1),
 }
 
 
@@ -1099,6 +1224,10 @@ solarcharger_registers = {
         dataType=UINT16,
         entityType=TextReadEntityType(generic_mppoperationmode),
     ),
+}
+
+solarcharger_registers_2 = {
+    "solarcharger_yield_power_uint32": RegisterInfo(792, UINT32, UnitOfPower.WATT),
 }
 
 solarcharger_tracker_voltage_registers = {
@@ -1410,6 +1539,20 @@ settings_cgwacs_registers = {
 }
 
 
+class without_gridmeter_options(Enum):
+    """Settings CGWACS run without grid meter options."""
+
+    EXTENRAL_METER = 0
+    INVERTER_CHARGER = 1
+
+
+settings_cgwacs_registers_2 = {
+    "settings_cgwacs_run_without_gridmeter": RegisterInfo(
+        2718, UINT16, "", 1, SelectWriteType(without_gridmeter_options)
+    )
+}
+
+
 gps_registers = {
     "gps_latitude": RegisterInfo(2800, INT32, "", 10000000),
     "gps_longitude": RegisterInfo(2802, INT32, "", 10000000),
@@ -1573,9 +1716,14 @@ inverter_alarm_registers = {
 class inverter_mode(Enum):
     """Inverter mode."""
 
-    ON = 2
+    CHARGER_ONLY = 1
+    INVERTER_ONLY = 2
+    ON = 3
     OFF = 4
-    ECO = 5
+    LOW_POWER = 5
+    PASSTHROUGH = 251
+    STANDBY = 252
+    HIBERNATE = 253
 
 
 inverter_info_registers = {
@@ -1870,6 +2018,16 @@ genset_registers_2 = {
     ),
 }
 
+genset_registers_4 = {
+    "genset_L1_power_int32": RegisterInfo(3230, INT32, UnitOfPower.WATT),
+    "genset_L2_power_int32": RegisterInfo(3232, INT32, UnitOfPower.WATT),
+    "genset_L3_power_int32": RegisterInfo(3234, INT32, UnitOfPower.WATT),
+    "genset_L1_powerfactor": RegisterInfo(3236, INT16, "", 1000),
+    "genset_L2_powerfactor": RegisterInfo(3237, INT16, "", 1000),
+    "genset_L3_powerfactor": RegisterInfo(3238, INT16, "", 1000),
+    "genset_total_powerfactor": RegisterInfo(3239, INT16, "", 1000),
+}
+
 genset_thirdparty_registers = {
     "genset_error_0": RegisterInfo(5000, STRING(16)),
     "genset_error_1": RegisterInfo(5016, STRING(16)),
@@ -1892,6 +2050,10 @@ class temperature_type(Enum):
     BATTERY = 0
     FRIDGE = 1
     GENERIC = 2
+    ROOM = 3
+    OUTDOOR = 4
+    WATERHEATER = 5
+    FREEZER = 6
 
 
 class temperature_status(Enum):
@@ -1925,6 +2087,16 @@ temperature_registers = {
         3307, UINT16, UnitOfElectricPotential.VOLT, 100
     ),
     "temperature_pressure": RegisterInfo(3308, UINT16, UnitOfPressure.HPA),
+}
+
+temperature_registers_2 = {
+    "temperature_co2": RegisterInfo(3309, UINT16, CONCENTRATION_PARTS_PER_MILLION, 1),
+    "temperature_lux": RegisterInfo(3310, UINT32, LIGHT_LUX, 1),
+    "temperature_nitrogen_oxides": RegisterInfo(3312, UINT16, "", 1),
+    "temperature_particulate_matter": RegisterInfo(
+        3313, UINT16, CONCENTRATION_MICROGRAMS_PER_CUBIC_METER, 1
+    ),
+    "temperature_volatile_organic_compounds": RegisterInfo(3314, UINT16, "", 1),
 }
 
 pulsemeter_registers = {
@@ -2164,6 +2336,16 @@ acload_registers = {
         3920, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100
     ),
     "acload_frequency": RegisterInfo(3922, UINT16, UnitOfFrequency.HERTZ, 100),
+}
+
+acload_registers_1 = {
+    "acload_L1_power_int32": RegisterInfo(3924, INT32, UnitOfPower.WATT),
+    "acload_L2_power_int32": RegisterInfo(3926, INT32, UnitOfPower.WATT),
+    "acload_L3_power_int32": RegisterInfo(3928, INT32, UnitOfPower.WATT),
+    "acload_L1_powerfactor": RegisterInfo(3930, INT16, "", 1000),
+    "acload_L2_powerfactor": RegisterInfo(3931, INT16, "", 1000),
+    "acload_L3_powerfactor": RegisterInfo(3932, INT16, "", 1000),
+    "acload_total_powerfactor": RegisterInfo(3933, INT16, "", 1000),
 }
 
 fuelcell_registers = {
@@ -2958,6 +3140,10 @@ acsystem_registers = {
     # RESERVED 4925 - 4929
 }
 
+acsystem_registers_1 = {
+    "acsystem_active_soclimit": RegisterInfo(4925, UINT16, PERCENTAGE, 1),
+}
+
 acsystem_registers_2 = {
     "acsystem_alarm_gridlost": RegisterInfo(
         4930, UINT16, entityType=TextReadEntityType(generic_alarm_ledger)
@@ -2965,7 +3151,21 @@ acsystem_registers_2 = {
     "acsystem_alarm_phaserotation": RegisterInfo(
         4931, UINT16, entityType=TextReadEntityType(generic_alarm_ledger)
     ),
+    # RESERVED 4932 - 4939
 }
+
+acsystem_registers_3 = {
+    "acsystem_input1_currentlimit": RegisterInfo(
+        4940, UINT16, UnitOfElectricCurrent.AMPERE, 10, SliderWriteType("AC", False)
+    ),
+    "acsystem_input2_currentlimit": RegisterInfo(
+        4941, UINT16, UnitOfElectricCurrent.AMPERE, 10, SliderWriteType("AC", False)
+    ),
+    "acsystem_gridmeter_currentlimit": RegisterInfo(
+        4942, UINT16, UnitOfElectricCurrent.AMPERE, 10, SliderWriteType("AC", False)
+    ),
+}
+
 
 dcgenset_registers = {
     "dcgenset_productid": RegisterInfo(5200, UINT16),
@@ -3045,6 +3245,8 @@ class dynamic_ess_strategy(Enum):
 
     TARGET_SOC = 0
     SELF_CONSUMPTION = 1
+    PRO_BATTERY = 2
+    PRO_GRID = 3
 
 
 system_dynamic_ess_registers = {
@@ -3115,9 +3317,35 @@ settings_dynamic_ess_registers = {
     "settings_dynamicess_schedule_starttime": RegisterInfo(
         5428, INT32, UnitOfTime.SECONDS, entityType=SliderWriteType(UnitOfTime.SECONDS)
     ),  # TODO refactor to support date and time picker and although negative is allowed this is specified as unix timestamp in the docs
-    # "settings_dynamicess_strategy": RegisterInfo(
-    #     5429, UINT16, entityType=SelectWriteType(dynamic_ess_strategy)
-    # ),
+    "settings_dynamicess_strategy": RegisterInfo(
+        5429, UINT16, entityType=SelectWriteType(dynamic_ess_strategy)
+    ),
+}
+
+
+class heatpump_state(Enum):
+    """Heatpump state."""
+
+    OFF = 0
+    ERROR = 1
+    STARTUP = 2
+    HEATING = 3
+    COOLING = 4
+
+
+heatpump_registers = {
+    "heatpump_productid": RegisterInfo(5500, UINT16),
+    "heatpump_state": RegisterInfo(
+        5501, UINT16, entityType=TextReadEntityType(heatpump_state)
+    ),
+    "heatpump_power": RegisterInfo(5502, UINT32, UnitOfPower.WATT),
+    "heatpump_energy_forward": RegisterInfo(
+        5504, UINT32, UnitOfEnergy.KILO_WATT_HOUR, 100
+    ),
+    "heatpump_temperature": RegisterInfo(5506, INT16, UnitOfTemperature.CELSIUS, 10),
+    "heatpump_target_temperature": RegisterInfo(
+        5507, INT16, UnitOfTemperature.CELSIUS, 10
+    ),
 }
 
 
@@ -3167,6 +3395,11 @@ system_registers = {
 # system_internal_registers = {
 #    "system_system_time_in_utc": RegisterInfo(830, UINT64, UnitOfTime.SECONDS)
 # }
+
+system_firmware_registers = {
+    "system_firmware_gx_major_version": RegisterInfo(834, UINT16),
+    "system_firmware_gx_beta_release": RegisterInfo(835, UINT16),
+}
 
 
 class system_battery_state(Enum):
@@ -3245,6 +3478,29 @@ system_invertercharger_registers = {
     ),
 }
 
+system_pvac_registers = {
+    "system_pvac_pvonoutput_L1_power": RegisterInfo(884, UINT32, UnitOfPower.WATT),
+    "system_pvac_pvonoutput_L2_power": RegisterInfo(886, UINT32, UnitOfPower.WATT),
+    "system_pvac_pvonoutput_L3_power": RegisterInfo(888, UINT32, UnitOfPower.WATT),
+    "system_pvac_pvongrid_L1_power": RegisterInfo(890, UINT32, UnitOfPower.WATT),
+    "system_pvac_pvongrid_L2_power": RegisterInfo(892, UINT32, UnitOfPower.WATT),
+    "system_pvac_pvongrid_L3_power": RegisterInfo(894, UINT32, UnitOfPower.WATT),
+    "system_pvac_pvongenset_L1_power": RegisterInfo(896, UINT32, UnitOfPower.WATT),
+    "system_pvac_pvongenset_L2_power": RegisterInfo(898, UINT32, UnitOfPower.WATT),
+    "system_pvac_pvongenset_L3_power": RegisterInfo(900, UINT32, UnitOfPower.WATT),
+}
+
+system_power_registers_2 = {
+    "system_consumption_L1_power": RegisterInfo(902, UINT32, UnitOfPower.WATT),
+    "system_consumption_L2_power": RegisterInfo(904, UINT32, UnitOfPower.WATT),
+    "system_consumption_L3_power": RegisterInfo(906, UINT32, UnitOfPower.WATT),
+    "system_grid_L1_power": RegisterInfo(908, INT32, UnitOfPower.WATT),
+    "system_grid_L2_power": RegisterInfo(910, INT32, UnitOfPower.WATT),
+    "system_grid_L3_power": RegisterInfo(912, INT32, UnitOfPower.WATT),
+    "system_genset_L1_power": RegisterInfo(914, INT32, UnitOfPower.WATT),
+    "system_genset_L2_power": RegisterInfo(916, INT32, UnitOfPower.WATT),
+    "system_genset_L3_power": RegisterInfo(918, INT32, UnitOfPower.WATT),
+}
 
 valid_unit_ids = [
     0,
