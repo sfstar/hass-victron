@@ -3316,10 +3316,10 @@ settings_dynamic_ess_registers = {
     ),
     "settings_dynamicess_schedule_starttime": RegisterInfo(
         5428, INT32, UnitOfTime.SECONDS, entityType=SliderWriteType(UnitOfTime.SECONDS)
-    ),  # TODO refactor to support date and time picker and although negative is allowed this is specified as unix timestamp in the docs
-    "settings_dynamicess_strategy": RegisterInfo(
-        5429, UINT16, entityType=SelectWriteType(dynamic_ess_strategy)
-    ),
+    ),  # ,  # TODO refactor to support date and time picker and although negative is allowed this is specified as unix timestamp in the docs
+    # "settings_dynamicess_strategy": RegisterInfo(
+    #     5429, UINT16, entityType=SelectWriteType(dynamic_ess_strategy)
+    # ),
 }
 
 
