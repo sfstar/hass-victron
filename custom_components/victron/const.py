@@ -4,11 +4,11 @@ from enum import Enum
 
 from homeassistant.components.sensor import SensorStateClass
 from homeassistant.const import (
+    CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+    CONCENTRATION_PARTS_PER_MILLION,
+    LIGHT_LUX,
     PERCENTAGE,
     REVOLUTIONS_PER_MINUTE,
-    CONCENTRATION_PARTS_PER_MILLION,
-    CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
-    LIGHT_LUX,
     UnitOfElectricCurrent,
     UnitOfElectricPotential,
     UnitOfEnergy,
