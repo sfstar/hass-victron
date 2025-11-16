@@ -923,7 +923,8 @@ battery_registers = {
         dataType=UINT16,
         entityType=TextReadEntityType(generic_alarm_ledger),
     ),
-    "battery_mode": RegisterInfo(327, UINT16, entityType=SelectWriteType(battery_mode)),
+    # disabled for now as it is specified as RESERVED (not yet active) in the documentation
+    # "battery_mode": RegisterInfo(327, UINT16, entityType=SelectWriteType(battery_mode)),
 }
 
 battery_registers_2 = {
@@ -997,7 +998,6 @@ class battery_error(Enum):
 
 class battery_mode_alternative(Enum):
     """Battery mode alternative."""
-
     ON = 3
     STANDBY = 252
 
@@ -1073,9 +1073,9 @@ battery_detail_registers = {
 }
 
 battery_info_registers = {
-    "battery_mode_2": RegisterInfo(
-        1319, UINT16, entityType=SelectWriteType(battery_mode_alternative)
-    ),
+ #   "battery_mode_2": RegisterInfo(
+ #       1319, UINT16, entityType=SelectWriteType(battery_mode_alternative)
+ #   ),
     "battery_balancer_status": RegisterInfo(
         1320, UINT16, entityType=TextReadEntityType(battery_balancer_status)
     ),
@@ -1094,7 +1094,7 @@ battery_smartlithium_registers = {
     "battery_errors_smartlithium_invalidconfiguration": RegisterInfo(
         1324, UINT16
     ),  # This has no decode values for returned numbers
-    "battery_connection_information": RegisterInfo(1328, STRING(8)),
+    # "battery_connection_information": RegisterInfo(1328, STRING(8)),
 }
 
 
@@ -3672,5 +3672,4 @@ register_info_dict = {
     "system_invertercharger_registers": system_invertercharger_registers,
     "system_pvac_registers": system_pvac_registers,
     "system_power_registers_2": system_power_registers_2,
-
 }
