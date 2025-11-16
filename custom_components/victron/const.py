@@ -1070,12 +1070,18 @@ battery_detail_registers = {
     "battery_system_maxvoltagecellid": RegisterInfo(1310, STRING(4)),
     "battery_system_mintemperaturecellid": RegisterInfo(1314, STRING(4)),
     "battery_system_maxtemperaturecellid": RegisterInfo(1318, STRING(4)),
+}
+
+battery_info_registers = {
     "battery_mode_2": RegisterInfo(
         1319, UINT16, entityType=SelectWriteType(battery_mode_alternative)
     ),
     "battery_balancer_status": RegisterInfo(
         1320, UINT16, entityType=TextReadEntityType(battery_balancer_status)
     ),
+}
+
+battery_smartlithium_registers = {
     "battery_errors_smartlithium_communication": RegisterInfo(
         1321, UINT16
     ),  # This has no decode values for returned numbers
@@ -3590,10 +3596,19 @@ valid_unit_ids = [
 
 register_info_dict = {
     "gavazi_grid_registers": gavazi_grid_registers,
+    "gavazi_grid_registers_2": gavazi_grid_registers_2,
     "vebus_registers": vebus_registers,
+    "vebus_registers_2": vebus_registers_2,
+    # "vebus_registers_3": vebus_registers_3, will be added later when victron fills reserved registers
+    "vebus_registers_4": vebus_registers_4,
+    "battery_registers_0": battery_registers_0,
     "battery_registers": battery_registers,
+    "battery_registers_2": battery_registers_2,
     "battery_detail_registers": battery_detail_registers,
+    "battery_info_registers": battery_info_registers,
+    "battery_smartlithium_registers": battery_smartlithium_registers,
     "solarcharger_registers": solarcharger_registers,
+    "solarcharger_registers_2": solarcharger_registers_2,
     "solarcharger_tracker_voltage_registers": solarcharger_tracker_voltage_registers,
     "solarcharger_tracker_registers": solarcharger_tracker_registers,
     "pvinverter_registers": pvinverter_registers,
@@ -3601,6 +3616,7 @@ register_info_dict = {
     "charger_registers": charger_registers,
     "settings_registers": settings_registers,
     "settings_cgwacs_registers": settings_cgwacs_registers,
+    "settings_cgwacs_registers_2": settings_cgwacs_registers_2,
     "gps_registers": gps_registers,
     "settings_ess_registers": settings_ess_registers,
     "tank_registers": tank_registers,
@@ -3613,9 +3629,11 @@ register_info_dict = {
     "inverter_tracker_statistics_registers": inverter_tracker_statistics_registers,
     "genset_registers": genset_registers,
     "genset_registers_2": genset_registers_2,
+    "genset_registers_4": genset_registers_4,
     "genset_thirdparty_registers": genset_thirdparty_registers,
     "genset_thirdparty_registers_2": genset_thirdparty_registers_2,
     "temperature_registers": temperature_registers,
+    "temperature_registers_2": temperature_registers_2,
     "pulsemeter_registers": pulsemeter_registers,
     "digitalinput_registers": digitalinput_registers,
     "generator_registers": generator_registers,
@@ -3623,6 +3641,7 @@ register_info_dict = {
     "evcharger_productid_registers": evcharger_productid_registers,
     "evcharger_registers": evcharger_registers,
     "acload_registers": acload_registers,
+    "acload_registers_1": acload_registers_1,
     "fuelcell_registers": fuelcell_registers,
     "alternator_registers": alternator_registers,
     "dcsource_registers": dcsource_registers,
@@ -3630,21 +3649,28 @@ register_info_dict = {
     "dcsystem_registers": dcsystem_registers,
     "multi_registers": multi_registers,
     "multi_registers_2": multi_registers_2,
+    "pump_registers": pump_registers,
+    "dcdc_registers": dcdc_registers,
+    "acsystem_registers": acsystem_registers,
+    "acsystem_registers_1": acsystem_registers_1,
+    "acsystem_registers_2": acsystem_registers_2,
+    "acsystem_registers_3": acsystem_registers_3,
+    "dcgenset_registers": dcgenset_registers,
+    "dcgenset_registers_thirdparty": dcgenset_registers_thirdparty,
+    "dcgenset_registers_thirdparty_2": dcgenset_registers_thirdparty_2,
+    "system_dynamic_ess_registers": system_dynamic_ess_registers,
+    "settings_dynamic_ess_registers": settings_dynamic_ess_registers,
+    "heatpump_registers": heatpump_registers,
     "system_registers": system_registers,
-    "system_invertercharger_registers": system_invertercharger_registers,
+    "system_firmware_registers": system_firmware_registers,
     # "system_internal_registers": system_internal_registers,
     "system_battery_registers": system_battery_registers,
     "system_dc_registers": system_dc_registers,
     "system_charger_registers": system_charger_registers,
     "system_power_registers": system_power_registers,
     "system_bus_registers": system_bus_registers,
-    "pump_registers": pump_registers,
-    "dcdc_registers": dcdc_registers,
-    "acsystem_registers": acsystem_registers,
-    "acsystem_registers_2": acsystem_registers_2,
-    "dcgenset_registers": dcgenset_registers,
-    "dcgenset_registers_thirdparty": dcgenset_registers_thirdparty,
-    "dcgenset_registers_thirdparty_2": dcgenset_registers_thirdparty_2,
-    "system_dynamic_ess_registers": system_dynamic_ess_registers,
-    "settings_dynamic_ess_registers": settings_dynamic_ess_registers,
+    "system_invertercharger_registers": system_invertercharger_registers,
+    "system_pvac_registers": system_pvac_registers,
+    "system_power_registers_2": system_power_registers_2,
+
 }
