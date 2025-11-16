@@ -998,6 +998,7 @@ class battery_error(Enum):
 
 class battery_mode_alternative(Enum):
     """Battery mode alternative."""
+
     ON = 3
     STANDBY = 252
 
@@ -1073,9 +1074,9 @@ battery_detail_registers = {
 }
 
 battery_info_registers = {
- #   "battery_mode_2": RegisterInfo(
- #       1319, UINT16, entityType=SelectWriteType(battery_mode_alternative)
- #   ),
+    #   "battery_mode_2": RegisterInfo(
+    #       1319, UINT16, entityType=SelectWriteType(battery_mode_alternative)
+    #   ),
     "battery_balancer_status": RegisterInfo(
         1320, UINT16, entityType=TextReadEntityType(battery_balancer_status)
     ),
