@@ -125,7 +125,7 @@ def determine_min_value(
                 )
                 if powerType == "AC"
                 else (
-                    int(config_entry[CONF_DC_SYSTEM_VOLTAGE].dc_voltage)
+                    int(config_entry[CONF_DC_SYSTEM_VOLTAGE])
                     * config_entry[CONF_DC_CURRENT_LIMIT]
                 )
             )

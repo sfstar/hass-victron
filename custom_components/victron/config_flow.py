@@ -299,7 +299,6 @@ class VictronOptionFlowHandler(config_entries.OptionsFlow):
 
     def __init__(self, config_entry: ConfigEntry) -> None:
         """Initialize options flow."""
-        self.config_entry = config_entry
         self.area = None
 
     async def async_step_advanced(self, user_input=None):
