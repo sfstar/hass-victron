@@ -25,3 +25,4 @@ class VictronWriteBaseEntityDescription(VictronBaseEntityDescription):
     """An extension of VictronBaseEntityDescription for writeable Victron components."""
 
     address: int = None
+    data_type: str = None
