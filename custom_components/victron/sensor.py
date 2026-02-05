@@ -158,10 +158,10 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         self._attr_unique_id = f"{description.slave}_{self.description.key}"
         if description.slave not in (0, 100, 225):
             self.entity_id = (
-                f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}_{description.slave}"
+                f"{SENSOR_DOMAIN}.{DOMAIN}{self.description.key}{description.slave}".lower()
             )
         else:
-            self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}"
+            self.entity_id = f"{SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}".lower()
 
         self._update_job = HassJob(self.async_schedule_update_ha_state)
         self._unsub_update = None
