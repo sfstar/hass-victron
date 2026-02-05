@@ -188,7 +188,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
                     else:
                         self._attr_native_value = "NONDECODABLE"
                         _LOGGER.error(
-                            "The reported value %s for entity %s isn't a decobale value. Please report this error to the integrations maintainer",
+                            "The reported value %s for entity %s isn't a decodable value. Please report this error to the integrations maintainer",
                             data,
                             self._attr_name,
                         )
