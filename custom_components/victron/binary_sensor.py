@@ -89,9 +89,9 @@ class VictronBinarySensor(CoordinatorEntity, BinarySensorEntity):
 
         self._attr_unique_id = f"{self.description.slave}_{self.description.key}"
         if self.description.slave not in (100, 225):
-            self.entity_id = f"{BINARY_SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}_{self.description.slave}"
+            self.entity_id = f"{BINARY_SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}_{self.description.slave}".lower()
         else:
-            self.entity_id = f"{BINARY_SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}"
+            self.entity_id = f"{BINARY_SENSOR_DOMAIN}.{DOMAIN}_{self.description.key}".lower()
 
         self._update_job = HassJob(self.async_schedule_update_ha_state)
         self._unsub_update = None
