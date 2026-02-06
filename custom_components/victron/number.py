@@ -233,9 +233,9 @@ class VictronNumber(NumberEntity):
 
         self._attr_unique_id = f"{self.description.slave}_{self.description.key}"
         if self.description.slave not in (100, 225):
-            self.entity_id = f"{NUMBER_DOMAIN}.{DOMAIN}_{self.description.key}_{self.description.slave}"
+            self.entity_id = f"{NUMBER_DOMAIN}.{DOMAIN}_{self.description.key}_{self.description.slave}".lower()
         else:
-            self.entity_id = f"{NUMBER_DOMAIN}.{DOMAIN}_{self.description.key}"
+            self.entity_id = f"{NUMBER_DOMAIN}.{DOMAIN}_{self.description.key}".lower()
 
         self._attr_mode = self.description.mode
 
