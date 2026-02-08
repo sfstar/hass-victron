@@ -187,20 +187,20 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
         except HomeAssistantError as e:
             raise UpdateFailed("Fetching registers failed") from e
 
-    def write_register(self, unit, address, value):
+    def write_register(self, unit, address, value, is_32bit=False):
         """Write to the register."""
         # try:
 
-        self.api_write(unit, address, value)
+        self.api_write(unit, address, value, is_32bit)
 
     # except HomeAssistantError as e:
     # TODO raise specific write error
     # _LOGGER.error("failed to write to option:", e
 
-    def api_write(self, unit, address, value):
+    def api_write(self, unit, address, value, is_32bit=False):
         """Write to the api."""
         # recycle connection
-        return self.api.write_register(unit=unit, address=address, value=value)
+        return self.api.write_register(unit=unit, address=address, value=value, is_32bit=is_32bit)
 
     def api_update(self, unit, registerInfo):
         """Update the api."""

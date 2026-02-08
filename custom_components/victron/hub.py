@@ -83,9 +83,16 @@ class VictronHub:
             return self._client.close()
         return None
 
-    def write_register(self, unit, address, value):
+    def write_register(self, unit, address, value, is_32bit=False):
         """Write a register."""
         slave = int(unit) if unit else 1
+        if is_32bit:
+            # For 32-bit values, split into two 16-bit registers (high word, low word)
+            high_word = (value >> 16) & 0xFFFF
+            low_word = value & 0xFFFF
+            return self._client.write_registers(
+                address=address, values=[high_word, low_word], device_id=slave
+            )
         return self._client.write_register(
             address=address, value=value, device_id=slave
         )
