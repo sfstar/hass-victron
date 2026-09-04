@@ -71,7 +71,7 @@ async def async_setup_entry(
                             key=register_name,
                             name=register_name.replace("_", " "),
                             slave=slave,
-                            native_unit_of_measurement=registerInfo.unit,
+                            native_unit_of_measurement=(registerInfo.unit if isinstance(registerInfo.unit, str) else None),
                             mode=NumberMode.SLIDER
                             if config_entry.options[CONF_USE_SLIDERS]
                             else NumberMode.BOX,
