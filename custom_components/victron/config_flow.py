@@ -248,24 +248,28 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
+            hub = VictronHub(user_input[CONF_HOST], user_input[CONF_PORT])
             try:
-                hub = VictronHub(user_input[CONF_HOST], user_input[CONF_PORT])
-                await hub.connect()
-                _LOGGER.info("connection was succesfull")
+                connected = await self.hass.async_add_executor_job(hub.connect)
             except HomeAssistantError as e:
                 errors["base"] = f"cannot_connect ({e!s})"
-
             else:
-                new_options = config_entry.options | {
-                    CONF_HOST: user_input[CONF_HOST],
-                    CONF_PORT: user_input[CONF_PORT],
-                }
-                return self.async_update_reload_and_abort(
-                    config_entry,
-                    title=DOMAIN,
-                    options=new_options,
-                    reason="reconfigure_successful",
-                )
+                if not connected:
+                    errors["base"] = "cannot_connect"
+                else:
+                    _LOGGER.info("connection was succesfull")
+                    new_options = config_entry.options | {
+                        CONF_HOST: user_input[CONF_HOST],
+                        CONF_PORT: user_input[CONF_PORT],
+                    }
+                    return self.async_update_reload_and_abort(
+                        config_entry,
+                        title=DOMAIN,
+                        options=new_options,
+                        reason="reconfigure_successful",
+                    )
+            finally:
+                await self.hass.async_add_executor_job(hub.disconnect)
 
         return self.async_show_form(
             step_id="reconfigure",

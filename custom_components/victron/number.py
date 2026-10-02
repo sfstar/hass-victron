@@ -71,7 +71,11 @@ async def async_setup_entry(
                             key=register_name,
                             name=register_name.replace("_", " "),
                             slave=slave,
-                            native_unit_of_measurement=registerInfo.unit,
+                            native_unit_of_measurement=(
+                                registerInfo.unit
+                                if isinstance(registerInfo.unit, str)
+                                else None
+                            ),
                             mode=NumberMode.SLIDER
                             if config_entry.options[CONF_USE_SLIDERS]
                             else NumberMode.BOX,
@@ -225,11 +229,23 @@ class VictronNumber(NumberEntity):
 
         self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
-        self._attr_native_value = self.description.value_fn(
-            self.coordinator.processed_data(),
-            self.description.slave,
-            self.description.key,
-        )
+        try:
+            self._attr_native_value = self.description.value_fn(
+                self.coordinator.processed_data(),
+                self.description.slave,
+                self.description.key,
+            )
+        except KeyError:
+            # The unit returned no data for this register at startup. Initialize
+            # as unavailable; native_value recovers automatically once the
+            # coordinator receives data for this register.
+            _LOGGER.debug(
+                "No startup data for number entity '%s' on unit %s; "
+                "initializing as unavailable",
+                self.description.key,
+                self.description.slave,
+            )
+            self._attr_native_value = None
 
         self._attr_unique_id = f"{self.description.slave}_{self.description.key}"
         if self.description.slave not in (100, 225):
@@ -256,13 +272,18 @@ class VictronNumber(NumberEntity):
         await self.coordinator.async_update_local_entry(self.data_key, int(value))
 
     @property
-    def native_value(self) -> float:
+    def native_value(self) -> float | None:
         """Return the state of the entity."""
-        value = self.description.value_fn(
-            data=self.coordinator.processed_data(),
-            slave=self.description.slave,
-            key=self.description.key,
-        )
+        try:
+            value = self.description.value_fn(
+                data=self.coordinator.processed_data(),
+                slave=self.description.slave,
+                key=self.description.key,
+            )
+        except KeyError:
+            return None
+        if value is None:
+            return None
         if value > round(
             UINT16_MAX / 2
         ):  # Half of the UINT16 is reserved for positive and half for negative values

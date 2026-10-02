@@ -85,14 +85,14 @@ class VictronHub:
 
     def write_register(self, unit, address, value):
         """Write a register."""
-        slave = int(unit) if unit else 1
+        slave = int(unit) if unit is not None else 1
         return self._client.write_register(
             address=address, value=value, device_id=slave
         )
 
     def read_holding_registers(self, unit, address, count):
         """Read holding registers."""
-        slave = int(unit) if unit else 1
+        slave = int(unit) if unit is not None else 1
         _LOGGER.info("Reading unit %s address %s count %s", unit, address, count)
         return self._client.read_holding_registers(
             address=address, count=count, device_id=slave
@@ -129,8 +129,12 @@ class VictronHub:
             working_registers = []
             for key, register_definition in register_info_dict.items():
                 _LOGGER.debug("Checking unit %s for register set %s", unit, key)
-                # VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
-                if unit == 100 and not key.startswith(("settings", "system")):
+                # Unit 0 and unit 100 map to the same GX system address. Keep
+                # system/settings entities on unit 100 while allowing a real
+                # VE.CAN device at unit 0 to own its device-specific entities.
+                if (unit == 100 and not key.startswith(("settings", "system"))) or (
+                    unit == 0 and key.startswith(("settings", "system"))
+                ):
                     continue
 
                 try:

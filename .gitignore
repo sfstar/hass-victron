@@ -1,3 +1,6 @@
 custom_components/victron/__pycache__
 .DS_Store
 .idea
+
+# Agent workflow task artifacts
+.agents/

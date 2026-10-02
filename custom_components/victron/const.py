@@ -4,11 +4,10 @@ from enum import Enum
 
 from homeassistant.components.sensor import SensorStateClass
 from homeassistant.const import (
-    CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
-    CONCENTRATION_PARTS_PER_MILLION,
     LIGHT_LUX,
     PERCENTAGE,
     REVOLUTIONS_PER_MINUTE,
+    UnitOfDensity,
     UnitOfElectricCurrent,
     UnitOfElectricPotential,
     UnitOfEnergy,
@@ -17,6 +16,7 @@ from homeassistant.const import (
     UnitOfLength,
     UnitOfPower,
     UnitOfPressure,
+    UnitOfRatio,
     UnitOfSpeed,
     UnitOfTemperature,
     UnitOfTime,
@@ -725,7 +725,7 @@ vebus_registers_4 = {
         230, UINT16, 1, entityType=ButtonWriteType()
     ),
     "vebus_microgrid_error": RegisterInfo(
-        231, UINT16, TextReadEntityType(microgrid_error)
+        231, UINT16, entityType=TextReadEntityType(microgrid_error)
     ),
 }
 
@@ -1078,7 +1078,7 @@ battery_info_registers = {
     #       1319, UINT16, entityType=SelectWriteType(battery_mode_alternative)
     #   ),
     "battery_balancer_status": RegisterInfo(
-        1320, UINT16, entityType=TextReadEntityType(battery_balancer_status)
+        1323, UINT16, entityType=TextReadEntityType(battery_balancer_status)
     ),
 }
 
@@ -2097,11 +2097,11 @@ temperature_registers = {
 }
 
 temperature_registers_2 = {
-    "temperature_co2": RegisterInfo(3309, UINT16, CONCENTRATION_PARTS_PER_MILLION, 1),
+    "temperature_co2": RegisterInfo(3309, UINT16, UnitOfRatio.PARTS_PER_MILLION, 1),
     "temperature_lux": RegisterInfo(3310, UINT32, LIGHT_LUX, 1),
     "temperature_nitrogen_oxides": RegisterInfo(3312, UINT16, "", 1),
     "temperature_particulate_matter": RegisterInfo(
-        3313, UINT16, CONCENTRATION_MICROGRAMS_PER_CUBIC_METER, 1
+        3313, UINT16, UnitOfDensity.MICROGRAMS_PER_CUBIC_METER, 1
     ),
     "temperature_volatile_organic_compounds": RegisterInfo(3314, UINT16, "", 1),
 }
