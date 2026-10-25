@@ -129,8 +129,12 @@ class VictronHub:
             working_registers = []
             for key, register_definition in register_info_dict.items():
                 _LOGGER.debug("Checking unit %s for register set %s", unit, key)
-                # VE.CAN device zero is present under unit 100. This seperates non system / settings entities into the seperate can device
-                if unit == 100 and not key.startswith(("settings", "system")):
+                # Unit 0 and unit 100 map to the same GX system address. Keep
+                # system/settings entities on unit 100 while allowing a real
+                # VE.CAN device at unit 0 to own its device-specific entities.
+                if (unit == 100 and not key.startswith(("settings", "system"))) or (
+                    unit == 0 and key.startswith(("settings", "system"))
+                ):
                     continue
 
                 try:
