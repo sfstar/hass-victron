@@ -98,7 +98,24 @@ async def async_setup_entry(
     entity = {}
     for description in descriptions:
         entity = description
-        entities.append(VictronNumber(victron_coordinator, entity))
+        try:
+            entities.append(VictronNumber(victron_coordinator, entity))
+        except KeyError:
+            # A unit present in the stored register set returned no data for this
+            # register -- e.g. the device is powered off, physically absent, or
+            # simply does not implement it. Skip just this entity.
+            #
+            # Previously the KeyError propagated out of async_setup_entry, so a
+            # single dead unit removed EVERY number entity across ALL units. That
+            # silently disables unrelated controls (e.g. an unpowered battery
+            # monitor taking out the inverter's AC input current limit), with no
+            # user-visible error. See issue #450.
+            _LOGGER.warning(
+                "Skipping number entity '%s' for unit %s: the unit returned no data "
+                "for this register. Other entities are unaffected",
+                description.key,
+                description.slave,
+            )
     _LOGGER.debug("adding number")
     async_add_entities(entities)
     _LOGGER.debug("adding numbering")
@@ -256,13 +273,21 @@ class VictronNumber(NumberEntity):
         await self.coordinator.async_update_local_entry(self.data_key, int(value))
 
     @property
-    def native_value(self) -> float:
+    def native_value(self) -> float | None:
         """Return the state of the entity."""
-        value = self.description.value_fn(
-            data=self.coordinator.processed_data(),
-            slave=self.description.slave,
-            key=self.description.key,
-        )
+        try:
+            value = self.description.value_fn(
+                data=self.coordinator.processed_data(),
+                slave=self.description.slave,
+                key=self.description.key,
+            )
+        except KeyError:
+            # The unit stopped returning this register after setup (device powered
+            # off or went offline). Report unknown rather than raising on every
+            # coordinator update.
+            return None
+        if value is None:
+            return None
         if value > round(
             UINT16_MAX / 2
         ):  # Half of the UINT16 is reserved for positive and half for negative values
