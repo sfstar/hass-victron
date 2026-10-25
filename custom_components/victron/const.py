@@ -2629,7 +2629,7 @@ dcsystem_registers = {
         4401, INT16, UnitOfElectricCurrent.AMPERE, 10
     ),
     "dcsystem_starter_voltage": RegisterInfo(
-        4402, UINT16, UnitOfElectricPotential.VOLT, 100
+        4402, UINT16, UnitOfElectricPotential.VOLT, 10
     ),
     "dcsystem_temperature": RegisterInfo(4403, INT16, UnitOfTemperature.CELSIUS, 10),
     "dcsystem_history_energyout": RegisterInfo(
