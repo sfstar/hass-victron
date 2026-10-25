@@ -1334,6 +1334,13 @@ class generic_position(Enum):
     AC_INPUT_2 = 2
 
 
+class evcharger_position(Enum):
+    """EV charger position (register 3827: 0 = AC output, 1 = AC input)."""
+
+    AC_OUTPUT = 0
+    AC_INPUT = 1
+
+
 pvinverter_registers = {
     "pvinverter_position": RegisterInfo(
         register=1026, dataType=UINT16, entityType=TextReadEntityType(generic_position)
@@ -2318,7 +2325,9 @@ evcharger_registers = {
         register=3826, dataType=UINT16, entityType=SwitchWriteType()
     ),
     "evcharger_position": RegisterInfo(
-        register=3827, dataType=UINT16, entityType=TextReadEntityType(generic_position)
+        register=3827,
+        dataType=UINT16,
+        entityType=TextReadEntityType(evcharger_position),
     ),
 }
 
