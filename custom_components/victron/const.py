@@ -4,11 +4,10 @@ from enum import Enum
 
 from homeassistant.components.sensor import SensorStateClass
 from homeassistant.const import (
-    CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
-    CONCENTRATION_PARTS_PER_MILLION,
     LIGHT_LUX,
     PERCENTAGE,
     REVOLUTIONS_PER_MINUTE,
+    UnitOfDensity,
     UnitOfElectricCurrent,
     UnitOfElectricPotential,
     UnitOfEnergy,
@@ -17,6 +16,7 @@ from homeassistant.const import (
     UnitOfLength,
     UnitOfPower,
     UnitOfPressure,
+    UnitOfRatio,
     UnitOfSpeed,
     UnitOfTemperature,
     UnitOfTime,
@@ -2097,11 +2097,11 @@ temperature_registers = {
 }
 
 temperature_registers_2 = {
-    "temperature_co2": RegisterInfo(3309, UINT16, CONCENTRATION_PARTS_PER_MILLION, 1),
+    "temperature_co2": RegisterInfo(3309, UINT16, UnitOfRatio.PARTS_PER_MILLION, 1),
     "temperature_lux": RegisterInfo(3310, UINT32, LIGHT_LUX, 1),
     "temperature_nitrogen_oxides": RegisterInfo(3312, UINT16, "", 1),
     "temperature_particulate_matter": RegisterInfo(
-        3313, UINT16, CONCENTRATION_MICROGRAMS_PER_CUBIC_METER, 1
+        3313, UINT16, UnitOfDensity.MICROGRAMS_PER_CUBIC_METER, 1
     ),
     "temperature_volatile_organic_compounds": RegisterInfo(3314, UINT16, "", 1),
 }
