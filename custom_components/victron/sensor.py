@@ -74,7 +74,7 @@ async def async_setup_entry(
                 description = VictronEntityDescription(
                     key=register_name,
                     name=register_name.replace("_", " "),
-                    native_unit_of_measurement=registerInfo.unit,
+                    native_unit_of_measurement=(registerInfo.unit if isinstance(registerInfo.unit, str) else None),
                     state_class=registerInfo.determine_stateclass(),
                     slave=slave,
                     device_class=determine_victron_device_class(
