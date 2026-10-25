@@ -250,7 +250,7 @@ class VictronFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             try:
                 hub = VictronHub(user_input[CONF_HOST], user_input[CONF_PORT])
-                await hub.connect()
+                hub.connect()
                 _LOGGER.info("connection was succesfull")
             except HomeAssistantError as e:
                 errors["base"] = f"cannot_connect ({e!s})"
