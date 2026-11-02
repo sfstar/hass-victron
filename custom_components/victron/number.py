@@ -98,24 +98,13 @@ async def async_setup_entry(
     entity = {}
     for description in descriptions:
         entity = description
-        try:
-            entities.append(VictronNumber(victron_coordinator, entity))
-        except KeyError:
-            # A unit present in the stored register set returned no data for this
-            # register -- e.g. the device is powered off, physically absent, or
-            # simply does not implement it. Skip just this entity.
-            #
-            # Previously the KeyError propagated out of async_setup_entry, so a
-            # single dead unit removed EVERY number entity across ALL units. That
-            # silently disables unrelated controls (e.g. an unpowered battery
-            # monitor taking out the inverter's AC input current limit), with no
-            # user-visible error. See issue #450.
-            _LOGGER.warning(
-                "Skipping number entity '%s' for unit %s: the unit returned no data "
-                "for this register. Other entities are unaffected",
-                description.key,
-                description.slave,
-            )
+        # Always create the entity. A unit that returns no data for this
+        # register at startup (device powered off, absent, or not implementing
+        # it) initializes to None in __init__ rather than being skipped, so the
+        # entity stays registered and recovers automatically once the register
+        # starts reporting on a later poll. Skipping it would permanently drop
+        # the entity until the next HA restart. See issue #450.
+        entities.append(VictronNumber(victron_coordinator, entity))
     _LOGGER.debug("adding number")
     async_add_entities(entities)
     _LOGGER.debug("adding numbering")
@@ -242,11 +231,18 @@ class VictronNumber(NumberEntity):
 
         self.data_key = str(self.description.slave) + "." + str(self.description.key)
 
-        self._attr_native_value = self.description.value_fn(
-            self.coordinator.processed_data(),
-            self.description.slave,
-            self.description.key,
-        )
+        try:
+            self._attr_native_value = self.description.value_fn(
+                self.coordinator.processed_data(),
+                self.description.slave,
+                self.description.key,
+            )
+        except KeyError:
+            # The unit returned no data for this register at startup. Initialize
+            # to None (unavailable) instead of raising, so the entity is still
+            # created and recovers on a later poll. native_value already returns
+            # None on a missing register.
+            self._attr_native_value = None
 
         self._attr_unique_id = f"{self.description.slave}_{self.description.key}"
         if self.description.slave not in (100, 225):

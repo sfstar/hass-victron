@@ -1078,7 +1078,7 @@ battery_info_registers = {
     #       1319, UINT16, entityType=SelectWriteType(battery_mode_alternative)
     #   ),
     "battery_balancer_status": RegisterInfo(
-        1320, UINT16, entityType=TextReadEntityType(battery_balancer_status)
+        1323, UINT16, entityType=TextReadEntityType(battery_balancer_status)
     ),
 }
 

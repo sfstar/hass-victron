@@ -156,6 +156,7 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
         self.entity_type = description.entity_type
 
         self._attr_unique_id = f"{description.slave}_{self.description.key}"
+        self._is_sentinel_unavailable = False
         if description.slave not in (0, 100, 225):
             self.entity_id = (
                 f"{SENSOR_DOMAIN}.{DOMAIN}{self.description.key}{description.slave}".lower()
@@ -172,7 +173,11 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
     def _handle_coordinator_update(self) -> None:
         """Get the latest data and updates the states."""
         try:
-            if self.available:
+            # Gate on the coordinator's raw availability (whether the Modbus
+            # read succeeded), not on self.available, so the sentinel flag can
+            # never suppress re-reading the data and the entity can recover.
+            full_key = str(self.description.slave) + "." + self.description.key
+            if self.coordinator.processed_data()["availability"][full_key]:
                 data = self.description.value_fn(
                     self.coordinator.processed_data(),
                     self.description.slave,
@@ -181,11 +186,20 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
                 if self.entity_type is not None and isinstance(
                     self.entity_type, TextReadEntityType
                 ):
-                    if data in {item.value for item in self.entity_type.decodeEnum}:
+                    if data in (65535, 65535.0):
+                        self._attr_native_value = None
+                        self._is_sentinel_unavailable = True
+                        _LOGGER.debug(
+                            "Value 0xFFFF (no-data sentinel) received for entity %s, reporting entity as unavailable",
+                            self._attr_name,
+                        )
+                    elif data in {item.value for item in self.entity_type.decodeEnum}:
+                        self._is_sentinel_unavailable = False
                         self._attr_native_value = self.entity_type.decodeEnum(
                             data
                         ).name.split("_DUPLICATE")[0]
                     else:
+                        self._is_sentinel_unavailable = False
                         self._attr_native_value = "NONDECODABLE"
                         _LOGGER.error(
                             "The reported value %s for entity %s isn't a decodable value. Please report this error to the integrations maintainer",
@@ -205,7 +219,14 @@ class VictronSensor(CoordinatorEntity, SensorEntity):
     def available(self) -> bool:
         """Return True if entity is available."""
         full_key = str(self.description.slave) + "." + self.description.key
-        return self.coordinator.processed_data()["availability"][full_key]
+        base = self.coordinator.processed_data()["availability"][full_key]
+        if (
+            self.entity_type is not None
+            and isinstance(self.entity_type, TextReadEntityType)
+            and getattr(self, "_is_sentinel_unavailable", False)
+        ):
+            return False
+        return base
 
     @property
     def device_info(self) -> entity.DeviceInfo:
