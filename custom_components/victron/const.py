@@ -1309,7 +1309,9 @@ solarcharger_tracker_registers = {
     "solarcharger_tracker_1_pv_power": RegisterInfo(3725, UINT16, UnitOfPower.WATT),
     "solarcharger_tracker_2_pv_power": RegisterInfo(3726, UINT16, UnitOfPower.WATT),
     "solarcharger_tracker_3_pv_power": RegisterInfo(3727, UINT16, UnitOfPower.WATT),
-    "solarcharger_yield_user": RegisterInfo(3728, UINT32, UnitOfEnergy.KILO_WATT_HOUR),
+    "solarcharger_yield_user_2": RegisterInfo(
+        3728, UINT32, UnitOfEnergy.KILO_WATT_HOUR
+    ),
     "solarcharger_yield_pv": RegisterInfo(3730, UINT16, UnitOfPower.WATT),
     "solarcharger_pv_mppoperationmode_0": RegisterInfo(
         3731, UINT16, entityType=TextReadEntityType(generic_mppoperationmode)
