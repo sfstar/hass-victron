@@ -7,6 +7,7 @@ import threading
 from packaging import version
 import pymodbus
 from pymodbus.client import ModbusTcpClient
+from pymodbus.exceptions import ModbusException
 
 from homeassistant.exceptions import HomeAssistantError
 
@@ -32,7 +33,11 @@ class VictronHub:
         """Initialize."""
         self.host = host
         self.port = port
-        self._client = ModbusTcpClient(host=self.host, port=self.port)
+        # Fail fast (3 s timeout, 1 retry) so a dead connection is detected and
+        # reset within a single polling cycle.
+        self._client = ModbusTcpClient(
+            host=self.host, port=self.port, timeout=3, retries=1
+        )
         self._lock = threading.Lock()
 
     def is_still_connected(self):
@@ -77,6 +82,20 @@ class VictronHub:
         """Connect to the Modbus TCP server."""
         return self._client.connect()
 
+    def reset_connection(self):
+        """Drop the current socket so the next request opens a new connection.
+
+        The pymodbus sync client only reconnects when its socket is None. After
+        a GX reboot or a network outage the old socket object survives (broken
+        pipe, host unreachable, half-open connection), so every later request
+        fails until the integration is reloaded. Closing it forces a reconnect
+        on the next poll.
+        """
+        try:
+            self._client.close()
+        except Exception:
+            _LOGGER.debug("Error while closing the modbus connection", exc_info=True)
+
     def disconnect(self):
         """Disconnect from the Modbus TCP server."""
         if self._client.is_socket_open():
@@ -86,17 +105,29 @@ class VictronHub:
     def write_register(self, unit, address, value):
         """Write a register."""
         slave = int(unit) if unit else 1
-        return self._client.write_register(
-            address=address, value=value, device_id=slave
-        )
+        try:
+            return self._client.write_register(
+                address=address, value=value, device_id=slave
+            )
+        except (ModbusException, OSError) as err:
+            self.reset_connection()
+            raise HomeAssistantError(
+                f"Writing register {address} of unit {slave} failed: {err}"
+            ) from err
 
     def read_holding_registers(self, unit, address, count):
         """Read holding registers."""
         slave = int(unit) if unit else 1
         _LOGGER.info("Reading unit %s address %s count %s", unit, address, count)
-        return self._client.read_holding_registers(
-            address=address, count=count, device_id=slave
-        )
+        try:
+            return self._client.read_holding_registers(
+                address=address, count=count, device_id=slave
+            )
+        except (ModbusException, OSError) as err:
+            self.reset_connection()
+            raise HomeAssistantError(
+                f"Reading register {address} of unit {slave} failed: {err}"
+            ) from err
 
     def calculate_register_count(self, registerInfoDict: OrderedDict):
         """Calculate the number of registers to read."""

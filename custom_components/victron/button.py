@@ -109,7 +109,10 @@ class VictronBinarySensor(CoordinatorEntity, ButtonEntity):
     def available(self) -> bool:
         """Return True if entity available."""
         full_key = str(self.description.slave) + "." + self.description.key
-        return self.coordinator.processed_data()["availability"][full_key]
+        return (
+            self.coordinator.last_update_success
+            and self.coordinator.processed_data()["availability"][full_key]
+        )
 
     @property
     def device_info(self) -> entity.DeviceInfo:
