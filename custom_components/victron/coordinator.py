@@ -185,7 +185,7 @@ class victronEnergyDeviceUpdateCoordinator(DataUpdateCoordinator):
             )
 
         except HomeAssistantError as e:
-            raise UpdateFailed("Fetching registers failed") from e
+            raise UpdateFailed(f"Fetching registers failed: {e}") from e
 
     def write_register(self, unit, address, value):
         """Write to the register."""
